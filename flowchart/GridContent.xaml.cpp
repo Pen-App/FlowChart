@@ -124,6 +124,48 @@ void flowchart::GridContent::appendColumn()
 	}
 }
 
+void flowchart::GridContent::appendTopRow()
+{
+	appendRow();
+
+	wchar_t debugBuf[256];
+	for (int i = 0; i < PageGrid->Children->Size; i++)
+	{
+		UIElement^ symbolInGridContent = PageGrid->Children->GetAt(i);
+
+		swprintf_s(debugBuf, L"%s", symbolInGridContent->ToString()->Data());
+
+		if (wcscmp(debugBuf, L"Windows.UI.Xaml.Shapes.Rectangle")) //심볼일 때
+		{
+			Object^ rowPropertyValueObject = 
+				symbolInGridContent->GetValue(Grid::RowProperty);
+			int rowPropertyValueInt = safe_cast<int>(rowPropertyValueObject);
+			symbolInGridContent->SetValue(Grid::RowProperty, rowPropertyValueInt + 1);
+		}
+	}
+}
+
+void flowchart::GridContent::appendLeftColumn()
+{
+	appendColumn();
+
+	wchar_t debugBuf[256];
+	for (int i = 0; i < PageGrid->Children->Size; i++)
+	{
+		UIElement^ symbolInGridContent = PageGrid->Children->GetAt(i);
+
+		swprintf_s(debugBuf, L"%s", symbolInGridContent->ToString()->Data());
+
+		if (wcscmp(debugBuf, L"Windows.UI.Xaml.Shapes.Rectangle")) //심볼일 때
+		{
+			Object^ columnPropertyValueObject =
+				symbolInGridContent->GetValue(Grid::ColumnProperty);
+			int columnPropertyValueInt = safe_cast<int>(columnPropertyValueObject);
+			symbolInGridContent->SetValue(Grid::ColumnProperty, columnPropertyValueInt + 1);
+		}
+	}
+}
+
 void flowchart::GridContent::PageGrid_DragOver(Platform::Object ^ sender, 
 	Windows::UI::Xaml::DragEventArgs ^ e)
 {
@@ -138,6 +180,26 @@ void flowchart::GridContent::PageGrid_Drop(Platform::Object^ sender,
 	makeButton(PageGrid, 2, 0, 20, 20, curRowIdx, curColumnIdx);
 	makeButton(PageGrid, 2, 2, 20, 20, curRowIdx, curColumnIdx);
 	makeImage(PageGrid, curRowIdx, curColumnIdx);
+
+	if (curColumnIdx == 0)
+	{
+		appendLeftColumn();
+	}
+
+	if (curRowIdx == 0)
+	{
+		appendTopRow();
+	}
+
+	if (curColumnIdx + 1 == nowColumnNum) 
+	{
+		appendColumn();
+	}
+
+	if (curRowIdx + 1 == nowRowNum) {
+		appendRow();
+	}
+
 	PageGrid->UpdateLayout();
 }
 
@@ -157,8 +219,12 @@ void flowchart::GridContent::PageGrid_SizeChanged(Platform::Object^ sender,
 	int resizedPageGridHeight = (int)(PageGrid->ActualHeight);
 	int resizedPageGridWidth = (int)(PageGrid->ActualWidth);
 
-	int resizedRowNum = (resizedPageGridHeight / rowHeight) + ((resizedPageGridHeight%rowHeight) ? 1 : 0);
-	int resizedColumnNum = (resizedPageGridWidth / columnWidth) + ((resizedPageGridWidth%columnWidth) ? 1 : 0);
+	int resizedRowNum = (resizedPageGridHeight / rowHeight) 
+						+ 
+						((resizedPageGridHeight%rowHeight) ? 1 : 0);
+	int resizedColumnNum = (resizedPageGridWidth / columnWidth) 
+		                   + 
+		                   ((resizedPageGridWidth%columnWidth) ? 1 : 0);
 
 	while (resizedRowNum > nowRowNum)
 	{

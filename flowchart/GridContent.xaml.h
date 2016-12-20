@@ -39,6 +39,8 @@ namespace flowchart
 		void makeImage(Grid^ parentGrid, int rowIdx, int columnIdx);
 		void appendRow();
 		void appendColumn();
+		void appendTopRow();
+		void appendLeftColumn();
 
 		void PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
