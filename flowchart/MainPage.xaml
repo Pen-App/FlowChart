@@ -8,6 +8,40 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="150"/>
+        </Grid.ColumnDefinitions>
 
+        <AppBar Grid.Row="0" Height="auto" Grid.ColumnSpan="3">
+            <TextBox Grid.Row="0" Grid.Column="1" Width="200"/>
+        </AppBar>
+
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+            <Frame Name="GridContentFrame" AllowDrop="True">
+                
+            </Frame>
+        </ScrollViewer>
+
+        <ListBox CanDrag="True" Grid.Row="1" Grid.Column="2">
+            <ListBoxItem HorizontalAlignment="Center">
+                <Image CanDrag="True" Source="/Assets/circle.png" Height="30" Width="150" Stretch="Uniform"/>
+            </ListBoxItem>
+            <ListBoxItem HorizontalAlignment="Center">
+                <Image CanDrag="True" Source="/Assets/ellipse.png" Height="30" Width="150" Stretch="Uniform"/>
+            </ListBoxItem>
+            <ListBoxItem HorizontalAlignment="Center">
+                <Image CanDrag="True" Source="/Assets/rectangle.png" Height="30" Width="150" Stretch="Uniform"/>
+            </ListBoxItem>
+            <ListBoxItem HorizontalAlignment="Center">
+                <Image CanDrag="True" Source="/Assets/decisiong.png" Height="30" Width="150" Stretch="Uniform"/>
+            </ListBoxItem>
+        </ListBox>
     </Grid>
 </Page>

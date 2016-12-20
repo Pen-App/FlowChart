@@ -5,6 +5,7 @@
 
 #include "pch.h"
 #include "MainPage.xaml.h"
+#include "GridContent.xaml.h"
 
 using namespace flowchart;
 
@@ -24,4 +25,10 @@ using namespace Windows::UI::Xaml::Navigation;
 MainPage::MainPage()
 {
 	InitializeComponent();
+	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridContent::typeid));
+}
+
+void MainPage::Image_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+{
+
 }
