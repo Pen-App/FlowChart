@@ -17,5 +17,7 @@ namespace flowchart
 	public:
 		MainPage();
 
+	private:
+		void Image_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 	};
 }
