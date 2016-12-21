@@ -8,41 +8,55 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <!--행과 열 나누기-->
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>
 
-        <AppBar Grid.Row="0" Height="auto" Grid.ColumnSpan="3">
-            <TextBox Grid.Row="0" Grid.Column="1" Width="200"/>
+        <!--앱바-->
+        <AppBar Grid.Row="0"   Height="auto" Grid.ColumnSpan="3">
+            <TextBox Grid.Row="0" Grid.Column="1" Width="200" ></TextBox>
         </AppBar>
 
-        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"
-                      MinZoomFactor="0.5" MaxZoomFactor="2.0"
-                      PointerWheelChanged="ScrollViewer_PointerWheelChanged">
+        <!--스크롤뷰어-->
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
             <Frame Name="GridContentFrame" AllowDrop="True">
-                
+                <!--그리드 컨텐츠 들어갈 자리-->
             </Frame>
         </ScrollViewer>
 
+        <!--도형선택 리스트 -->
         <ListBox CanDrag="True" Grid.Row="1" Grid.Column="2">
+            <!--<Image DragStarting="Image_DragStarting" Drop="Image_Drop" DropCompleted="Image_DropCompleted"></Image>-->
             <ListBoxItem HorizontalAlignment="Center">
-                <Image CanDrag="True" Source="/Assets/circle.png" Height="30" Width="150" Stretch="Uniform"/>
+                <Image Name="s1" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/process.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
+
             <ListBoxItem HorizontalAlignment="Center">
-                <Image CanDrag="True" Source="/Assets/ellipse.png" Height="30" Width="150" Stretch="Uniform"/>
+                <Image Name="s2" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/decision.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
+
             <ListBoxItem HorizontalAlignment="Center">
-                <Image CanDrag="True" Source="/Assets/rectangle.png" Height="30" Width="150" Stretch="Uniform"/>
+                <Image Name="s3" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/preparation.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
+
             <ListBoxItem HorizontalAlignment="Center">
-                <Image CanDrag="True" Source="/Assets/decisiong.png" Height="30" Width="150" Stretch="Uniform"/>
+                <Image Name="s4" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/terminator.png" Height="50" Width="150" Stretch="Uniform"></Image>
+            </ListBoxItem>
+
+            <ListBoxItem HorizontalAlignment="Center">
+                <Image Name="s5" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/data.png" Height="50" Width="150" Stretch="Uniform"></Image>
+            </ListBoxItem>
+
+            <ListBoxItem HorizontalAlignment="Center">
+                <Image Name="s6" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/document.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
         </ListBox>
     </Grid>

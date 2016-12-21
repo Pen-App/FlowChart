@@ -6,7 +6,7 @@
 #pragma once
 
 #include "MainPage.g.h"
-
+#include <string>
 namespace flowchart
 {
 	/// <summary>
@@ -16,9 +16,8 @@ namespace flowchart
 	{
 	public:
 		MainPage();
-
 	private:
-		void Image_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
-		void ScrollViewer_PointerWheelChanged(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+		void Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args);
+		void Image_DropCompleted(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DropCompletedEventArgs^ args);
 	};
 }

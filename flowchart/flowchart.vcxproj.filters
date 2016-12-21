@@ -46,16 +46,22 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\circle.png">
+    <Image Include="Assets\data.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\decisiong.png">
+    <Image Include="Assets\decision.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\ellipse.png">
+    <Image Include="Assets\document.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\rectangle.png">
+    <Image Include="Assets\preparation.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\process.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\terminator.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
@@ -67,6 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
-    <Page Include="GridContent.xaml" />
+    <Page Include="GridPage.xaml" />
   </ItemGroup>
 </Project>

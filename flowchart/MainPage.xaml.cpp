@@ -5,8 +5,7 @@
 
 #include "pch.h"
 #include "MainPage.xaml.h"
-#include "GridContent.xaml.h"
-
+#include "GridPage.xaml.h"
 using namespace flowchart;
 
 using namespace Platform;
@@ -25,39 +24,19 @@ using namespace Windows::UI::Xaml::Navigation;
 MainPage::MainPage()
 {
 	InitializeComponent();
-	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridContent::typeid));
+	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 }
 
-void MainPage::Image_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+//이미지 이벤트 처리 메소드 : 이미지가 클릭되면 어떤 도형이 선택되었는지 selectedSymbolNumber에 저장된다. 
+void flowchart::MainPage::Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args)
 {
+	auto sendersName = ((Image^)sender)->Name;
+	App::selectedSymbolNumber = std::stoi(sendersName->Data() + 1);
+		 
 
 }
-
-void flowchart::MainPage::ScrollViewer_PointerWheelChanged(
-	Platform::Object^ sender, 
-	Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+//이미지 드롭 후 이벤트 처리 메소드 : 드롭이 되면 selectedSymbolNumber가 다시 0이 된다. => 아무것도 선택된게 없다는 뜻
+void flowchart::MainPage::Image_DropCompleted(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DropCompletedEventArgs^ args)
 {
-	if (e->KeyModifiers == Windows::System::VirtualKeyModifiers::Control) 
-	{
-		int direction = e->
-			GetCurrentPoint((UIElement^)sender)->
-			Properties->
-			MouseWheelDelta;
-		auto scrollView = ((ScrollViewer^)sender);
-		float zoomFactor = scrollView->ZoomFactor;
-		wchar_t debugBuf[256];
-
-		if (direction >= 0) //줌 인
-		{
-			scrollView->ZoomToFactor(zoomFactor - 0.1);
-			swprintf_s(debugBuf, L"%.2f\n", scrollView->ZoomFactor);
-			OutputDebugString(debugBuf);
-		}
-		else //줌 아웃
-		{
-			scrollView->ZoomToFactor(zoomFactor + 0.1);
-			swprintf_s(debugBuf, L"%.2f\n", scrollView->ZoomFactor);
-			OutputDebugString(debugBuf);
-		}
-	}
+	App::selectedSymbolNumber = -1;
 }
