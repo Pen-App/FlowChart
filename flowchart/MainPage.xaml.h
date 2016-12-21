@@ -19,5 +19,6 @@ namespace flowchart
 
 	private:
 		void Image_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void ScrollViewer_PointerWheelChanged(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 	};
 }

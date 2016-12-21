@@ -59,7 +59,9 @@ void flowchart::GridContent::makeRectangle(Grid^ parentGrid,
 	tempRect->SetValue(PageGrid->ColumnProperty, columnIdx);
 	tempRect->SetValue(PageGrid->RowProperty, rowIdx);
 	tempRect->AllowDrop = true;
-	tempRect->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridContent::Rectangle_DragEnter);
+	tempRect->DragEnter += 
+		ref new Windows::UI::Xaml::DragEventHandler(this, 
+			&flowchart::GridContent::Rectangle_DragEnter);
 	parentGrid->Children->Append(tempRect);
 }
 
@@ -140,7 +142,8 @@ void flowchart::GridContent::appendTopRow()
 			Object^ rowPropertyValueObject = 
 				symbolInGridContent->GetValue(Grid::RowProperty);
 			int rowPropertyValueInt = safe_cast<int>(rowPropertyValueObject);
-			symbolInGridContent->SetValue(Grid::RowProperty, rowPropertyValueInt + 1);
+			symbolInGridContent->
+				SetValue(Grid::RowProperty, rowPropertyValueInt + 1);
 		}
 	}
 }
@@ -161,7 +164,8 @@ void flowchart::GridContent::appendLeftColumn()
 			Object^ columnPropertyValueObject =
 				symbolInGridContent->GetValue(Grid::ColumnProperty);
 			int columnPropertyValueInt = safe_cast<int>(columnPropertyValueObject);
-			symbolInGridContent->SetValue(Grid::ColumnProperty, columnPropertyValueInt + 1);
+			symbolInGridContent->
+				SetValue(Grid::ColumnProperty, columnPropertyValueInt + 1);
 		}
 	}
 }

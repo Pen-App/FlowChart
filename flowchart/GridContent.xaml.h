@@ -37,14 +37,14 @@ namespace flowchart
 		void makeRectangle(Grid^ parentGrid, int width, int height, int rowIdx, int columnIdx);
 		void makeGridArray(int rowNum, int columnNum, int rectWidth, int rectHeight);
 		void makeImage(Grid^ parentGrid, int rowIdx, int columnIdx);
-		void appendRow();
-		void appendColumn();
-		void appendTopRow();
-		void appendLeftColumn();
+		void appendRow();			//끝에 가로줄 한줄 추가
+		void appendColumn();		//끝에 세로줄 한줄 추가
+		void appendTopRow();		//앞에 가로줄 한줄 추가
+		void appendLeftColumn();	//앞에 세로줄 한줄 추가
 
 		void PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void Rectangle_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
-		void PageGrid_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
+		void PageGrid_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);					//GridContent 사이즈 변경 이벤트(창크기가 늘어날 때 grid도 늘려주기 위함)
 	};
 }

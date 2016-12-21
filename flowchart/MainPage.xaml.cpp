@@ -32,3 +32,32 @@ void MainPage::Image_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEvent
 {
 
 }
+
+void flowchart::MainPage::ScrollViewer_PointerWheelChanged(
+	Platform::Object^ sender, 
+	Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	if (e->KeyModifiers == Windows::System::VirtualKeyModifiers::Control) 
+	{
+		int direction = e->
+			GetCurrentPoint((UIElement^)sender)->
+			Properties->
+			MouseWheelDelta;
+		auto scrollView = ((ScrollViewer^)sender);
+		float zoomFactor = scrollView->ZoomFactor;
+		wchar_t debugBuf[256];
+
+		if (direction >= 0) //줌 인
+		{
+			scrollView->ZoomToFactor(zoomFactor - 0.1);
+			swprintf_s(debugBuf, L"%.2f\n", scrollView->ZoomFactor);
+			OutputDebugString(debugBuf);
+		}
+		else //줌 아웃
+		{
+			scrollView->ZoomToFactor(zoomFactor + 0.1);
+			swprintf_s(debugBuf, L"%.2f\n", scrollView->ZoomFactor);
+			OutputDebugString(debugBuf);
+		}
+	}
+}
