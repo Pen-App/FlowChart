@@ -1,10 +1,11 @@
 #pragma once
-#include <iostream>
 #include <collection.h>
+#include <algorithm>
 
 using namespace std;
 using namespace Platform;
 using namespace Platform::Collections;
+using namespace Windows::Foundation::Collections;
 
 ref class SymbolInfo sealed
 {
@@ -25,7 +26,7 @@ private:
 	String^ title = nullptr;	// 제목
 	String^ content = nullptr;	// 내용
 	String^ detail = nullptr;	// 세부내용
-	//Vector<SymbolInfo^>^ path = ref new Vector<SymbolInfo^>();
+	Vector<SymbolInfo^>^ path = ref new Vector<SymbolInfo^>();	// 경로 (인접행렬)
 public:
 	SymbolInfo();
 
@@ -66,12 +67,15 @@ public:
 		String^ get() { return detail; }
 		void set(String^ value) { detail = value; }
 	}
-	//property Vector<SymbolInfo^>^ Path
-	//{
-	//	Vector<SymbolInfo^>^ get() 
-	//	{
-	//		return path;
-	//	}
-	//	void set(Vector<SymbolInfo^>^ value) { path = value; }
-	//}
+	property IVector<SymbolInfo^>^ Path
+	{
+		IVector<SymbolInfo^>^ get() 
+		{
+			return path;
+		}
+		//void set(IVector<SymbolInfo^>^ value)
+		//{
+		//	path = static_cast<Vector>(value);
+		//}
+	}
 };
