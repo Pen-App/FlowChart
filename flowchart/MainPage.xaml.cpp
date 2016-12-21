@@ -5,7 +5,7 @@
 
 #include "pch.h"
 #include "MainPage.xaml.h"
-
+#include "GridPage.xaml.h"
 using namespace flowchart;
 
 using namespace Platform;
@@ -24,4 +24,20 @@ using namespace Windows::UI::Xaml::Navigation;
 MainPage::MainPage()
 {
 	InitializeComponent();
+	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
+}
+
+//이미지 이벤트 처리 메소드 : 이미지가 클릭되면 어떤 도형이 선택되었는지 selectedSymbolNumber에 저장된다. 
+void flowchart::MainPage::Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args)
+{
+	auto sendersName = ((Image^)sender)->Name;
+	App::selectedSymbolNumber = std::stoi(sendersName->Data() + 1);
+		 
+
+}
+//이미지 드롭 후 이벤트 처리 메소드 : 드롭이 되면 selectedSymbolNumber가 다시 0이 된다. => 아무것도 선택된게 없다는 뜻
+void flowchart::MainPage::Image_DropCompleted(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DropCompletedEventArgs^ args)
+{
+	App::selectedSymbolNumber = -1;
+	
 }
