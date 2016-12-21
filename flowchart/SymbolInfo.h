@@ -25,25 +25,29 @@ private:
 	String^ title = nullptr;	// 제목
 	String^ content = nullptr;	// 내용
 	String^ detail = nullptr;	// 세부내용
-	list<SymbolInfo ^> path;
+	list<SymbolInfo^> path;
 	//SymbolInfo^ path = nullptr;	// 이 symbol이 가리키는 symbol들
 public:
 	SymbolInfo();
 
 	// GET & SET
-	//int GetSymbolNo();
-	//void SetSymbolNo(int symbolNo);
-	//int GetRowIndex();
-	//void SetRowIndex(int rowIndex);
-	//int GetColumnIndex();
-	//void SetColumnIndex(int columnIndex);
-	//
-	//String^ GetTitle();
-	//void SetTitle(String^ title);
-	//String^ GetContent();
-	//void SetContent(String^ content);
-	//String^ GetDetail();
-	//void SetDetail(String^ detail);
+	int GetSymbolNo();
+	void SetSymbolNo(int symbolNo);
+	int GetRowIndex();
+	void SetRowIndex(int rowIndex);
+	int GetColumnIndex();
+	void SetColumnIndex(int columnIndex);
+	int GetSymbolType();
+	void SetSymbolType(int SymbolType);
+	String^ GetTitle();
+	void SetTitle(String^ title);
+	String^ GetContent();
+	void SetContent(String^ content);
+	String^ GetDetail();
+	void SetDetail(String^ detail);
+	list<SymbolInfo^> GetPath();
+	void SetPath(list<SymbolInfo^> path);
+
 	//SymbolInfo^ GetPath();
 	//void SetPath(SymbolInfo^ path);
 };
