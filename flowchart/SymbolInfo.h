@@ -5,16 +5,6 @@
 using namespace std;
 using namespace Platform;
 
-enum class SymbolType
-{
-	process,	// 처리
-	decision,	// 판당
-	preparation,	// 준비
-	terminator,	// 단말
-	data,	// 입출력
-	document	// 인쇄
-};
-
 ref class SymbolInfo sealed
 {
 	//enum class SymbolType
