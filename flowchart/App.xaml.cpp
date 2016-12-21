@@ -9,7 +9,6 @@
 using namespace flowchart;
 
 using namespace Platform;
-using namespace Platform::Collections;
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Foundation;
@@ -31,9 +30,6 @@ App::App()
 {
     InitializeComponent();
     Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
-	symbolMap = ref new Map<ID_TYPE, SymbolInfo^>();
-	symbolIdCount = 0;
-	selectedSymbolNumber = -1;
 }
 
 /// <summary>
