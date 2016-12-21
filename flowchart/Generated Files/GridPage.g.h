@@ -10,9 +10,15 @@
 namespace Windows {
     namespace UI {
         namespace Xaml {
+            ref class Style;
+        }
+    }
+}
+namespace Windows {
+    namespace UI {
+        namespace Xaml {
             namespace Controls {
-                ref class Image;
-                ref class Frame;
+                ref class Grid;
             }
         }
     }
@@ -21,7 +27,7 @@ namespace Windows {
 namespace flowchart
 {
     [::Windows::Foundation::Metadata::WebHostHidden]
-    partial ref class MainPage : public ::Windows::UI::Xaml::Controls::Page, 
+    partial ref class GridPage : public ::Windows::UI::Xaml::Controls::Page, 
         public ::Windows::UI::Xaml::Markup::IComponentConnector,
         public ::Windows::UI::Xaml::Markup::IComponentConnector2
     {
@@ -33,13 +39,17 @@ namespace flowchart
     private:
         bool _contentLoaded;
     
-        private: ::Windows::UI::Xaml::Controls::Image^ s6;
-        private: ::Windows::UI::Xaml::Controls::Image^ s5;
-        private: ::Windows::UI::Xaml::Controls::Image^ s4;
-        private: ::Windows::UI::Xaml::Controls::Image^ s3;
-        private: ::Windows::UI::Xaml::Controls::Image^ s2;
-        private: ::Windows::UI::Xaml::Controls::Image^ s1;
-        private: ::Windows::UI::Xaml::Controls::Frame^ GridContentFrame;
+        private: ::Windows::UI::Xaml::Style^ RECTANGLE_STYLE;
+        private: ::Windows::UI::Xaml::Style^ BUTTON_STYLE_CONNECTOR;
+        private: ::Windows::UI::Xaml::Style^ BUTTON_STYLE_CONTENTS;
+        private: ::Windows::UI::Xaml::Style^ BUTTON_STYLE_DETAIL;
+        private: ::Windows::UI::Xaml::Style^ IMAGE_PROCESS;
+        private: ::Windows::UI::Xaml::Style^ IMAGE_DECISION;
+        private: ::Windows::UI::Xaml::Style^ IMAGE_PREPARATION;
+        private: ::Windows::UI::Xaml::Style^ IMAGE_TERMINATOR;
+        private: ::Windows::UI::Xaml::Style^ IMAGE_DATA;
+        private: ::Windows::UI::Xaml::Style^ IMAGE_DOCUMENT;
+        private: ::Windows::UI::Xaml::Controls::Grid^ PageGrid;
     };
 }
 

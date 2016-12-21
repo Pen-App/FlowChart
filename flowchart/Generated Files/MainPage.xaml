@@ -27,7 +27,7 @@
 
         <!--스크롤뷰어-->
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-            <Frame Name="GridContentFrame" AllowDrop="True">
+            <Frame x:ConnectionId='7' Name="GridContentFrame" AllowDrop="True">
                 <!--그리드 컨텐츠 들어갈 자리-->
             </Frame>
         </ScrollViewer>
@@ -36,29 +36,30 @@
         <ListBox CanDrag="True" Grid.Row="1" Grid.Column="2">
             <!--<Image DragStarting="Image_DragStarting" Drop="Image_Drop" DropCompleted="Image_DropCompleted"></Image>-->
             <ListBoxItem HorizontalAlignment="Center">
-                <Image Name="s1" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/process.png" Height="50" Width="150" Stretch="Uniform"></Image>
+                <Image x:ConnectionId='6' Name="s1"                                                                       CanDrag="True" Source="/Assets/process.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
 
             <ListBoxItem HorizontalAlignment="Center">
-                <Image Name="s2" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/decision.png" Height="50" Width="150" Stretch="Uniform"></Image>
+                <Image x:ConnectionId='5' Name="s2"                                                                       CanDrag="True" Source="/Assets/decision.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
 
             <ListBoxItem HorizontalAlignment="Center">
-                <Image Name="s3" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/preparation.png" Height="50" Width="150" Stretch="Uniform"></Image>
+                <Image x:ConnectionId='4' Name="s3"                                                                       CanDrag="True" Source="/Assets/preparation.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
 
             <ListBoxItem HorizontalAlignment="Center">
-                <Image Name="s4" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/terminator.png" Height="50" Width="150" Stretch="Uniform"></Image>
+                <Image x:ConnectionId='3' Name="s4"                                                                       CanDrag="True" Source="/Assets/terminator.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
 
             <ListBoxItem HorizontalAlignment="Center">
-                <Image Name="s5" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/data.png" Height="50" Width="150" Stretch="Uniform"></Image>
+                <Image x:ConnectionId='2' Name="s5"                                                                       CanDrag="True" Source="/Assets/data.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
 
             <ListBoxItem HorizontalAlignment="Center">
-                <Image Name="s6" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/document.png" Height="50" Width="150" Stretch="Uniform"></Image>
+                <Image x:ConnectionId='1' Name="s6"                                                                       CanDrag="True" Source="/Assets/document.png" Height="50" Width="150" Stretch="Uniform"></Image>
             </ListBoxItem>
 
         </ListBox>
     </Grid>
 </Page>
+
