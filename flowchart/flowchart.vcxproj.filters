@@ -46,6 +46,24 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\data.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\decision.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\document.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\preparation.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\process.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\terminator.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
@@ -55,5 +73,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
+    <Page Include="GridPage.xaml" />
   </ItemGroup>
 </Project>
