@@ -106,7 +106,7 @@ void GridPage::makeButton(Grid^ parentGrid, int buttonType, int rowIndex, int co
 	Button^ tempButton = ref new Button();
 	tempButton->SetValue(parentGrid->ColumnProperty, columnIndex);
 	tempButton->SetValue(parentGrid->RowProperty, rowIndex);
-	
+
 	switch (buttonType) {
 	case 1:
 		tempButton->Style = BUTTON_STYLE_CONNECTOR;

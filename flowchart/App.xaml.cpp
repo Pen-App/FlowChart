@@ -32,6 +32,7 @@ App::App()
     InitializeComponent();
     Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
 	symbolVector = ref new Vector<SymbolInfo^>();
+
 	symbolIdCount = 0;
 	selectedSymbolNumber = -1;
 }

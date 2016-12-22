@@ -11,7 +11,7 @@
 
 
 
-typedef UINT64 ID_TYPE;
+//typedef UINT64 LONGINT;
 
 namespace flowchart
 {
@@ -26,9 +26,10 @@ namespace flowchart
 
 	internal:
 		App();
-		static property ID_TYPE symbolIdCount;
+		static property UINT64 symbolIdCount;
 		static property int selectedSymbolNumber;
 		static property Platform::Collections::Vector<SymbolInfo^>^ symbolVector;
+
 
 	private:
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);
