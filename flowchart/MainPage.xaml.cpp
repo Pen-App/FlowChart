@@ -44,19 +44,26 @@ void flowchart::MainPage::Image_DropCompleted(Windows::UI::Xaml::UIElement^ send
 
 void flowchart::MainPage::ScrollViewer_PointerWheelChanged(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
+	//컨트롤이 눌렸는지 확인
 	if (e->KeyModifiers == Windows::System::VirtualKeyModifiers::Control)
 	{
+		//마우스 휠이 어느 방향(위,아래)로 움직였는지 확인
 		int delta = e->
 					GetCurrentPoint((UIElement^)sender)->
 					Properties->
 					MouseWheelDelta;
+		//현재 광학 줌의 정도
 		float curZoomFactor = ((ScrollViewer^)sender)->ZoomFactor;
-		if (delta >= 0)
+
+		//xaml에 Min,MaxZoomFactor에 의해 상한값 하한값은 자동으로 조절됩니다.
+		if (delta >= 0) //위쪽으로 스크롤 했을 때
 		{
+			//줌 인
 			((ScrollViewer^)sender)->ZoomToFactor(curZoomFactor + 0.1);
 		}
-		else
+		else //아래쪽으로 스크롤 했을 때
 		{
+			//줌 아웃
 			((ScrollViewer^)sender)->ZoomToFactor(curZoomFactor - 0.1);
 		}
 	}

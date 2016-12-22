@@ -158,11 +158,13 @@ void GridPage::refreshGridPage(Grid^ parentGrid)
 
 void GridPage::appendRow()
 {
+	//행을 한줄 그려줌
 	RowDefinition^ tempRowDef = ref new RowDefinition;
 	tempRowDef->Height = rowHeight;
 	PageGrid->RowDefinitions->Append(tempRowDef);
 	nowRowNum++;
 
+	//그려준 행에 Rectangle(경계선)을 그림
 	for (int i = 0; i < nowColumnNum; i++)
 	{
 		makeRectangle(PageGrid, nowRowNum - 1, i);
@@ -171,11 +173,13 @@ void GridPage::appendRow()
 
 void GridPage::appendColumn()
 {
+	//열을 한줄 그려줌
 	ColumnDefinition^ tempColDef = ref new ColumnDefinition;
 	tempColDef->Width = columnWidth;
 	PageGrid->ColumnDefinitions->Append(tempColDef);
 	nowColumnNum++;
 
+	//그려준 열에 Rectangle(경계선)을 그림
 	for (int i = 0; i < nowRowNum; i++)
 	{
 		makeRectangle(PageGrid, i, nowColumnNum - 1);
@@ -184,8 +188,10 @@ void GridPage::appendColumn()
 
 void GridPage::appendTopRow()
 {
+	//행 한줄 추가
 	appendRow();
 
+	//모든 심볼 한 행씩 아래로 옴김(위쪽에 행이 한줄 추가되는 효과를 얻기 위해)
 	wchar_t elementType[256];
 	for (int i = 0; i < PageGrid->Children->Size; i++)
 	{
@@ -205,8 +211,10 @@ void GridPage::appendTopRow()
 
 void GridPage::appendLeftColumn()
 {
+	//열 한줄 추가
 	appendColumn();
 
+	//모든 심볼 한 열씩 오른쪽으로 옴김(왼쪽에 열이 한줄 추가되는 효과를 얻기 위해)
 	wchar_t elementType[256];
 	for (int i = 0; i < PageGrid->Children->Size; i++)
 	{
@@ -290,15 +298,19 @@ void flowchart::GridPage::Rectangle_DragEnter(Platform::Object^ sender, Windows:
 
 void flowchart::GridPage::PageGrid_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
 {
+	//커진 크기 측정
 	int resizedPageGridHeight = (int)(PageGrid->ActualHeight);
 	int resizedPageGridWidth = (int)(PageGrid->ActualWidth);
 
+	//커진 크기에 따른 행,열의 갯수 측정
 	int resizedRowNum = (resizedPageGridHeight / rowHeight)
 		+
 		((resizedPageGridHeight%rowHeight) ? 1 : 0);
 	int resizedColumnNum = (resizedPageGridWidth / columnWidth)
 		+
 		((resizedPageGridWidth%columnWidth) ? 1 : 0);
+
+	//커진 크기만큼 행,열 늘림
 	while (resizedRowNum > nowRowNum)
 	{
 		appendRow();
