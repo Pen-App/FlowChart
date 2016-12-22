@@ -122,18 +122,51 @@ void GridPage::makeButton(Grid^ parentGrid, int buttonType, int rowIndex, int co
 		tempButton->Style = BUTTON_STYLE_CONTENTS;
 		horizontal = 0;
 		vertical = 2;
+
+		// ContentButton을 클릭했을 때 flyout 이벤트
+		tempButton->Click += ref new RoutedEventHandler(this, &flowchart::GridPage::ContentButtonClick);
 		break;
 
 	case 3:
 		tempButton->Style = BUTTON_STYLE_DETAIL;
 		horizontal = 2;
 		vertical = 0;
+
+		// DetailButton을 클릭했을 때 flyout 이벤트
+		tempButton->Click += ref new RoutedEventHandler(this, &flowchart::GridPage::DetailButtonClick);
 		break;
 	}
 	tempButton->SetValue(HorizontalAlignmentProperty, horizontal);
 	tempButton->SetValue(VerticalAlignmentProperty, vertical);
 	parentGrid->Children->Append(tempButton);
+
 }
+
+// Content버튼 클릭했을때 flyout이 나오도록
+void GridPage::ContentButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	Button ^ button = (Button ^)sender;
+	Flyout^ flyout = ref new Flyout();	// flyout
+	TextBlock^ textblock = ref new TextBlock();
+
+	textblock->Text = "ContentButton clicked";
+
+	flyout->Content = textblock;
+	flyout->ShowAt(button);
+}
+// Detail버튼 클릭했을때 flyout이 나오도록
+void GridPage::DetailButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	Button ^ button = (Button ^)sender;
+	Flyout^ flyout = ref new Flyout();	// flyout
+	TextBlock^ textblock = ref new TextBlock();
+
+	textblock->Text = "DetailButton clicked";
+
+	flyout->Content = textblock;
+	flyout->ShowAt(button);
+}
+
 void GridPage::makeButtons(Grid^ parentGrid, int rowIndex, int columnIndex)
 {
 	makeButton(parentGrid, 1, rowIndex, columnIndex);
