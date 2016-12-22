@@ -1,10 +1,11 @@
 #pragma once
-#include <iostream>
 #include <collection.h>
+#include <algorithm>
 
 using namespace std;
 using namespace Platform;
 using namespace Platform::Collections;
+using namespace Windows::Foundation::Collections;
 
 ref class SymbolInfo sealed
 {
@@ -18,24 +19,26 @@ ref class SymbolInfo sealed
 	//	document	// 인쇄
 	//};
 private:
-	//int symbolNo = 0;	// symbol의 고유번호
+
+	UINT64 symbolNo = 0;	// symbol의 고유번호
 	int rowIndex, columnIndex;	// Grid 내에서 index
 	// 1.process 2.decision 3.preparation 4.terminator 5.data 6. document
 	int symbolType = 0;	// symbol의 종류
 	String^ title = nullptr;	// 제목
 	String^ content = nullptr;	// 내용
 	String^ detail = nullptr;	// 세부내용
-	//Vector<SymbolInfo^>^ path = ref new Vector<SymbolInfo^>();
+	Vector<SymbolInfo^>^ path = ref new Vector<SymbolInfo^>();	// 경로 (인접행렬)
 public:
 	SymbolInfo();
 
 	// GET & SET
 
-	//property int SymbolNo
-	//{
-	//	int get() { return symbolNo; }
-	//	void set(int value) { symbolNo = value; }
-	//}
+
+	property UINT64 SymbolNo
+	{
+		UINT64 get() { return symbolNo; }
+		void set(UINT64 value) { symbolNo = value; }
+	}
 	property int RowIndex
 	{
 		int get() { return rowIndex; }
@@ -66,13 +69,15 @@ public:
 		String^ get() { return detail; }
 		void set(String^ value) { detail = value; }
 	}
-	//property Vector<SymbolInfo^>^ Path
-	//{
-	//	Vector<SymbolInfo^>^ get() 
-	//	{
-	//		return path;
-	//	}
-	//	void set(Vector<SymbolInfo^>^ value) { path = value; }
-	//}
+	property IVector<SymbolInfo^>^ Path
+	{
+		IVector<SymbolInfo^>^ get() 
+		{
+			return path;
+		}
+		//void set(IVector<SymbolInfo^>^ value)
+		//{
+		//	path = static_cast<Vector>(value);
+		//}
+	}
 };
-

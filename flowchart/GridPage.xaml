@@ -1,0 +1,90 @@
+﻿<Page
+    x:Class="flowchart.GridPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:flowchart"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+    <!--그리드 안에서 쓰일 재료들 스타일 정리-->
+    <Page.Resources>
+        <!--이벤트를 받아줄 투명 Rectangle 스타일 -->
+        <Style TargetType="Rectangle" x:Name="RECTANGLE_STYLE" x:Key="RECTANGLE_STYLE">
+            <Setter Property="Fill" Value= "Transparent"/>
+            <Setter Property="Stroke" Value="Gray"/>
+            <Setter Property="StrokeThickness" Value="0.5"/>
+            <Setter Property="Width" Value="100" />
+            <Setter Property="Height" Value="70" />
+        </Style>
+
+        <!--버튼 스타일들: 위치는 이걸로 안먹혀서 코드단에서 생성해줘야됨.-->
+        <!--1. 연결선 버튼 스타일-->
+        <Style TargetType="Button" x:Name="BUTTON_STYLE_CONNECTOR" x:Key="BUTTON_STYLE_CONNECTOR">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="Content" Value="&#xEB97;"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+        <!--2. 내용 버튼 스타일-->
+        <Style TargetType="Button" x:Name="BUTTON_STYLE_CONTENTS" x:Key="BUTTON_STYLE_CONTENTS">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="Content" Value="&#xEC42;"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+        <!--3. 디테일 버튼 스타일-->
+        <Style TargetType="Button" x:Name="BUTTON_STYLE_DETAIL" x:Key="BUTTON_STYLE_DETAIL">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="Content" Value="&#xEB7E;"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+
+        <!--도형별 이미지 스타일 6개-->
+        <Style TargetType="Image" x:Name="IMAGE_PROCESS" x:Key="IMAGE_PROCESS">
+            <Setter Property="Source" Value="Assets/process.png"></Setter>
+            <Setter Property="Width" Value="50"></Setter>
+            <Setter Property="Height" Value="50"></Setter>
+        </Style>
+        <Style TargetType="Image" x:Name="IMAGE_DECISION" x:Key="IMAGE_DECISION">
+            <Setter Property="Source" Value="Assets/decision.png"></Setter>
+            <Setter Property="Width" Value="50"></Setter>
+            <Setter Property="Height" Value="50"></Setter>
+        </Style>
+        <Style TargetType="Image" x:Name="IMAGE_PREPARATION" x:Key="IMAGE_PREPARATION">
+            <Setter Property="Source" Value="/Assets/preparation.png"></Setter>
+            <Setter Property="Width" Value="50"></Setter>
+            <Setter Property="Height" Value="50"></Setter>
+        </Style>
+        <Style TargetType="Image" x:Name="IMAGE_TERMINATOR" x:Key="IMAGE_TERMINATOR">
+            <Setter Property="Source" Value="Assets/terminator.png"></Setter>
+            <Setter Property="Width" Value="50"></Setter>
+            <Setter Property="Height" Value="50"></Setter>
+        </Style>
+        <Style TargetType="Image" x:Name="IMAGE_DATA" x:Key="IMAGE_DATA">
+            <Setter Property="Source" Value="Assets/data.png"></Setter>
+            <Setter Property="Width" Value="50"></Setter>
+            <Setter Property="Height" Value="50"></Setter>
+        </Style>
+        <Style TargetType="Image" x:Name="IMAGE_DOCUMENT" x:Key="IMAGE_DOCUMENT">
+            <Setter Property="Source" Value="Assets/document.png"></Setter>
+            <Setter Property="Width" Value="50"></Setter>
+            <Setter Property="Height" Value="50"></Setter>
+        </Style>
+        
+        <!-- Flyout Detail style -->
+        <Style TargetType = "FlyoutPresenter" x:Name="FLYOUT_STYLE_PRESENTER">
+            <Setter Property = "Padding" Value = "0" />
+            <Setter Property = "BorderThickness" Value = "0" />
+        </Style>
+    </Page.Resources>
+    <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="PageGrid_SizeChanged">
+        <!--<Rectangle PointerEntered="Rectangle_PointerEntered" DragEnter="Rectangle_DragEnter" PointerPressed="Rectangle_PointerPressed"></Rectangle>-->
+        <!--<Image PointerEntered="Image_PointerEntered" PointerExited="Image_PointerExited" PointerPressed="Image_PointerPressed"></Image>-->
+        <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
+        
+    </Grid>
+</Page>

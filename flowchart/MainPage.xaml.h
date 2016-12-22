@@ -6,7 +6,7 @@
 #pragma once
 
 #include "MainPage.g.h"
-
+#include <string>
 namespace flowchart
 {
 	/// <summary>
@@ -16,6 +16,9 @@ namespace flowchart
 	{
 	public:
 		MainPage();
-
+	private:
+		void Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args);
+		void Image_DropCompleted(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DropCompletedEventArgs^ args);
+		void ScrollViewer_PointerWheelChanged(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e); //스크롤을 움직였을 때 발생하는 이벤트 처리 함수
 	};
 }
