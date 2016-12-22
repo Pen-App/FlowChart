@@ -31,7 +31,7 @@ App::App()
 {
     InitializeComponent();
     Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
-	symbolMap = ref new Map<ID_TYPE, SymbolInfo^>();
+	symbolMap = ref new Map<UINT64, SymbolInfo^>();
 	symbolIdCount = 0;
 	selectedSymbolNumber = -1;
 }

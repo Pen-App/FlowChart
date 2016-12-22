@@ -19,7 +19,7 @@ ref class SymbolInfo sealed
 	//	document	// 인쇄
 	//};
 private:
-	//int symbolNo = 0;	// symbol의 고유번호
+	UINT64 symbolNo = 0;	// symbol의 고유번호
 	int rowIndex, columnIndex;	// Grid 내에서 index
 	// 1.process 2.decision 3.preparation 4.terminator 5.data 6. document
 	int symbolType = 0;	// symbol의 종류
@@ -32,11 +32,11 @@ public:
 
 	// GET & SET
 
-	//property int SymbolNo
-	//{
-	//	int get() { return symbolNo; }
-	//	void set(int value) { symbolNo = value; }
-	//}
+	property UINT64 SymbolNo
+	{
+		UINT64 get() { return symbolNo; }
+		void set(UINT64 value) { symbolNo = value; }
+	}
 	property int RowIndex
 	{
 		int get() { return rowIndex; }

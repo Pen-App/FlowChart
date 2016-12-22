@@ -7,6 +7,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
+    <Page.TopAppBar>
+        <CommandBar>
+            <CommandBar.Content>
+                <Grid/>
+            </CommandBar.Content>
+            <AppBarButton Icon="Accept" Label="appbarbutton"/>
+            <AppBarButton Icon="Cancel" Label="appbarbutton"/>
+        </CommandBar>
+    </Page.TopAppBar>
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <!--행과 열 나누기-->
         <Grid.RowDefinitions>
@@ -21,9 +31,9 @@
         </Grid.ColumnDefinitions>
 
         <!--앱바-->
-        <AppBar Grid.Row="0"   Height="auto" Grid.ColumnSpan="3">
+        <!--<AppBar Grid.Row="0"   Height="auto" Grid.ColumnSpan="3">
             <TextBox Grid.Row="0" Grid.Column="1" Width="200" ></TextBox>
-        </AppBar>
+        </AppBar>-->
 
         <!--스크롤뷰어-->
         <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
