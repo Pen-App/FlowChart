@@ -41,3 +41,23 @@ void flowchart::MainPage::Image_DropCompleted(Windows::UI::Xaml::UIElement^ send
 {
 	App::selectedSymbolNumber = -1;
 }
+
+void flowchart::MainPage::ScrollViewer_PointerWheelChanged(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	if (e->KeyModifiers == Windows::System::VirtualKeyModifiers::Control)
+	{
+		int delta = e->
+					GetCurrentPoint((UIElement^)sender)->
+					Properties->
+					MouseWheelDelta;
+		float curZoomFactor = ((ScrollViewer^)sender)->ZoomFactor;
+		if (delta >= 0)
+		{
+			((ScrollViewer^)sender)->ZoomToFactor(curZoomFactor + 0.1);
+		}
+		else
+		{
+			((ScrollViewer^)sender)->ZoomToFactor(curZoomFactor - 0.1);
+		}
+	}
+}

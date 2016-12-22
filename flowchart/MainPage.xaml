@@ -36,7 +36,9 @@
         </AppBar>-->
 
         <!--스크롤뷰어-->
-        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"
+                      MinZoomFactor="0.5" MaxZoomFactor="2.0"
+                      PointerWheelChanged="ScrollViewer_PointerWheelChanged">
             <Frame Name="GridContentFrame" AllowDrop="True">
                 <!--그리드 컨텐츠 들어갈 자리-->
             </Frame>

@@ -27,7 +27,12 @@ using namespace Windows::Foundation::Collections;
 GridPage::GridPage()
 {
 	InitializeComponent();
-	makeGridArray(PageGrid, 10, 10, 70, 100);
+
+	nowColumnNum = 10;
+	nowRowNum = 10;
+	columnWidth = 100;
+	rowHeight = 70;
+	makeGridArray(PageGrid, nowRowNum, nowColumnNum, rowHeight, columnWidth);
 }
 void GridPage::makeRectangle(Grid^ parentGrid, int rowIndex, int columnIndex)
 {
@@ -151,6 +156,73 @@ void GridPage::refreshGridPage(Grid^ parentGrid)
 	parentGrid->UpdateLayout();
 }
 
+void GridPage::appendRow()
+{
+	RowDefinition^ tempRowDef = ref new RowDefinition;
+	tempRowDef->Height = rowHeight;
+	PageGrid->RowDefinitions->Append(tempRowDef);
+	nowRowNum++;
+
+	for (int i = 0; i < nowColumnNum; i++)
+	{
+		makeRectangle(PageGrid, nowRowNum - 1, i);
+	}
+}
+
+void GridPage::appendColumn()
+{
+	ColumnDefinition^ tempColDef = ref new ColumnDefinition;
+	tempColDef->Width = columnWidth;
+	PageGrid->ColumnDefinitions->Append(tempColDef);
+	nowColumnNum++;
+
+	for (int i = 0; i < nowRowNum; i++)
+	{
+		makeRectangle(PageGrid, i, nowColumnNum - 1);
+	}
+}
+
+void GridPage::appendTopRow()
+{
+	appendRow();
+
+	wchar_t elementType[256];
+	for (int i = 0; i < PageGrid->Children->Size; i++)
+	{
+		UIElement^ symbolInPageGrid = PageGrid->Children->GetAt(i);
+
+		swprintf_s(elementType, L"%s", symbolInPageGrid->ToString()->Data());
+
+		if (wcscmp(elementType, L"Windows.UI.Xaml.Shapes.Rectangle")) //심볼일 때
+		{
+			Object^ rowPropertyValueObject =
+				symbolInPageGrid->GetValue(Grid::RowProperty);
+			int rowPropertyValueInt = safe_cast<int>(rowPropertyValueObject);
+			symbolInPageGrid->SetValue(Grid::RowProperty, rowPropertyValueInt + 1);
+		}
+	}
+}
+
+void GridPage::appendLeftColumn()
+{
+	appendColumn();
+
+	wchar_t elementType[256];
+	for (int i = 0; i < PageGrid->Children->Size; i++)
+	{
+		UIElement^ symbolInPageGrid = PageGrid->Children->GetAt(i);
+
+		swprintf_s(elementType, L"%s", symbolInPageGrid->ToString()->Data());
+
+		if (wcscmp(elementType, L"Windows.UI.Xaml.Shapes.Rectangle")) //심볼일 때
+		{
+			Object^ columnPropertyValueObject =
+				symbolInPageGrid->GetValue(Grid::ColumnProperty);
+			int columnPropertyValueInt = safe_cast<int>(columnPropertyValueObject);
+			symbolInPageGrid->SetValue(Grid::ColumnProperty, columnPropertyValueInt + 1);
+		}
+	}
+}
 
 void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
@@ -169,6 +241,24 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 	tempSymbolInfo->ColumnIndex = curColumnIndex;
 	tempSymbolInfo->SymbolNo = App::symbolIdCount++;
 	App::symbolVector->Append(tempSymbolInfo);
+
+	//심볼 놓는 위치에 따라 PageGrid를 늘려줌
+	if (curColumnIndex == 0)
+	{
+		appendLeftColumn();
+	}
+	if (curRowIndex == 0)
+	{
+		appendTopRow();
+	}
+	if (curColumnIndex + 1 == nowColumnNum)
+	{
+		appendColumn();
+	}
+	if (curRowIndex + 1 == nowRowNum)
+	{
+		appendRow();
+	}
 
 	//refreshGridPage(PageGrid);
 	testTextBox->Text = "" + App::symbolVector->Size;
@@ -195,4 +285,26 @@ void flowchart::GridPage::Rectangle_DragEnter(Platform::Object^ sender, Windows:
 
 	curRowIndex = safe_cast<int>(rowIdx);
 	curColumnIndex = safe_cast<int>(columnIdx);
+}
+
+
+void flowchart::GridPage::PageGrid_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
+{
+	int resizedPageGridHeight = (int)(PageGrid->ActualHeight);
+	int resizedPageGridWidth = (int)(PageGrid->ActualWidth);
+
+	int resizedRowNum = (resizedPageGridHeight / rowHeight)
+		+
+		((resizedPageGridHeight%rowHeight) ? 1 : 0);
+	int resizedColumnNum = (resizedPageGridWidth / columnWidth)
+		+
+		((resizedPageGridWidth%columnWidth) ? 1 : 0);
+	while (resizedRowNum > nowRowNum)
+	{
+		appendRow();
+	}
+	while (resizedColumnNum > nowColumnNum)
+	{
+		appendColumn();
+	}
 }

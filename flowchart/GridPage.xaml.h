@@ -37,6 +37,9 @@ namespace flowchart
 		int curRowIndex; 
 		int curColumnIndex;
 
+		int rowHeight, columnWidth;    //가로줄의 높이, 세로줄의 너비
+		int nowRowNum, nowColumnNum;  //현재 가로줄 수, 현재 세로줄 수
+
 		//0. gridArray 만들기
 		void makeGridArray(Grid^ parentGrid, int rowNum, int columnNum, int rowHeight, int columnWidth);
 
@@ -53,9 +56,16 @@ namespace flowchart
 		//4. 화면 전체를 다시 그려주는 함수
 		void refreshGridPage(Grid^ parentGrid);
 
+		//5. grid늘리기
+		void appendRow();
+		void appendColumn();
+		void appendTopRow();
+		void appendLeftColumn();
+
 		void PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void Rectangle_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Rectangle_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void PageGrid_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
 	};
 }
