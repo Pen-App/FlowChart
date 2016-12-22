@@ -190,11 +190,15 @@ void GridPage::DetailButtonClick(Platform::Object^ sender, Windows::UI::Xaml::Ro
 {
 	Button ^ button = (Button ^)sender;
 	Flyout^ flyout = ref new Flyout();	// flyout
-	TextBlock^ textblock = ref new TextBlock();
+	TextBox^ textbox = ref new TextBox();
 
-	textblock->Text = "DetailButton clicked";
+	textbox->Width = 150;
+	textbox->Height = 100;
+	textbox->TextWrapping = TextWrapping::Wrap;
 
-	flyout->Content = textblock;
+	flyout->Placement = FlyoutPlacementMode::Right;	// flyout이 오른쪽에 나오도록
+	flyout->FlyoutPresenterStyle = FLYOUT_STYLE_PRESENTER;	// textbox가 flyout을 다 차지하는 style
+	flyout->Content = textbox;	// flyout 내부에 textbox 삽입
 	flyout->ShowAt(button);
 }
 

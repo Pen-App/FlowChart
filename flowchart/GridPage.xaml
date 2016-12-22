@@ -74,6 +74,12 @@
             <Setter Property="Width" Value="50"></Setter>
             <Setter Property="Height" Value="50"></Setter>
         </Style>
+        
+        <!-- Flyout Detail style -->
+        <Style TargetType = "FlyoutPresenter" x:Name="FLYOUT_STYLE_PRESENTER">
+            <Setter Property = "Padding" Value = "0" />
+            <Setter Property = "BorderThickness" Value = "0" />
+        </Style>
     </Page.Resources>
     <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="PageGrid_SizeChanged">
         <!--<Rectangle PointerEntered="Rectangle_PointerEntered" DragEnter="Rectangle_DragEnter" PointerPressed="Rectangle_PointerPressed"></Rectangle>-->
