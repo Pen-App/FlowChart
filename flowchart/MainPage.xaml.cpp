@@ -5,6 +5,7 @@
 
 #include "pch.h"
 #include "MainPage.xaml.h"
+#include "SymbolInfo.h"
 
 using namespace flowchart;
 
