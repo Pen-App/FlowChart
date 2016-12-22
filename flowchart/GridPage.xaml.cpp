@@ -5,7 +5,7 @@
 
 #include "pch.h"
 #include "GridPage.xaml.h"
-
+#include <string>
 using namespace flowchart;
 
 using namespace Platform;
@@ -24,9 +24,11 @@ using namespace Windows::Foundation::Collections;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
+//GridPage 생성자 : 생성과 동시에 makeGridArray로 행열을 그려준다. 
 GridPage::GridPage()
 {
 	InitializeComponent();
+	isSymbolIn = false;
 
 	nowColumnNum = 10;
 	nowRowNum = 10;
@@ -34,6 +36,8 @@ GridPage::GridPage()
 	rowHeight = 70;
 	makeGridArray(PageGrid, nowRowNum, nowColumnNum, rowHeight, columnWidth);
 }
+
+//행,열 하나하나 마다 rectangle을 채워넣는 함수 : 마우스 커서가 어떤 행,열 인덱스위에 올라가있는지 이벤트를 받기 위해서
 void GridPage::makeRectangle(Grid^ parentGrid, int rowIndex, int columnIndex)
 {
 	Rectangle^ tempRect = ref new Rectangle();
@@ -46,9 +50,12 @@ void GridPage::makeRectangle(Grid^ parentGrid, int rowIndex, int columnIndex)
 	tempRect->AllowDrop = true;
 
 	tempRect->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerEntered);
+	tempRect->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerPressed);
 	tempRect->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragEnter);
 	parentGrid->Children->Append(tempRect);
 }
+
+//행열을 그려주는 함수: parentGrid에 rowNum, columnNum만큼 행열을 만들어주고, makeRectangle로 한개씩 사각형을 채워넣는다.
 void GridPage::makeGridArray(Grid^ parentGrid, int rowNum, int columnNum, int rowHeight, int columnWidth)
 {
 	//1. 행을 그린다. 
@@ -73,7 +80,9 @@ void GridPage::makeGridArray(Grid^ parentGrid, int rowNum, int columnNum, int ro
 		}
 	}
 }
-void GridPage::makeImage(Grid^ parentGrid, int symbolType, int rowIndex, int columnIndex)
+
+//이미지 그려주기 : symbolType(1~6)에 따라서 해당 행,열에 symbol모양을 그려준다. 
+void GridPage::makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int rowIndex, int columnIndex)
 {
 	if (symbolType == -1)
 		return;
@@ -81,50 +90,71 @@ void GridPage::makeImage(Grid^ parentGrid, int symbolType, int rowIndex, int col
 	Image^ tempImage = ref new Image();
 	tempImage->SetValue(parentGrid->RowProperty, curRowIndex);
 	tempImage->SetValue(parentGrid->ColumnProperty, curColumnIndex);
+	tempImage->CanDrag = true;
+	tempImage->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerEntered);
+	tempImage->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerExited);
+	tempImage->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerPressed);
+	String^ tempName = "i";
+
+	//type이 1이고 symbolNo가 77인 이미지의 경우 "i1 77" 이라는 name이 부여된다. 
 	switch (symbolType) {
 	case 1:
 		tempImage->Style = IMAGE_PROCESS;
+		tempName += "1 ";
 		break;
 	case 2:
 		tempImage->Style = IMAGE_DECISION;
+		tempName += "2 ";
 		break;
 	case 3:
 		tempImage->Style = IMAGE_PREPARATION;
+		tempName += "3 ";
 		break;
 	case 4:
 		tempImage->Style = IMAGE_TERMINATOR;
+		tempName += "4 ";
 		break;
 	case 5:
 		tempImage->Style = IMAGE_DATA;
+		tempName += "5 ";
 		break;
 	case 6:
 		tempImage->Style = IMAGE_DOCUMENT;
+		tempName += "6 ";
 		break;
 	}
+	tempName += symbolNo;
+	tempImage->Name = tempName;
 	parentGrid->Children->Append(tempImage);
 	//parentGrid->UpdateLayout();
 }
-void GridPage::makeButton(Grid^ parentGrid, int buttonType, int rowIndex, int columnIndex)
+
+//버튼 1개 만들기 : buttonType 파라미터에 따라서 세가지 종류의 버튼을 만들수 있다. 
+void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int rowIndex, int columnIndex)
 {
 	int horizontal, vertical;
 
 	Button^ tempButton = ref new Button();
 	tempButton->SetValue(parentGrid->ColumnProperty, columnIndex);
 	tempButton->SetValue(parentGrid->RowProperty, rowIndex);
+	tempButton->SetValue(this->VisibilityProperty, 1); //0: visible, 1:collapsed : 그냥 놓았을 때는 버튼이 숨겨진다. 
 
 	switch (buttonType) {
 	case 1:
+		tempButton->Name = "b1 " + symbolNo;
 		tempButton->Style = BUTTON_STYLE_CONNECTOR;
 		horizontal = 2;
 		vertical = 2;
 		break;
 	case 2:
+		tempButton->Name = "b2 " + symbolNo;
 		tempButton->Style = BUTTON_STYLE_CONTENTS;
 		horizontal = 0;
 		vertical = 2;
 		break;
 
 	case 3:
+		tempButton->Name = "b3 " + symbolNo;
 		tempButton->Style = BUTTON_STYLE_DETAIL;
 		horizontal = 2;
 		vertical = 0;
@@ -134,26 +164,37 @@ void GridPage::makeButton(Grid^ parentGrid, int buttonType, int rowIndex, int co
 	tempButton->SetValue(VerticalAlignmentProperty, vertical);
 	parentGrid->Children->Append(tempButton);
 }
-void GridPage::makeButtons(Grid^ parentGrid, int rowIndex, int columnIndex)
+//버튼 3종류 한꺼번에 만들기
+void GridPage::makeButtons(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
 {
-	makeButton(parentGrid, 1, rowIndex, columnIndex);
-	makeButton(parentGrid, 2, rowIndex, columnIndex);
-	makeButton(parentGrid, 3, rowIndex, columnIndex);
+	makeButton(parentGrid, symbolNo, 1, rowIndex, columnIndex);
+	makeButton(parentGrid, symbolNo, 2, rowIndex, columnIndex);
+	makeButton(parentGrid, symbolNo, 3, rowIndex, columnIndex);
 
 }
 
-void GridPage::refreshGridPage(Grid^ parentGrid) 
+
+//grid를 전체 새로 그려주는 함수 : 작동 이상으로 쓰이지 않음.-----------------
+void GridPage::refreshGridPage(Grid^ parentGrid)
 {
-	parentGrid->Children->Clear();
-	makeGridArray(PageGrid, 10, 10, 70, 100);
+	//parentGrid->Children->Clear();
+	for (int i = 0; i < parentGrid->Children->Size; i++) {
+		if (parentGrid->Children->GetAt(i)->GetType() == Image::typeid) {
+			parentGrid->Children->RemoveAt(i);
+			parentGrid->UpdateLayout();
+		}
+	}
+
+	//parentGrid->UpdateLayout();
+	//makeGridArray(PageGrid, 10, 10, 70, 100);
 
 	//1. map 순회
-	for (int i = 0; i < App::symbolVector->Size; i++) 
+	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
-		makeImage(parentGrid, App::symbolVector->GetAt(i)->SymbolType, App::symbolVector->GetAt(i)->RowIndex, App::symbolVector->GetAt(i)->ColumnIndex);
-		makeButtons(PageGrid, App::symbolVector->GetAt(i)->RowIndex, App::symbolVector->GetAt(i)->ColumnIndex);
+		//makeImage(parentGrid, App::symbolVector->GetAt(i)->SymbolType, App::symbolVector->GetAt(i)->RowIndex, App::symbolVector->GetAt(i)->ColumnIndex);
+		//makeButtons(parentGrid, App::symbolVector->GetAt(i)->RowIndex, App::symbolVector->GetAt(i)->ColumnIndex);
 	}
-	parentGrid->UpdateLayout();
+
 }
 
 void GridPage::appendRow()
@@ -232,6 +273,10 @@ void GridPage::appendLeftColumn()
 	}
 }
 
+
+//이벤트 함수들 
+
+//이미지가 드래그된 상태로 pageGrid위로 올라가면 커서에 무엇을 보여줄 것인가?
 void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
 	e->AcceptedOperation = DataPackageOperation::Move;
@@ -239,15 +284,17 @@ void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::U
 	e->DragUIOverride->IsGlyphVisible = true;
 }
 
-
+//드래그된 상태에서 마우스버튼을 놓았을때, 즉 drop했을 때 어떤 일이 일어나는가?
 void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
 	//1. map에 새로운 symbolInfo 객체를 추가시킨다. 
+	UINT64 tempSymbolNo = App::symbolIdCount;
+	App::symbolIdCount++;
 	SymbolInfo^ tempSymbolInfo = ref new SymbolInfo();
 	tempSymbolInfo->SymbolType = App::selectedSymbolNumber;
 	tempSymbolInfo->RowIndex = curRowIndex;
 	tempSymbolInfo->ColumnIndex = curColumnIndex;
-	tempSymbolInfo->SymbolNo = App::symbolIdCount++;
+	tempSymbolInfo->SymbolNo = tempSymbolNo;
 	App::symbolVector->Append(tempSymbolInfo);
 
 	//심볼 놓는 위치에 따라 PageGrid를 늘려줌
@@ -268,14 +315,15 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		appendRow();
 	}
 
+
+	//testTextBox->Text = "" + App::symbolVector->Size;
+	makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
+	makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
+	PageGrid->UpdateLayout();
 	//refreshGridPage(PageGrid);
-	testTextBox->Text = "" + App::symbolVector->Size;
-	makeImage(PageGrid, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
-	makeButtons(PageGrid, curRowIndex, curColumnIndex);
-	
 }
 
-
+//마우스가 rectangle위로 올라가있으면 rectangle이 자신이 속한 행,열 인덱스를 curRowIndex와 curColumnIndex에 기록한다. 
 void flowchart::GridPage::Rectangle_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	auto columnIdx = ((Rectangle^)sender)->GetValue(PageGrid->ColumnProperty);
@@ -283,9 +331,11 @@ void flowchart::GridPage::Rectangle_PointerEntered(Platform::Object^ sender, Win
 
 	curRowIndex = safe_cast<int>(rowIdx);
 	curColumnIndex = safe_cast<int>(columnIdx);
+
+
 }
 
-
+//마우스가 드래그된 상태에서 rectangle위로 올라가도 행,열 인덱스가 자동으로 curRowIndex와 curColumnIndex에 기록된다. 
 void flowchart::GridPage::Rectangle_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
 	auto columnIdx = ((Rectangle^)sender)->GetValue(PageGrid->ColumnProperty);
@@ -295,7 +345,15 @@ void flowchart::GridPage::Rectangle_DragEnter(Platform::Object^ sender, Windows:
 	curColumnIndex = safe_cast<int>(columnIdx);
 }
 
+//symbol이 없는 곳에서 마우스 클릭하면 모든 버튼이 숨겨진다. 
+void flowchart::GridPage::Rectangle_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	if (!isSymbolIn) {
+		hideAllButtons();
+	}
+}
 
+//그리드 사이즈 변환 함수
 void flowchart::GridPage::PageGrid_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
 {
 	//커진 크기 측정
@@ -320,3 +378,94 @@ void flowchart::GridPage::PageGrid_SizeChanged(Platform::Object^ sender, Windows
 		appendColumn();
 	}
 }
+
+
+
+//이미지 안에 커서가 들어오면 isSymbolIn이 true가 되고 나가면 false가 된다. 
+void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	isSymbolIn = true;
+	testTextBox->Text = "" + isSymbolIn;
+}
+
+void flowchart::GridPage::Image_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	isSymbolIn = false;
+	testTextBox->Text = "" + isSymbolIn;
+}
+
+
+//이미지 안에서 클릭을 했을 경우 -> focus 시키기, 버튼보이게 하기
+void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	if (isSymbolIn)
+	{
+		//1. 이미지의 symbolNo를 알아낸다. 
+		auto tempImageName = ((Image^)sender)->Name;
+		focusedSymbolNo = std::stoi(tempImageName->Data() + 3);
+
+		//2. 포커스된 symbol의 버튼만 보이게 만든다. 
+		showFocusedSymbolButtons(focusedSymbolNo);
+
+	}
+	
+}
+
+//파라미터로 넘겨진 id의 symbol 버튼만 보이게 하는 함수
+void flowchart::GridPage::showFocusedSymbolButtons(UINT64 focusedSymbolNo)
+{
+	UINT64 tempSymbolNo;
+	Button^ tempButton1;
+	Button^ tempButton2;
+	Button^ tempButton3;
+
+	for (UINT64 i = 0; i < App::symbolVector->Size; i++) {
+		tempSymbolNo = App::symbolVector->GetAt(i)->SymbolNo;
+		tempButton1 = nullptr;
+		tempButton2 = nullptr;
+		tempButton3 = nullptr;
+
+		tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + tempSymbolNo));
+		tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + tempSymbolNo));
+		tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + tempSymbolNo));
+
+		if (tempSymbolNo == focusedSymbolNo) {
+			tempButton1->SetValue(VisibilityProperty, 0);
+			tempButton2->SetValue(VisibilityProperty, 0);
+			tempButton3->SetValue(VisibilityProperty, 0);
+		}
+		else {
+			tempButton1->SetValue(VisibilityProperty, 1);
+			tempButton2->SetValue(VisibilityProperty, 1);
+			tempButton3->SetValue(VisibilityProperty, 1);
+		}
+	}
+}
+
+void flowchart::GridPage::hideAllButtons()
+{
+	UINT64 tempSymbolNo;
+	Button^ tempButton1;
+	Button^ tempButton2;
+	Button^ tempButton3;
+	for (UINT64 i = 0; i < App::symbolVector->Size; i++) {
+		tempSymbolNo = App::symbolVector->GetAt(i)->SymbolNo;
+		tempButton1 = nullptr;
+		tempButton2 = nullptr;
+		tempButton3 = nullptr;
+
+		tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + tempSymbolNo));
+		tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + tempSymbolNo));
+		tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + tempSymbolNo));
+
+
+		tempButton1->SetValue(VisibilityProperty, 1);
+		tempButton2->SetValue(VisibilityProperty, 1);
+		tempButton3->SetValue(VisibilityProperty, 1);
+
+	}
+	PageGrid->UpdateLayout();
+}
+
+
+
