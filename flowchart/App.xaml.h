@@ -28,7 +28,7 @@ namespace flowchart
 		App();
 		static property ID_TYPE symbolIdCount;
 		static property int selectedSymbolNumber;
-		static property Platform::Collections::Map<ID_TYPE, SymbolInfo^>^ symbolMap;
+		static property Platform::Collections::Vector<SymbolInfo^>^ symbolVector;
 
 	private:
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);

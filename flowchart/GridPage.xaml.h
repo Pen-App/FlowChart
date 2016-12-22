@@ -50,6 +50,9 @@ namespace flowchart
 		void makeButton(Grid^ parentGrid, int buttonType, int rowIndex, int columnIndex);
 		void makeButtons(Grid^ parentGrid, int rowIndex, int columnIndex);
 
+		//4. 화면 전체를 다시 그려주는 함수
+		void refreshGridPage(Grid^ parentGrid);
+
 		void PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void Rectangle_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);

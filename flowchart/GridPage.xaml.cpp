@@ -76,9 +76,6 @@ void GridPage::makeImage(Grid^ parentGrid, int symbolType, int rowIndex, int col
 	Image^ tempImage = ref new Image();
 	tempImage->SetValue(parentGrid->RowProperty, curRowIndex);
 	tempImage->SetValue(parentGrid->ColumnProperty, curColumnIndex);
-
-
-
 	switch (symbolType) {
 	case 1:
 		tempImage->Style = IMAGE_PROCESS;
@@ -99,11 +96,8 @@ void GridPage::makeImage(Grid^ parentGrid, int symbolType, int rowIndex, int col
 		tempImage->Style = IMAGE_DOCUMENT;
 		break;
 	}
-
-
 	parentGrid->Children->Append(tempImage);
-
-	parentGrid->UpdateLayout();
+	//parentGrid->UpdateLayout();
 }
 void GridPage::makeButton(Grid^ parentGrid, int buttonType, int rowIndex, int columnIndex)
 {
@@ -142,6 +136,22 @@ void GridPage::makeButtons(Grid^ parentGrid, int rowIndex, int columnIndex)
 	makeButton(parentGrid, 3, rowIndex, columnIndex);
 
 }
+
+void GridPage::refreshGridPage(Grid^ parentGrid) 
+{
+	parentGrid->Children->Clear();
+	makeGridArray(PageGrid, 10, 10, 70, 100);
+
+	//1. map 순회
+	for (int i = 0; i < App::symbolVector->Size; i++) 
+	{
+		makeImage(parentGrid, App::symbolVector->GetAt(i)->SymbolType, App::symbolVector->GetAt(i)->RowIndex, App::symbolVector->GetAt(i)->ColumnIndex);
+		makeButtons(PageGrid, App::symbolVector->GetAt(i)->RowIndex, App::symbolVector->GetAt(i)->ColumnIndex);
+	}
+	parentGrid->UpdateLayout();
+}
+
+
 void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
 	e->AcceptedOperation = DataPackageOperation::Move;
@@ -152,8 +162,19 @@ void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::U
 
 void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
+	//1. map에 새로운 symbolInfo 객체를 추가시킨다. 
+	SymbolInfo^ tempSymbolInfo = ref new SymbolInfo();
+	tempSymbolInfo->SymbolType = App::selectedSymbolNumber;
+	tempSymbolInfo->RowIndex = curRowIndex;
+	tempSymbolInfo->ColumnIndex = curColumnIndex;
+	tempSymbolInfo->SymbolNo = App::symbolIdCount++;
+	App::symbolVector->Append(tempSymbolInfo);
+
+	//refreshGridPage(PageGrid);
+	testTextBox->Text = "" + App::symbolVector->Size;
 	makeImage(PageGrid, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
 	makeButtons(PageGrid, curRowIndex, curColumnIndex);
+	
 }
 
 

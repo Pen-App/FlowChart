@@ -77,5 +77,6 @@
     </Page.Resources>
     <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <!--<Rectangle PointerEntered="Rectangle_PointerEntered" DragEnter="Rectangle_DragEnter"></Rectangle>-->
+        <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
     </Grid>
 </Page>
