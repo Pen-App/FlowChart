@@ -46,33 +46,33 @@
         <!--도형별 이미지 스타일 6개-->
         <Style TargetType="Image" x:Name="IMAGE_PROCESS" x:Key="IMAGE_PROCESS">
             <Setter Property="Source" Value="Assets/process.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_DECISION" x:Key="IMAGE_DECISION">
             <Setter Property="Source" Value="Assets/decision.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_PREPARATION" x:Key="IMAGE_PREPARATION">
             <Setter Property="Source" Value="/Assets/preparation.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_TERMINATOR" x:Key="IMAGE_TERMINATOR">
             <Setter Property="Source" Value="Assets/terminator.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_DATA" x:Key="IMAGE_DATA">
             <Setter Property="Source" Value="Assets/data.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_DOCUMENT" x:Key="IMAGE_DOCUMENT">
             <Setter Property="Source" Value="Assets/document.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         
         <!-- Flyout Detail style -->
@@ -83,7 +83,7 @@
     </Page.Resources>
     <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="PageGrid_SizeChanged">
         <!--<Rectangle PointerEntered="Rectangle_PointerEntered" DragEnter="Rectangle_DragEnter" PointerPressed="Rectangle_PointerPressed"></Rectangle>-->
-        <!--<Image PointerEntered="Image_PointerEntered" PointerExited="Image_PointerExited" PointerPressed="Image_PointerPressed"></Image>-->
+        <Image DragLeave="Image_DragLeave" DragEnter="Image_DragEnter" DragOver="Image_DragOver" DragStarting="Image_DragStarting" PointerEntered="Image_PointerEntered" PointerExited="Image_PointerExited" PointerPressed="Image_PointerPressed"></Image>
         <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
         
     </Grid>

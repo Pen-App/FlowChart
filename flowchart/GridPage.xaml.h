@@ -42,7 +42,7 @@ namespace flowchart
 
 		bool isSymbolIn; //커서가 있는 grid안에 symbol이 존재하는가?
 		UINT64 focusedSymbolNo; //포커스된 symbolNo
-
+		int focusedSymbolType;
 
 
 
@@ -86,9 +86,17 @@ namespace flowchart
 		void Image_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Image_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Image_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
-
+		void Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args);
+		void Image_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void Image_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void Image_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		
 		//. focused 된 버튼만 보여주게 만드는 함수, 모든 버튼을 숨기는 함수
 		void showFocusedSymbolButtons(UINT64 focusedSymbolNo);
 		void hideAllButtons();
+
+		//. symbol 이동시켜주는 함수
+		void moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex);
+		
 	};
 }

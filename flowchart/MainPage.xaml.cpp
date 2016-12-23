@@ -36,7 +36,7 @@ void flowchart::MainPage::Image_DragStarting(Windows::UI::Xaml::UIElement^ sende
 		 
 
 }
-//이미지 드롭 후 이벤트 처리 메소드 : 드롭이 되면 selectedSymbolNumber가 다시 0이 된다. => 아무것도 선택된게 없다는 뜻
+//이미지 드롭 후 이벤트 처리 메소드 : 드롭이 되면 selectedSymbolNumber가 다시 -1이 된다. => 아무것도 선택된게 없다는 뜻
 void flowchart::MainPage::Image_DropCompleted(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DropCompletedEventArgs^ args)
 {
 	App::selectedSymbolNumber = -1;
