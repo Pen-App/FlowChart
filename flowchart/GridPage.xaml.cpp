@@ -390,34 +390,6 @@ void flowchart::GridPage::Rectangle_PointerPressed(Platform::Object^ sender, Win
 	}
 }
 
-//그리드 사이즈 변환 함수
-void flowchart::GridPage::PageGrid_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
-{
-	//커진 크기 측정
-	int resizedPageGridHeight = (int)(PageGrid->ActualHeight);
-	int resizedPageGridWidth = (int)(PageGrid->ActualWidth);
-
-	//커진 크기에 따른 행,열의 갯수 측정
-	int resizedRowNum = (resizedPageGridHeight / rowHeight)
-		+
-		((resizedPageGridHeight%rowHeight) ? 1 : 0);
-	int resizedColumnNum = (resizedPageGridWidth / columnWidth)
-		+
-		((resizedPageGridWidth%columnWidth) ? 1 : 0);
-
-	//커진 크기만큼 행,열 늘림
-	while (resizedRowNum > nowRowNum)
-	{
-		appendRow();
-	}
-	while (resizedColumnNum > nowColumnNum)
-	{
-		appendColumn();
-	}
-}
-
-
-
 //이미지 안에 커서가 들어오면 isSymbolIn이 true가 되고 나가면 false가 된다. 
 void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
@@ -430,7 +402,6 @@ void flowchart::GridPage::Image_PointerExited(Platform::Object^ sender, Windows:
 	isSymbolIn = false;
 	testTextBox->Text = "" + isSymbolIn;
 }
-
 
 //이미지 안에서 클릭을 했을 경우 -> focus 시키기, 버튼보이게 하기
 void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
@@ -515,18 +486,80 @@ void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Obj
 			Properties->
 			MouseWheelDelta;
 		//현재 광학 줌의 정도
-		float curZoomFactor = ((ScrollViewer^)sender)->ZoomFactor;
+		float curZoomFactor = PageGridScrollViewer->ZoomFactor;
 
 		//xaml에 Min,MaxZoomFactor에 의해 상한값 하한값은 자동으로 조절됩니다.
 		if (delta >= 0) //위쪽으로 스크롤 했을 때
 		{
 			//줌 인
-			((ScrollViewer^)sender)->ZoomToFactor(curZoomFactor + 0.1);
+			PageGridScrollViewer->ZoomToFactor(curZoomFactor + 0.1);
 		}
 		else //아래쪽으로 스크롤 했을 때
 		{
 			//줌 아웃
-			((ScrollViewer^)sender)->ZoomToFactor(curZoomFactor - 0.1);
+			PageGridScrollViewer->ZoomToFactor(curZoomFactor - 0.1);
 		}
 	}
+
+	while (PageGridScrollViewer->ExtentWidth < PageGridScrollViewer->ActualWidth)
+	{
+		appendColumn();
+		PageGrid->UpdateLayout();
+	}
+	while (PageGridScrollViewer->ExtentHeight < PageGridScrollViewer->ActualHeight)
+	{
+		appendRow();
+		PageGrid->UpdateLayout();
+	}
+
+	wchar_t debugstr[256];
+	swprintf_s(debugstr, L"zoom : %lf\n", PageGridScrollViewer->ZoomFactor);
+	OutputDebugString(debugstr);
+}
+
+
+void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
+{
+	double gridRenderWidth = nowColumnNum * columnWidth * PageGridScrollViewer->ZoomFactor;
+	double gridRenderHeight = nowRowNum * rowHeight * PageGridScrollViewer->ZoomFactor;
+
+	wchar_t debugstr[256];
+	swprintf_s(debugstr,
+		L"zoom : %lf\ngrid : %lf %lf\nscroll : %lf %lf\n",
+		PageGridScrollViewer->ZoomFactor,
+		gridRenderWidth,
+		gridRenderHeight,
+		PageGridScrollViewer->ActualWidth,
+		PageGridScrollViewer->ActualHeight);
+	OutputDebugString(debugstr);
+
+	if (PageGridScrollViewer->ZoomFactor >= 1) 
+	{
+		while (gridRenderWidth < (PageGridScrollViewer->ActualWidth*PageGridScrollViewer->ZoomFactor))
+		{
+			appendColumn();
+			gridRenderWidth = nowColumnNum * columnWidth * PageGridScrollViewer->ZoomFactor;
+		}
+		while (gridRenderHeight < (PageGridScrollViewer->ActualHeight*PageGridScrollViewer->ZoomFactor))
+		{
+			appendRow();
+			gridRenderHeight = nowRowNum * rowHeight * PageGridScrollViewer->ZoomFactor;
+		}
+	}
+	else
+	{
+		while (gridRenderWidth < PageGridScrollViewer->ActualWidth)
+		{
+			appendColumn();
+			gridRenderWidth = nowColumnNum * columnWidth * PageGridScrollViewer->ZoomFactor;
+		}
+		while (gridRenderHeight < PageGridScrollViewer->ActualHeight)
+		{
+			appendRow();
+			gridRenderHeight = nowRowNum * rowHeight * PageGridScrollViewer->ZoomFactor;
+		}
+	}
+
+	PageGrid->UpdateLayout();
+	PageGridScrollViewer->UpdateLayout();
 }

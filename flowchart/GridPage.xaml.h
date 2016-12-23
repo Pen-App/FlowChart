@@ -72,7 +72,6 @@ namespace flowchart
 
 		void PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
-		void PageGrid_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e); //윈도우 사이즈 조절에 따라 PageGrid 크기가 바뀔 때 발생하는 이벤트 처리 함수
 		
 		void Rectangle_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Rectangle_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
@@ -90,6 +89,9 @@ namespace flowchart
 		//. focused 된 버튼만 보여주게 만드는 함수, 모든 버튼을 숨기는 함수
 		void showFocusedSymbolButtons(UINT64 focusedSymbolNo);
 		void hideAllButtons();
+
+		//스크롤뷰어 이벤트 처리(줌, PageGrid 늘리기)
 		void PageGridScrollViewer_PointerWheelChanged(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+		void PageGridScrollViewer_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
 	};
 }

@@ -83,8 +83,9 @@
     </Page.Resources>
     <ScrollViewer x:Name="PageGridScrollViewer" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"
                   MinZoomFactor="0.5" MaxZoomFactor="2.0"
-                  PointerWheelChanged="PageGridScrollViewer_PointerWheelChanged">
-        <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="PageGrid_SizeChanged">
+                  PointerWheelChanged="PageGridScrollViewer_PointerWheelChanged"
+                  SizeChanged="PageGridScrollViewer_SizeChanged">
+        <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <!--<Rectangle PointerEntered="Rectangle_PointerEntered" DragEnter="Rectangle_DragEnter" PointerPressed="Rectangle_PointerPressed"></Rectangle>-->
             <!--<Image PointerEntered="Image_PointerEntered" PointerExited="Image_PointerExited" PointerPressed="Image_PointerPressed"></Image>-->
             <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
