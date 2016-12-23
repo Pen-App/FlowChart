@@ -91,9 +91,15 @@ void GridPage::makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int 
 	tempImage->SetValue(parentGrid->RowProperty, curRowIndex);
 	tempImage->SetValue(parentGrid->ColumnProperty, curColumnIndex);
 	tempImage->CanDrag = true;
+	tempImage->AllowDrop = true;
 	tempImage->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerEntered);
 	tempImage->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerExited);
 	tempImage->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerPressed);
+	tempImage->DragOver += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragOver);
+	tempImage->DragStarting += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Xaml::UIElement ^, Windows::UI::Xaml::DragStartingEventArgs ^>(this, &flowchart::GridPage::Image_DragStarting);
+	tempImage->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragEnter);
+	tempImage->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragLeave);
+	
 	String^ tempName = "i";
 
 	//type이 1이고 symbolNo가 77인 이미지의 경우 "i1 77" 이라는 name이 부여된다. 
@@ -317,47 +323,89 @@ void GridPage::appendLeftColumn()
 //이미지가 드래그된 상태로 pageGrid위로 올라가면 커서에 무엇을 보여줄 것인가?
 void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
-	e->AcceptedOperation = DataPackageOperation::Move;
-	e->DragUIOverride->Caption = "추가";
-	e->DragUIOverride->IsGlyphVisible = true;
+	e->DragUIOverride->IsCaptionVisible = true;
+
+	if (App::selectedSymbolNumber != -1 && !isSymbolIn) 
+	{
+		e->AcceptedOperation = DataPackageOperation::Copy;
+		e->DragUIOverride->Caption = "추가";
+		e->DragUIOverride->IsGlyphVisible = true;
+	}
+	else if(App::selectedSymbolNumber == -1 && !isSymbolIn)
+	{
+		e->AcceptedOperation = DataPackageOperation::Move;
+		e->DragUIOverride->Caption = "이동";
+		e->DragUIOverride->IsGlyphVisible = true;
+	}
+	else if (isSymbolIn)
+	{
+		e->AcceptedOperation = DataPackageOperation::None;
+		e->DragUIOverride->IsCaptionVisible = false;
+		e->DragUIOverride->IsGlyphVisible = true;
+	}
+	
 }
 
 //드래그된 상태에서 마우스버튼을 놓았을때, 즉 drop했을 때 어떤 일이 일어나는가?
 void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
-	//1. map에 새로운 symbolInfo 객체를 추가시킨다. 
-	UINT64 tempSymbolNo = App::symbolIdCount;
-	App::symbolIdCount++;
-	SymbolInfo^ tempSymbolInfo = ref new SymbolInfo();
-	tempSymbolInfo->SymbolType = App::selectedSymbolNumber;
-	tempSymbolInfo->RowIndex = curRowIndex;
-	tempSymbolInfo->ColumnIndex = curColumnIndex;
-	tempSymbolInfo->SymbolNo = tempSymbolNo;
-	App::symbolVector->Append(tempSymbolInfo);
+	if (App::selectedSymbolNumber != -1 && !isSymbolIn) { //symbol 생성 로직
+		//1. map에 새로운 symbolInfo 객체를 추가시킨다. 
+		UINT64 tempSymbolNo = App::symbolIdCount;
+		App::symbolIdCount++;
+		SymbolInfo^ tempSymbolInfo = ref new SymbolInfo();
+		tempSymbolInfo->SymbolType = App::selectedSymbolNumber;
+		tempSymbolInfo->RowIndex = curRowIndex;
+		tempSymbolInfo->ColumnIndex = curColumnIndex;
+		tempSymbolInfo->SymbolNo = tempSymbolNo;
+		App::symbolVector->Append(tempSymbolInfo);
 
-	//testTextBox->Text = "" + App::symbolVector->Size;
-	makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
-	makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
 
-	//심볼 놓는 위치에 따라 PageGrid를 늘려줌
-	if (curColumnIndex == 0)
-	{
-		appendLeftColumn();
-	}
-	if (curRowIndex == 0)
-	{
-		appendTopRow();
-	}
-	if (curColumnIndex + 1 == nowColumnNum)
-	{
-		appendColumn();
-	}
-	if (curRowIndex + 1 == nowRowNum)
-	{
-		appendRow();
-	}
+		makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
+		makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
 
-	PageGrid->UpdateLayout();
+		showFocusedSymbolButtons(tempSymbolNo);
+		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
+		if (curColumnIndex == 0)
+		{
+			appendLeftColumn();
+		}
+		if (curRowIndex == 0)
+		{
+			appendTopRow();
+		}
+		if (curColumnIndex + 1 == nowColumnNum)
+		{
+			appendColumn();
+		}
+		if (curRowIndex + 1 == nowRowNum)
+		{
+			appendRow();
+		}
+		PageGrid->UpdateLayout();
+	}
+	else if(!isSymbolIn){ //symbol 이동 로직
+		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+
+		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
+		if (curColumnIndex == 0)
+		{
+			appendLeftColumn();
+		}
+		if (curRowIndex == 0)
+		{
+			appendTopRow();
+		}
+		if (curColumnIndex + 1 == nowColumnNum)
+		{
+			appendColumn();
+		}
+		if (curRowIndex + 1 == nowRowNum)
+		{
+			appendRow();
+		}
+	}
+	//testTextBox->Text = "" + App::selectedSymbolNumber;
 }
 
 //마우스가 rectangle위로 올라가있으면 rectangle이 자신이 속한 행,열 인덱스를 curRowIndex와 curColumnIndex에 기록한다. 
@@ -394,13 +442,23 @@ void flowchart::GridPage::Rectangle_PointerPressed(Platform::Object^ sender, Win
 void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = true;
-	testTextBox->Text = "" + isSymbolIn;
+	//testTextBox->Text = "" + isSymbolIn;
+}
+void flowchart::GridPage::Image_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+{
+	isSymbolIn = true;
+	//testTextBox->Text = ""+isSymbolIn;
 }
 
 void flowchart::GridPage::Image_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = false;
-	testTextBox->Text = "" + isSymbolIn;
+	//testTextBox->Text = "" + isSymbolIn;
+}
+void flowchart::GridPage::Image_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+{
+	isSymbolIn = false;
+	//testTextBox->Text = ""+isSymbolIn;
 }
 
 //이미지 안에서 클릭을 했을 경우 -> focus 시키기, 버튼보이게 하기
@@ -411,13 +469,45 @@ void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows
 		//1. 이미지의 symbolNo를 알아낸다. 
 		auto tempImageName = ((Image^)sender)->Name;
 		focusedSymbolNo = std::stoi(tempImageName->Data() + 3);
+		
+		//2. 이미지의 symbolType을 알아낸다.
+		wchar_t tempImageType[3];
+		wcsncpy_s(tempImageType, tempImageName->Data(), 2);
+		focusedSymbolType = _wtoi(tempImageType + 1);
 
-		//2. 포커스된 symbol의 버튼만 보이게 만든다. 
+		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
 		showFocusedSymbolButtons(focusedSymbolNo);
-
+		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 	}
 	
 }
+
+//이미지의 드래그가 시작될 때
+void flowchart::GridPage::Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args)
+{
+	if (isSymbolIn)
+	{
+		//1. 이미지의 symbolNo를 알아낸다. 
+		auto tempImageName = ((Image^)sender)->Name;
+		focusedSymbolNo = std::stoi(tempImageName->Data() + 3);
+
+		//2. 이미지의 symbolType을 알아낸다.
+		wchar_t tempImageType[3];
+		wcsncpy_s(tempImageType, tempImageName->Data(), 2);
+		focusedSymbolType = _wtoi(tempImageType + 1);
+		
+		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
+		showFocusedSymbolButtons(focusedSymbolNo);
+		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
+	}
+}
+
+//필요없는 메소드 xxxxx 필요없음.
+void flowchart::GridPage::Image_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+{
+	
+}
+
 
 //파라미터로 넘겨진 id의 symbol 버튼만 보이게 하는 함수
 void flowchart::GridPage::showFocusedSymbolButtons(UINT64 focusedSymbolNo)
@@ -517,6 +607,29 @@ void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Obj
 	OutputDebugString(debugstr);
 }
 
+void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
+{
+	Button^ tempButton1 = nullptr;
+	Button^ tempButton2 = nullptr;
+	Button^ tempButton3 = nullptr;
+	Image^ tempImage = nullptr;
+
+	tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + focusedSymbolNo));
+	tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + focusedSymbolNo));
+	tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + focusedSymbolNo));
+	tempImage = safe_cast<Image^>(PageGrid->FindName("i" + focusedSymbolType + " " + focusedSymbolNo));
+
+	tempButton1->SetValue(parentGrid->RowProperty, newRowIndex);
+	tempButton1->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+	tempButton2->SetValue(parentGrid->RowProperty, newRowIndex);
+	tempButton2->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+	tempButton3->SetValue(parentGrid->RowProperty, newRowIndex);
+	tempButton3->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+	tempImage->SetValue(parentGrid->RowProperty, newRowIndex);
+	tempImage->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+
+	parentGrid->UpdateLayout();
+}
 
 void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
 {
