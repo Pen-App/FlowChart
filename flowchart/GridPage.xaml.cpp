@@ -335,6 +335,10 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 	tempSymbolInfo->SymbolNo = tempSymbolNo;
 	App::symbolVector->Append(tempSymbolInfo);
 
+	//testTextBox->Text = "" + App::symbolVector->Size;
+	makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
+	makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
+
 	//심볼 놓는 위치에 따라 PageGrid를 늘려줌
 	if (curColumnIndex == 0)
 	{
@@ -353,12 +357,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		appendRow();
 	}
 
-
-	//testTextBox->Text = "" + App::symbolVector->Size;
-	makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
-	makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
 	PageGrid->UpdateLayout();
-	//refreshGridPage(PageGrid);
 }
 
 //마우스가 rectangle위로 올라가있으면 rectangle이 자신이 속한 행,열 인덱스를 curRowIndex와 curColumnIndex에 기록한다. 
@@ -505,5 +504,29 @@ void flowchart::GridPage::hideAllButtons()
 	PageGrid->UpdateLayout();
 }
 
+void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	//컨트롤이 눌렸는지 확인
+	if (e->KeyModifiers == Windows::System::VirtualKeyModifiers::Control)
+	{
+		//마우스 휠이 어느 방향(위,아래)로 움직였는지 확인
+		int delta = e->
+			GetCurrentPoint((UIElement^)sender)->
+			Properties->
+			MouseWheelDelta;
+		//현재 광학 줌의 정도
+		float curZoomFactor = ((ScrollViewer^)sender)->ZoomFactor;
 
-
+		//xaml에 Min,MaxZoomFactor에 의해 상한값 하한값은 자동으로 조절됩니다.
+		if (delta >= 0) //위쪽으로 스크롤 했을 때
+		{
+			//줌 인
+			((ScrollViewer^)sender)->ZoomToFactor(curZoomFactor + 0.1);
+		}
+		else //아래쪽으로 스크롤 했을 때
+		{
+			//줌 아웃
+			((ScrollViewer^)sender)->ZoomToFactor(curZoomFactor - 0.1);
+		}
+	}
+}

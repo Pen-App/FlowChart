@@ -90,5 +90,6 @@ namespace flowchart
 		//. focused 된 버튼만 보여주게 만드는 함수, 모든 버튼을 숨기는 함수
 		void showFocusedSymbolButtons(UINT64 focusedSymbolNo);
 		void hideAllButtons();
+		void PageGridScrollViewer_PointerWheelChanged(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 	};
 }

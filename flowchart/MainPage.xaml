@@ -35,14 +35,9 @@
             <TextBox Grid.Row="0" Grid.Column="1" Width="200" ></TextBox>
         </AppBar>-->
 
-        <!--스크롤뷰어-->
-        <ScrollViewer Grid.Row="1" Grid.ColumnSpan="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"
-                      MinZoomFactor="0.5" MaxZoomFactor="2.0"
-                      PointerWheelChanged="ScrollViewer_PointerWheelChanged">
-            <Frame Name="GridContentFrame" AllowDrop="True">
-                <!--그리드 컨텐츠 들어갈 자리-->
-            </Frame>
-        </ScrollViewer>
+        <Frame Name="GridContentFrame" Grid.Row="1" Grid.ColumnSpan="2" AllowDrop="True">
+            <!--그리드 컨텐츠 들어갈 자리-->
+        </Frame>
 
         <!--도형선택 리스트 -->
         <ListBox CanDrag="True" Grid.Row="1" Grid.Column="2">
