@@ -35,6 +35,8 @@ GridPage::GridPage()
 	columnWidth = 100;
 	rowHeight = 70;
 	makeGridArray(PageGrid, nowRowNum, nowColumnNum, rowHeight, columnWidth);
+
+	isLineDrawing = false;
 }
 
 //행,열 하나하나 마다 rectangle을 채워넣는 함수 : 마우스 커서가 어떤 행,열 인덱스위에 올라가있는지 이벤트를 받기 위해서
@@ -150,6 +152,13 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 	case 1:
 		tempButton->Name = "b1 " + symbolNo;
 		tempButton->Style = BUTTON_STYLE_CONNECTOR;
+		tempButton->CanDrag = true;
+		tempButton->ClickMode = ClickMode::Press;
+		tempButton->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &flowchart::GridPage::ConnectorButtonPress);
+		/*tempButton->AddHandler(
+			UIElement::PointerPressedEvent, 
+			ref new Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::ConnectorButtonPress), 
+			true);*/
 		horizontal = 2;
 		vertical = 2;
 		break;
@@ -675,4 +684,76 @@ void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sen
 
 	PageGrid->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
+}
+
+void flowchart::GridPage::ConnectorButtonPress(
+	Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	OutputDebugString(L"connectorButtonPressed!!\n");
+	isLineDrawing = true;
+
+	wchar_t debugStr[256];
+	swprintf_s(debugStr, L"%lf %lf\n", ((Button^)sender)->Margin.Left, ((Button^)sender)->Margin.Top);
+	OutputDebugString(debugStr); //button
+
+	//make line
+	auto tempLine = ref new Line;
+	tempLine->Name = L"tempLine";
+	tempLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+	tempLine->StrokeThickness = 1;
+	/*auto pressedPoint = e->GetCurrentPoint((UIElement^)sender)->Position;
+	tempLine->X1 = pressedPoint.X;
+	tempLine->Y1 = pressedPoint.Y;*/
+	PageGridCanvas->Children->Append(tempLine);
+	PageGridCanvas->UpdateLayout();
+}
+
+//void flowchart::GridPage::ConnectorButtonPress(
+//	Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+//{
+//	OutputDebugString(L"connectorButtonPressed!!\n");
+//	isLineDrawing = true;
+//
+//	//make line
+//	auto tempLine = ref new Line;
+//	tempLine->Name = L"tempLine";
+//	tempLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+//	tempLine->StrokeThickness = 1;
+//	auto pressedPoint = e->GetCurrentPoint((UIElement^)sender)->Position;
+//	tempLine->X1 = pressedPoint.X;
+//	tempLine->Y1 = pressedPoint.Y;
+//	PageGridCanvas->Children->Append(tempLine);
+//	PageGridCanvas->UpdateLayout();
+//}
+
+void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	OutputDebugString(L"canvas_press!!!\n");
+}
+
+void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	if (isLineDrawing)
+	{
+		OutputDebugString(L"move\n");
+		Line^ tempLine = (Line^)(PageGridCanvas->FindName(L"tempLine"));
+		auto movedPoint = e->GetCurrentPoint((UIElement^)sender)->Position;
+		tempLine->X2 = movedPoint.X;
+		tempLine->Y2 = movedPoint.Y;
+		PageGridCanvas->UpdateLayout();
+	}
+}
+
+void flowchart::GridPage::PageGridCanvas_PointerRelease(Platform::Object ^sender,
+	Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e)
+{
+	//throw ref new Platform::NotImplementedException();
+	OutputDebugString(L"Release\n");
+
+	if (isLineDrawing)
+	{
+		isLineDrawing = false;
+		PageGridCanvas->Children->RemoveAtEnd();
+		PageGridCanvas->UpdateLayout();
+	}
 }

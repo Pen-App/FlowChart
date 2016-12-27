@@ -86,11 +86,13 @@
                   MinZoomFactor="0.5" MaxZoomFactor="2.0"
                   PointerWheelChanged="PageGridScrollViewer_PointerWheelChanged"
                   SizeChanged="PageGridScrollViewer_SizeChanged">
-        <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-            <!--<Rectangle PointerEntered="Rectangle_PointerEntered" DragEnter="Rectangle_DragEnter" PointerPressed="Rectangle_PointerPressed"></Rectangle>-->
-            <Image DragLeave="Image_DragLeave" DragEnter="Image_DragEnter" DragOver="Image_DragOver" DragStarting="Image_DragStarting" PointerEntered="Image_PointerEntered" PointerExited="Image_PointerExited" PointerPressed="Image_PointerPressed"></Image>
-            <!--<Image PointerEntered="Image_PointerEntered" PointerExited="Image_PointerExited" PointerPressed="Image_PointerPressed"></Image>-->
-            <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
-        </Grid>
+        <Canvas x:Name="PageGridCanvas" 
+                PointerPressed="PageGridCanvas_PointerPress"
+                PointerReleased="PageGridCanvas_PointerRelease" 
+                PointerMoved="PageGridCanvas_PointerMove">
+            <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
+            </Grid>
+        </Canvas>
     </ScrollViewer>
 </Page>
