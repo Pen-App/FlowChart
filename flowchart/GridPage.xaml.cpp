@@ -34,6 +34,8 @@ GridPage::GridPage()
 	nowRowNum = 10;
 	columnWidth = 100;
 	rowHeight = 70;
+	mouseXPos = 0;
+	mouseYPos = 0;
 	makeGridArray(PageGrid, nowRowNum, nowColumnNum, rowHeight, columnWidth);
 
 	isLineDrawing = false;
@@ -154,11 +156,11 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 		tempButton->Style = BUTTON_STYLE_CONNECTOR;
 		tempButton->CanDrag = true;
 		tempButton->ClickMode = ClickMode::Press;
-		tempButton->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &flowchart::GridPage::ConnectorButtonPress);
-		/*tempButton->AddHandler(
+		//tempButton->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &flowchart::GridPage::ConnectorButtonPress);
+		tempButton->AddHandler(
 			UIElement::PointerPressedEvent, 
 			ref new Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::ConnectorButtonPress), 
-			true);*/
+			true);
 		horizontal = 2;
 		vertical = 2;
 		break;
@@ -263,6 +265,7 @@ void GridPage::appendRow()
 	{
 		makeRectangle(PageGrid, nowRowNum - 1, i);
 	}
+	PageGridCanvas->Height = PageGrid->Height;
 }
 
 void GridPage::appendColumn()
@@ -278,6 +281,7 @@ void GridPage::appendColumn()
 	{
 		makeRectangle(PageGrid, i, nowColumnNum - 1);
 	}
+	PageGridCanvas->Width = PageGrid->Width;
 }
 
 void GridPage::appendTopRow()
@@ -600,12 +604,12 @@ void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Obj
 		}
 	}
 
-	while (PageGridScrollViewer->ExtentWidth < PageGridScrollViewer->ActualWidth)
+	while (PageGridCanvas->ActualWidth < PageGridScrollViewer->ActualWidth)
 	{
 		appendColumn();
 		PageGrid->UpdateLayout();
 	}
-	while (PageGridScrollViewer->ExtentHeight < PageGridScrollViewer->ActualHeight)
+	while (PageGridCanvas->ActualHeight < PageGridScrollViewer->ActualHeight)
 	{
 		appendRow();
 		PageGrid->UpdateLayout();
@@ -613,6 +617,12 @@ void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Obj
 
 	wchar_t debugstr[256];
 	swprintf_s(debugstr, L"zoom : %lf\n", PageGridScrollViewer->ZoomFactor);
+	OutputDebugString(debugstr);
+
+	swprintf_s(debugstr, L"PageGridCanvas : %lf, %lf\n", PageGridCanvas->RenderSize.Width, PageGridCanvas->RenderSize.Height);
+	OutputDebugString(debugstr);
+
+	swprintf_s(debugstr, L"PageGridScrollViewer : %lf, %lf\n", PageGridScrollViewer->ActualWidth, PageGridScrollViewer->ActualHeight);
 	OutputDebugString(debugstr);
 }
 
@@ -686,7 +696,7 @@ void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sen
 	PageGridScrollViewer->UpdateLayout();
 }
 
-void flowchart::GridPage::ConnectorButtonPress(
+/*void flowchart::GridPage::ConnectorButtonPress(
 	Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	OutputDebugString(L"connectorButtonPressed!!\n");
@@ -701,30 +711,31 @@ void flowchart::GridPage::ConnectorButtonPress(
 	tempLine->Name = L"tempLine";
 	tempLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
 	tempLine->StrokeThickness = 1;
-	/*auto pressedPoint = e->GetCurrentPoint((UIElement^)sender)->Position;
+	auto pressedPoint = e->GetCurrentPoint((UIElement^)sender)->Position;
 	tempLine->X1 = pressedPoint.X;
-	tempLine->Y1 = pressedPoint.Y;*/
+	tempLine->Y1 = pressedPoint.Y;
+	PageGridCanvas->Children->Append(tempLine);
+	PageGridCanvas->UpdateLayout();
+}*/
+
+void flowchart::GridPage::ConnectorButtonPress(
+	Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	OutputDebugString(L"connectorButtonPressed!!\n");
+	isLineDrawing = true;
+
+	//make line
+	auto tempLine = ref new Line;
+	tempLine->Name = L"tempLine";
+	tempLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+	tempLine->StrokeThickness = 1;
+	tempLine->X1 = mouseXPos;
+	tempLine->Y1 = mouseYPos;
+	tempLine->X2 = mouseXPos;
+	tempLine->Y2 = mouseYPos;
 	PageGridCanvas->Children->Append(tempLine);
 	PageGridCanvas->UpdateLayout();
 }
-
-//void flowchart::GridPage::ConnectorButtonPress(
-//	Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
-//{
-//	OutputDebugString(L"connectorButtonPressed!!\n");
-//	isLineDrawing = true;
-//
-//	//make line
-//	auto tempLine = ref new Line;
-//	tempLine->Name = L"tempLine";
-//	tempLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
-//	tempLine->StrokeThickness = 1;
-//	auto pressedPoint = e->GetCurrentPoint((UIElement^)sender)->Position;
-//	tempLine->X1 = pressedPoint.X;
-//	tempLine->Y1 = pressedPoint.Y;
-//	PageGridCanvas->Children->Append(tempLine);
-//	PageGridCanvas->UpdateLayout();
-//}
 
 void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
@@ -737,10 +748,15 @@ void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, W
 	{
 		OutputDebugString(L"move\n");
 		Line^ tempLine = (Line^)(PageGridCanvas->FindName(L"tempLine"));
-		auto movedPoint = e->GetCurrentPoint((UIElement^)sender)->Position;
+		auto movedPoint = e->GetCurrentPoint(this)->Position;
 		tempLine->X2 = movedPoint.X;
 		tempLine->Y2 = movedPoint.Y;
 		PageGridCanvas->UpdateLayout();
+	}
+	else
+	{
+		mouseXPos = e->GetCurrentPoint(this)->Position.X;
+		mouseYPos = e->GetCurrentPoint(this)->Position.Y;
 	}
 }
 
