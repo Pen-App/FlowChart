@@ -102,7 +102,6 @@ namespace flowchart
 		void moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex);
 
 		// 선그리는 버튼 드래그 해서 선 그리는 함수
-		//void ConnectorButtonPress(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void ConnectorButtonPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void PageGridCanvas_PointerPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void PageGridCanvas_PointerMove(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);

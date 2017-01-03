@@ -52,6 +52,7 @@ void GridPage::makeRectangle(Grid^ parentGrid, int rowIndex, int columnIndex)
 	tempRect->SetValue(parentGrid->ColumnProperty, columnIndex);
 	tempRect->SetValue(parentGrid->RowProperty, rowIndex);
 	tempRect->AllowDrop = true;
+	tempRect->SetValue(Canvas::ZIndexProperty, 1);
 
 	tempRect->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerEntered);
 	tempRect->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerPressed);
@@ -103,6 +104,7 @@ void GridPage::makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int 
 	tempImage->DragStarting += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Xaml::UIElement ^, Windows::UI::Xaml::DragStartingEventArgs ^>(this, &flowchart::GridPage::Image_DragStarting);
 	tempImage->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragEnter);
 	tempImage->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragLeave);
+	tempImage->SetValue(Canvas::ZIndexProperty, 2);
 	
 	String^ tempName = "i";
 
@@ -148,7 +150,7 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 	tempButton->SetValue(parentGrid->ColumnProperty, columnIndex);
 	tempButton->SetValue(parentGrid->RowProperty, rowIndex);
 	tempButton->SetValue(this->VisibilityProperty, 1); //0: visible, 1:collapsed : 그냥 놓았을 때는 버튼이 숨겨진다. 
-
+	tempButton->SetValue(Canvas::ZIndexProperty, 2);
 
 	switch (buttonType) {
 	case 1:
@@ -156,7 +158,6 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 		tempButton->Style = BUTTON_STYLE_CONNECTOR;
 		tempButton->CanDrag = true;
 		tempButton->ClickMode = ClickMode::Press;
-		//tempButton->Click += ref new Windows::UI::Xaml::RoutedEventHandler(this, &flowchart::GridPage::ConnectorButtonPress);
 		tempButton->AddHandler(
 			UIElement::PointerPressedEvent, 
 			ref new Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::ConnectorButtonPress), 
@@ -395,7 +396,6 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		{
 			appendRow();
 		}
-		PageGrid->UpdateLayout();
 	}
 	else if(!isSymbolIn){ //symbol 이동 로직
 		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
@@ -418,7 +418,10 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 			appendRow();
 		}
 	}
-	//testTextBox->Text = "" + App::selectedSymbolNumber;
+
+	PageGrid->UpdateLayout();
+	PageGridCanvas->UpdateLayout();
+	PageGridScrollViewer->UpdateLayout();
 }
 
 //마우스가 rectangle위로 올라가있으면 rectangle이 자신이 속한 행,열 인덱스를 curRowIndex와 curColumnIndex에 기록한다. 
@@ -455,23 +458,23 @@ void flowchart::GridPage::Rectangle_PointerPressed(Platform::Object^ sender, Win
 void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = true;
-	//testTextBox->Text = "" + isSymbolIn;
+	OutputDebugString(L"Image_PointerEntered!!!\n");
 }
 void flowchart::GridPage::Image_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
 	isSymbolIn = true;
-	//testTextBox->Text = ""+isSymbolIn;
+	OutputDebugString(L"Image_DragEnter!!!\n");
 }
 
 void flowchart::GridPage::Image_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = false;
-	//testTextBox->Text = "" + isSymbolIn;
+	OutputDebugString(L"Image_PointerExited!!!\n");
 }
 void flowchart::GridPage::Image_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
 	isSymbolIn = false;
-	//testTextBox->Text = ""+isSymbolIn;
+	OutputDebugString(L"Image_DragLeave!!!\n");
 }
 
 //이미지 안에서 클릭을 했을 경우 -> focus 시키기, 버튼보이게 하기
@@ -608,11 +611,15 @@ void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Obj
 	{
 		appendColumn();
 		PageGrid->UpdateLayout();
+		PageGridCanvas->UpdateLayout();
+		PageGridScrollViewer->UpdateLayout();
 	}
 	while (PageGridCanvas->ActualHeight < PageGridScrollViewer->ActualHeight)
 	{
 		appendRow();
 		PageGrid->UpdateLayout();
+		PageGridCanvas->UpdateLayout();
+		PageGridScrollViewer->UpdateLayout();
 	}
 
 	wchar_t debugstr[256];
@@ -693,34 +700,18 @@ void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sen
 	}
 
 	PageGrid->UpdateLayout();
+	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
 }
-
-/*void flowchart::GridPage::ConnectorButtonPress(
-	Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	OutputDebugString(L"connectorButtonPressed!!\n");
-	isLineDrawing = true;
-
-	wchar_t debugStr[256];
-	swprintf_s(debugStr, L"%lf %lf\n", ((Button^)sender)->Margin.Left, ((Button^)sender)->Margin.Top);
-	OutputDebugString(debugStr); //button
-
-	//make line
-	auto tempLine = ref new Line;
-	tempLine->Name = L"tempLine";
-	tempLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
-	tempLine->StrokeThickness = 1;
-	auto pressedPoint = e->GetCurrentPoint((UIElement^)sender)->Position;
-	tempLine->X1 = pressedPoint.X;
-	tempLine->Y1 = pressedPoint.Y;
-	PageGridCanvas->Children->Append(tempLine);
-	PageGridCanvas->UpdateLayout();
-}*/
 
 void flowchart::GridPage::ConnectorButtonPress(
 	Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
+	if (isLineDrawing)
+	{
+		PageGridCanvas->Children->RemoveAtEnd();
+	}
+
 	OutputDebugString(L"connectorButtonPressed!!\n");
 	isLineDrawing = true;
 
@@ -729,10 +720,10 @@ void flowchart::GridPage::ConnectorButtonPress(
 	tempLine->Name = L"tempLine";
 	tempLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
 	tempLine->StrokeThickness = 1;
-	tempLine->X1 = mouseXPos;
-	tempLine->Y1 = mouseYPos;
-	tempLine->X2 = mouseXPos;
-	tempLine->Y2 = mouseYPos;
+	tempLine->X1 = mouseXPos / PageGridScrollViewer->ZoomFactor;
+	tempLine->Y1 = mouseYPos / PageGridScrollViewer->ZoomFactor;
+	tempLine->X2 = mouseXPos / PageGridScrollViewer->ZoomFactor;
+	tempLine->Y2 = mouseYPos / PageGridScrollViewer->ZoomFactor;
 	PageGridCanvas->Children->Append(tempLine);
 	PageGridCanvas->UpdateLayout();
 }
@@ -749,8 +740,8 @@ void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, W
 		OutputDebugString(L"move\n");
 		Line^ tempLine = (Line^)(PageGridCanvas->FindName(L"tempLine"));
 		auto movedPoint = e->GetCurrentPoint(this)->Position;
-		tempLine->X2 = movedPoint.X;
-		tempLine->Y2 = movedPoint.Y;
+		tempLine->X2 = movedPoint.X / PageGridScrollViewer->ZoomFactor;
+		tempLine->Y2 = movedPoint.Y / PageGridScrollViewer->ZoomFactor;
 		PageGridCanvas->UpdateLayout();
 	}
 	else
