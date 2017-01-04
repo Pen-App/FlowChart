@@ -462,6 +462,18 @@ void flowchart::GridPage::Rectangle_PointerPressed(Platform::Object^ sender, Win
 void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = true;
+
+	//1. 이미지의 symbolNo를 알아낸다. 
+	auto tempImageName = ((Image^)sender)->Name;
+	focusedSymbolNo = std::stoi(tempImageName->Data() + 3);
+
+	//2. 이미지의 symbolType을 알아낸다.
+	wchar_t tempImageType[3];
+	wcsncpy_s(tempImageType, tempImageName->Data(), 2);
+	focusedSymbolType = _wtoi(tempImageType + 1);
+
+	testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
+
 	OutputDebugString(L"Image_PointerEntered!!!\n");
 }
 void flowchart::GridPage::Image_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
@@ -473,6 +485,7 @@ void flowchart::GridPage::Image_DragEnter(Platform::Object^ sender, Windows::UI:
 void flowchart::GridPage::Image_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = false;
+	
 	OutputDebugString(L"Image_PointerExited!!!\n");
 }
 void flowchart::GridPage::Image_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
@@ -500,6 +513,7 @@ void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows
 		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 	}
 	
+	OutputDebugString(L"Image_clicked!!!\n");
 }
 
 //이미지의 드래그가 시작될 때
@@ -718,6 +732,7 @@ void flowchart::GridPage::ConnectorButtonPress(
 
 	OutputDebugString(L"connectorButtonPressed!!\n");
 	isLineDrawing = true;
+	connectorStartSymbolNo = focusedSymbolNo;
 
 	//make line
 	auto tempLine = ref new Line;
@@ -738,6 +753,52 @@ void flowchart::GridPage::ConnectorButtonPress(
 
 void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
+	if (isSymbolIn && isLineDrawing && connectorStartSymbolNo != focusedSymbolNo) {
+		//그래프에 추가시킨다. 
+		
+		UINT64 tempSymbolNo;
+		SymbolInfo^ startSymbolInfo = nullptr;
+		SymbolInfo^ connectSymbolInfo = nullptr;
+		//1. 기준이 되는 symbolInfo 찾기, app::vector에서
+		for (UINT64 i = 0; i < App::symbolVector->Size; i++) 
+		{
+			if (App::symbolVector->GetAt(i)->SymbolNo == connectorStartSymbolNo)
+			{
+				startSymbolInfo = App::symbolVector->GetAt(i);
+			}
+		}
+
+		//1.5 이미 startSymbolInfo에 connectorStartSymbolNo가 들어있으면 return한다.
+		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
+		{
+			if (startSymbolInfo->Path->GetAt(i)->SymbolNo == focusedSymbolNo)
+			{
+				return;
+			}
+		}
+
+		//2. 이어질 connecctSymbolInfo 찾기
+		for (UINT64 i = 0; i < App::symbolVector->Size; i++)
+		{
+			if (App::symbolVector->GetAt(i)->SymbolNo == focusedSymbolNo)
+			{
+				connectSymbolInfo = App::symbolVector->GetAt(i);
+			}
+		}
+
+		//3. startSymbolInfo의 path에 connectSymbolInfo넣기
+		startSymbolInfo->Path->Append(connectSymbolInfo);
+		
+
+		//debugging
+		String^ tempStr = L"";
+		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
+		{
+			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
+		}
+		pathBox->Text = tempStr;
+		
+	}
 	OutputDebugString(L"canvas_press!!!\n");
 }
 
