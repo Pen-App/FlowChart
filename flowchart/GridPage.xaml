@@ -46,45 +46,101 @@
         <!--도형별 이미지 스타일 6개-->
         <Style TargetType="Image" x:Name="IMAGE_PROCESS" x:Key="IMAGE_PROCESS">
             <Setter Property="Source" Value="Assets/process.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_DECISION" x:Key="IMAGE_DECISION">
             <Setter Property="Source" Value="Assets/decision.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_PREPARATION" x:Key="IMAGE_PREPARATION">
             <Setter Property="Source" Value="/Assets/preparation.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_TERMINATOR" x:Key="IMAGE_TERMINATOR">
             <Setter Property="Source" Value="Assets/terminator.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_DATA" x:Key="IMAGE_DATA">
             <Setter Property="Source" Value="Assets/data.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
         <Style TargetType="Image" x:Name="IMAGE_DOCUMENT" x:Key="IMAGE_DOCUMENT">
             <Setter Property="Source" Value="Assets/document.png"></Setter>
-            <Setter Property="Width" Value="50"></Setter>
-            <Setter Property="Height" Value="50"></Setter>
+            <Setter Property="Width" Value="100"></Setter>
+            <Setter Property="Height" Value="70"></Setter>
         </Style>
-        
+
         <!-- Flyout Detail style -->
-        <Style TargetType = "FlyoutPresenter" x:Name="FLYOUT_STYLE_PRESENTER">
-            <Setter Property = "Padding" Value = "0" />
-            <Setter Property = "BorderThickness" Value = "0" />
-        </Style>
+        <Flyout Placement="Right" x:Name="FLYOUT_DETAIL" x:Key="FLYOUT_DETAIL">
+            <Flyout.FlyoutPresenterStyle>
+                <Style TargetType = "FlyoutPresenter" x:Name="FLYOUT_STYLE_PRESENTER">
+                    <Setter Property = "BorderThickness" Value = "3" />
+                    <Setter Property = "Background" Value="White"/>
+                    <Setter Property = "BorderBrush" Value="Black" />
+                    <Setter Property="MinWidth" Value="200" />
+                    <Setter Property="MinHeight" Value="150" />
+                </Style>
+            </Flyout.FlyoutPresenterStyle>
+            <StackPanel>
+                <TextBlock Text="세부 내용"></TextBlock>
+                <TextBox 
+                    Name="DetailText" 
+                    TextWrapping="Wrap"
+                    Height="100"
+                    Margin="0,10,0,0"
+                    />
+                <Button
+                    Content="추가"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,0"
+                    />
+            </StackPanel>
+        </Flyout>
+
+        <!-- Flyout Title Style -->
+        <Flyout Placement="Left" x:Name="FLYOUT_TITLE" x:Key="FLYOUT_TITLE">
+            <Flyout.FlyoutPresenterStyle>
+                <Style TargetType = "FlyoutPresenter">
+                    <Setter Property = "BorderThickness" Value = "3" />
+                    <Setter Property = "Background" Value="White"/>
+                    <Setter Property = "BorderBrush" Value="Black" />
+                    <Setter Property="MinWidth" Value="200" />
+                    <Setter Property="MinHeight" Value="135" />
+                </Style>
+            </Flyout.FlyoutPresenterStyle>
+            <StackPanel>
+                <TextBlock Text="제목" />
+                <TextBox 
+                    Name="FLYOUT_TITLE_TEXT" 
+                    Margin="0,10,0,0" 
+                    TextWrapping="Wrap" 
+                    Height="20"
+                    ></TextBox>
+                <Button Content="추가" HorizontalAlignment="Center" Margin="0,10,0,0"></Button>
+            </StackPanel>
+        </Flyout>
     </Page.Resources>
-    <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" SizeChanged="PageGrid_SizeChanged">
-        <!--<Rectangle PointerEntered="Rectangle_PointerEntered" DragEnter="Rectangle_DragEnter" PointerPressed="Rectangle_PointerPressed"></Rectangle>-->
-        <!--<Image PointerEntered="Image_PointerEntered" PointerExited="Image_PointerExited" PointerPressed="Image_PointerPressed"></Image>-->
-        <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
-        
-    </Grid>
+    
+    <ScrollViewer x:Name="PageGridScrollViewer" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"
+                  MinZoomFactor="0.5" MaxZoomFactor="2.0"
+                  PointerWheelChanged="PageGridScrollViewer_PointerWheelChanged"
+                  SizeChanged="PageGridScrollViewer_SizeChanged">
+        <Canvas x:Name="PageGridCanvas"
+                Width="1000" Height="700"
+                PointerPressed="PageGridCanvas_PointerPress"
+                PointerReleased="PageGridCanvas_PointerRelease" 
+                PointerMoved="PageGridCanvas_PointerMove">
+            <Grid Name="PageGrid" 
+                  Width="1000" Height="700"
+                  AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
+                <TextBox Name="pathBox" Grid.Column="1" Grid.Row ="0" Grid.ColumnSpan="3"/>
+            </Grid>
+        </Canvas>
+    </ScrollViewer>
 </Page>

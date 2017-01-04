@@ -42,10 +42,11 @@ namespace flowchart
 
 		bool isSymbolIn; //커서가 있는 grid안에 symbol이 존재하는가?
 		UINT64 focusedSymbolNo; //포커스된 symbolNo
+		int focusedSymbolType;
 
-
-
-
+		bool isLineDrawing; //연결선을 그리고 있는지
+		UINT64 connectorStartSymbolNo; //연결선
+		double mouseXPos, mouseYPos;
 
 		//=============================함수들=====================================
 		//0. gridArray 만들기
@@ -72,7 +73,6 @@ namespace flowchart
 
 		void PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
-		void PageGrid_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e); //윈도우 사이즈 조절에 따라 PageGrid 크기가 바뀔 때 발생하는 이벤트 처리 함수
 		
 		void Rectangle_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Rectangle_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
@@ -86,9 +86,26 @@ namespace flowchart
 		void Image_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Image_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Image_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
-
+		void Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args);
+		void Image_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void Image_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void Image_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		
 		//. focused 된 버튼만 보여주게 만드는 함수, 모든 버튼을 숨기는 함수
 		void showFocusedSymbolButtons(UINT64 focusedSymbolNo);
 		void hideAllButtons();
+
+		//스크롤뷰어 이벤트 처리(줌, PageGrid 늘리기)
+		void PageGridScrollViewer_PointerWheelChanged(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+		void PageGridScrollViewer_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
+
+		//. symbol 이동시켜주는 함수
+		void moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex);
+
+		// 선그리는 버튼 드래그 해서 선 그리는 함수
+		void ConnectorButtonPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+		void PageGridCanvas_PointerPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+		void PageGridCanvas_PointerMove(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+		void PageGridCanvas_PointerRelease(Platform::Object ^sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e);
 	};
 }

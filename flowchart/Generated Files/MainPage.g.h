@@ -7,6 +7,16 @@
 //------------------------------------------------------------------------------
 
 
+namespace Windows {
+    namespace UI {
+        namespace Xaml {
+            namespace Controls {
+                ref class Frame;
+                ref class Image;
+            }
+        }
+    }
+}
 
 namespace flowchart
 {
@@ -23,6 +33,13 @@ namespace flowchart
     private:
         bool _contentLoaded;
     
+        private: ::Windows::UI::Xaml::Controls::Frame^ GridContentFrame;
+        private: ::Windows::UI::Xaml::Controls::Image^ s6;
+        private: ::Windows::UI::Xaml::Controls::Image^ s5;
+        private: ::Windows::UI::Xaml::Controls::Image^ s4;
+        private: ::Windows::UI::Xaml::Controls::Image^ s3;
+        private: ::Windows::UI::Xaml::Controls::Image^ s2;
+        private: ::Windows::UI::Xaml::Controls::Image^ s1;
     };
 }
 
