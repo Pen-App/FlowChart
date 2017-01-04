@@ -198,9 +198,7 @@ void GridPage::ContentButtonClick(Platform::Object^ sender, Windows::UI::Xaml::R
 	Flyout^ flyout = ref new Flyout();	// flyout
 	TextBlock^ textblock = ref new TextBlock();
 
-	textblock->Text = "ContentButton clicked";
-
-	flyout->Content = textblock;
+	flyout = FLYOUT_TITLE;
 	flyout->ShowAt(button);
 }
 // Detail버튼 클릭했을때 flyout이 나오도록
