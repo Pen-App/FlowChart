@@ -611,14 +611,20 @@ void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Obj
 		}
 	}
 
-	while (PageGridCanvas->ActualWidth < PageGridScrollViewer->ActualWidth)
+	while (
+		PageGridCanvas->ActualWidth * PageGridScrollViewer->ZoomFactor
+		< 
+		PageGridScrollViewer->ActualWidth)
 	{
 		appendColumn();
 		PageGrid->UpdateLayout();
 		PageGridCanvas->UpdateLayout();
 		PageGridScrollViewer->UpdateLayout();
 	}
-	while (PageGridCanvas->ActualHeight < PageGridScrollViewer->ActualHeight)
+	while (
+		PageGridCanvas->ActualHeight * PageGridScrollViewer->ZoomFactor
+		< 
+		PageGridScrollViewer->ActualHeight)
 	{
 		appendRow();
 		PageGrid->UpdateLayout();
