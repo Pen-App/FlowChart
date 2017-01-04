@@ -82,7 +82,6 @@
         </Style>
         
         <!-- Flyout Title Style -->
-
         <Flyout Placement="Left" x:Name="FLYOUT_TITLE" x:Key="FLYOUT_TITLE">
             <Flyout.FlyoutPresenterStyle>
                 <Style TargetType = "FlyoutPresenter">
