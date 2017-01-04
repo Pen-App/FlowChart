@@ -724,12 +724,16 @@ void flowchart::GridPage::ConnectorButtonPress(
 	tempLine->Name = L"tempLine";
 	tempLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
 	tempLine->StrokeThickness = 1;
-	tempLine->X1 = mouseXPos / PageGridScrollViewer->ZoomFactor;
-	tempLine->Y1 = mouseYPos / PageGridScrollViewer->ZoomFactor;
-	tempLine->X2 = mouseXPos / PageGridScrollViewer->ZoomFactor;
-	tempLine->Y2 = mouseYPos / PageGridScrollViewer->ZoomFactor;
+	tempLine->X1 = (mouseXPos + PageGridScrollViewer->HorizontalOffset) / PageGridScrollViewer->ZoomFactor;
+	tempLine->Y1 = (mouseYPos + PageGridScrollViewer->VerticalOffset) / PageGridScrollViewer->ZoomFactor;
+	tempLine->X2 = (mouseXPos + PageGridScrollViewer->HorizontalOffset) / PageGridScrollViewer->ZoomFactor;
+	tempLine->Y2 = (mouseYPos + PageGridScrollViewer->VerticalOffset) / PageGridScrollViewer->ZoomFactor;
 	PageGridCanvas->Children->Append(tempLine);
 	PageGridCanvas->UpdateLayout();
+
+	wchar_t asdf[234];
+	swprintf_s(asdf, L"ScrollOffset : %lf, %lf\n", PageGridScrollViewer->VerticalOffset, PageGridScrollViewer->HorizontalOffset);
+	OutputDebugString(asdf);
 }
 
 void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
@@ -744,8 +748,8 @@ void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, W
 		OutputDebugString(L"move\n");
 		Line^ tempLine = (Line^)(PageGridCanvas->FindName(L"tempLine"));
 		auto movedPoint = e->GetCurrentPoint(this)->Position;
-		tempLine->X2 = movedPoint.X / PageGridScrollViewer->ZoomFactor;
-		tempLine->Y2 = movedPoint.Y / PageGridScrollViewer->ZoomFactor;
+		tempLine->X2 = (movedPoint.X + PageGridScrollViewer->HorizontalOffset) / PageGridScrollViewer->ZoomFactor;
+		tempLine->Y2 = (movedPoint.Y + PageGridScrollViewer->VerticalOffset) / PageGridScrollViewer->ZoomFactor;
 		PageGridCanvas->UpdateLayout();
 	}
 	else
