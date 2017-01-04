@@ -45,6 +45,7 @@ namespace flowchart
 		int focusedSymbolType;
 
 		bool isLineDrawing; //연결선을 그리고 있는지
+		UINT64 connectorStartSymbolNo; //연결선
 		double mouseXPos, mouseYPos;
 
 		//=============================함수들=====================================
