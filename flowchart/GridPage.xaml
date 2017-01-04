@@ -91,7 +91,9 @@
                 PointerPressed="PageGridCanvas_PointerPress"
                 PointerReleased="PageGridCanvas_PointerRelease" 
                 PointerMoved="PageGridCanvas_PointerMove">
-            <Grid Name="PageGrid" AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid Name="PageGrid" 
+                  Width="1000" Height="700"
+                  AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
             </Grid>
         </Canvas>

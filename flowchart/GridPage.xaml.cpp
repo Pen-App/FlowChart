@@ -266,6 +266,8 @@ void GridPage::appendRow()
 	{
 		makeRectangle(PageGrid, nowRowNum - 1, i);
 	}
+
+	PageGrid->Height = nowRowNum*rowHeight;
 	PageGridCanvas->Height = PageGrid->Height;
 }
 
@@ -282,6 +284,8 @@ void GridPage::appendColumn()
 	{
 		makeRectangle(PageGrid, i, nowColumnNum - 1);
 	}
+
+	PageGrid->Width = nowColumnNum*columnWidth;
 	PageGridCanvas->Width = PageGrid->Width;
 }
 
