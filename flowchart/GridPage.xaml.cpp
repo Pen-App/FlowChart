@@ -100,8 +100,8 @@ void GridPage::makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int 
 	tempImage->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerEntered);
 	tempImage->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerExited);
 	tempImage->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerPressed);
-	tempImage->DragOver += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragOver);
 	tempImage->DragStarting += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Xaml::UIElement ^, Windows::UI::Xaml::DragStartingEventArgs ^>(this, &flowchart::GridPage::Image_DragStarting);
+	tempImage->DropCompleted += ref new Windows::Foundation::TypedEventHandler<Windows::UI::Xaml::UIElement^, Windows::UI::Xaml::DropCompletedEventArgs^>(this, &flowchart::GridPage::Image_DropComplete);
 	tempImage->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragEnter);
 	tempImage->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragLeave);
 	tempImage->SetValue(Canvas::ZIndexProperty, 2);
@@ -532,13 +532,18 @@ void flowchart::GridPage::Image_DragStarting(Windows::UI::Xaml::UIElement^ sende
 		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
 		showFocusedSymbolButtons(focusedSymbolNo);
 		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
+
+		//App.xaml.h.DraggingSymbolNo 설정
+		App::draggingSymbolNo = focusedSymbolNo;
+		App::draggingSymbolType = focusedSymbolType;
 	}
 }
 
-//필요없는 메소드 xxxxx 필요없음.
-void flowchart::GridPage::Image_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+//이미지의 드래그가 끝났을 때
+void flowchart::GridPage::Image_DropComplete(Windows::UI::Xaml::UIElement ^ sender, Windows::UI::Xaml::DropCompletedEventArgs ^ args)
 {
-	
+	App::draggingSymbolNo = -1;
+	App::draggingSymbolType = -1;
 }
 
 

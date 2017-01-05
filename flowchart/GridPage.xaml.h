@@ -87,7 +87,7 @@ namespace flowchart
 		void Image_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Image_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args);
-		void Image_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void Image_DropComplete(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DropCompletedEventArgs^ args);
 		void Image_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void Image_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		
