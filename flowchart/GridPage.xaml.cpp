@@ -368,7 +368,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 {
 	if (App::selectedSymbolNumber != -1 && !isSymbolIn) { //symbol 생성 로직
 		//1. map에 새로운 symbolInfo 객체를 추가시킨다. 
-		UINT64 tempSymbolNo = App::symbolIdCount;
+		UINT64 tempSymbolNo = App::symbolIdCount;	
 		App::symbolIdCount++;
 		SymbolInfo^ tempSymbolInfo = ref new SymbolInfo();
 		tempSymbolInfo->SymbolType = App::selectedSymbolNumber;
@@ -376,7 +376,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		tempSymbolInfo->ColumnIndex = curColumnIndex;
 		tempSymbolInfo->SymbolNo = tempSymbolNo;
 		App::symbolVector->Append(tempSymbolInfo);
-
+		focusedSymbolIndex = App::symbolVector->Size - 1;
 
 		makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
 		makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
@@ -465,6 +465,13 @@ void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows
 	//1. 이미지의 symbolNo를 알아낸다. 
 	auto tempImageName = ((Image^)sender)->Name;
 	focusedSymbolNo = std::stoi(tempImageName->Data() + 3);
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		if (focusedSymbolNo == App::symbolVector->GetAt(i)->SymbolNo) {
+			focusedSymbolIndex = i;
+			break;
+		}
+	}
 
 	//2. 이미지의 symbolType을 알아낸다.
 	wchar_t tempImageType[3];
@@ -501,7 +508,14 @@ void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows
 		//1. 이미지의 symbolNo를 알아낸다. 
 		auto tempImageName = ((Image^)sender)->Name;
 		focusedSymbolNo = std::stoi(tempImageName->Data() + 3);
-		
+		for (int i = 0; i < App::symbolVector->Size; i++)
+		{
+			if (focusedSymbolNo == App::symbolVector->GetAt(i)->SymbolNo) {
+				focusedSymbolIndex = i;
+				break;
+			}
+		}
+
 		//2. 이미지의 symbolType을 알아낸다.
 		wchar_t tempImageType[3];
 		wcsncpy_s(tempImageType, tempImageName->Data(), 2);

@@ -43,6 +43,7 @@ namespace flowchart
 		bool isSymbolIn; //커서가 있는 grid안에 symbol이 존재하는가?
 		UINT64 focusedSymbolNo; //포커스된 symbolNo
 		int focusedSymbolType;
+		int focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
 
 		bool isLineDrawing; //연결선을 그리고 있는지
 		UINT64 connectorStartSymbolNo; //연결선
