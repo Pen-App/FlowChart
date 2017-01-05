@@ -35,6 +35,8 @@ App::App()
 
 	symbolIdCount = 0;
 	selectedSymbolNumber = -1;
+	draggingSymbolNo = -1;
+	draggingSymbolType = -1;
 }
 
 /// <summary>
