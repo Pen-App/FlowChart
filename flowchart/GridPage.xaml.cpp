@@ -153,6 +153,11 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 	tempButton->SetValue(parentGrid->RowProperty, rowIndex);
 	tempButton->SetValue(this->VisibilityProperty, 1); //0: visible, 1:collapsed : 그냥 놓았을 때는 버튼이 숨겨진다. 
 	tempButton->SetValue(Canvas::ZIndexProperty, 2);
+	tempButton->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Button_PointerEntered);
+	tempButton->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Button_PointerExited);
+	tempButton->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Button_DragEnter);
+	tempButton->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Button_DragLeave);
+	tempButton->AllowDrop = true;
 
 	switch (buttonType) {
 	case 1:
@@ -950,6 +955,30 @@ void flowchart::GridPage::Rectangle_PointerExited(Platform::Object^ sender, Wind
 
 
 void flowchart::GridPage::Rectangle_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+{
+	isSymbolIn = false;
+}
+
+
+void flowchart::GridPage::Button_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	isSymbolIn = true;
+}
+
+
+void flowchart::GridPage::Button_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	isSymbolIn = false;
+}
+
+
+void flowchart::GridPage::Button_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+{
+	isSymbolIn = true;
+}
+
+
+void flowchart::GridPage::Button_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
 	isSymbolIn = false;
 }
