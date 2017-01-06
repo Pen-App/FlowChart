@@ -82,13 +82,14 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 		}
 		PageGrid->UpdateLayout();
 		
-		for (int i = 0; i < App::symbolVector->Size; i++)
-		{
-			if (App::symbolVector->GetAt(i)->SymbolNo == App::draggingSymbolNo)
-			{
-				App::symbolVector->RemoveAt(i);
-			}
-		}
+		//for (int i = 0; i < App::symbolVector->Size; i++)
+		//{
+		//	if (App::symbolVector->GetAt(i)->SymbolNo == App::draggingSymbolNo)
+		//	{
+		//		App::symbolVector->RemoveAt(i);
+		//	}
+		//}
+		App::symbolVector->RemoveAt(App::focusedSymbolIndex);
 	}
 }
 

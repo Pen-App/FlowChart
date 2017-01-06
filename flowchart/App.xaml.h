@@ -31,6 +31,7 @@ namespace flowchart
 		static property Platform::Collections::Vector<SymbolInfo^>^ symbolVector;
 		static property UINT64 draggingSymbolNo;
 		static property int draggingSymbolType;
+		static property int focusedSymbolIndex;	// 선택된 symbolInfoVector의 index
 
 	private:
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);

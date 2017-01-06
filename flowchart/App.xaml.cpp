@@ -37,6 +37,7 @@ App::App()
 	selectedSymbolNumber = -1;
 	draggingSymbolNo = -1;
 	draggingSymbolType = -1;
+	focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
 }
 
 /// <summary>

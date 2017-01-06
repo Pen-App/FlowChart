@@ -405,7 +405,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		tempSymbolInfo->ColumnIndex = curColumnIndex;
 		tempSymbolInfo->SymbolNo = tempSymbolNo;
 		App::symbolVector->Append(tempSymbolInfo);
-		focusedSymbolIndex = App::symbolVector->Size - 1;
+		App::focusedSymbolIndex = App::symbolVector->Size - 1;
 
 		makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
 		makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
@@ -522,7 +522,7 @@ void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
 		if (focusedSymbolNo == App::symbolVector->GetAt(i)->SymbolNo) {
-			focusedSymbolIndex = i;
+			App::focusedSymbolIndex = i;
 			break;
 		}
 	}
@@ -565,7 +565,7 @@ void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows
 		for (int i = 0; i < App::symbolVector->Size; i++)
 		{
 			if (focusedSymbolNo == App::symbolVector->GetAt(i)->SymbolNo) {
-				focusedSymbolIndex = i;
+				App::focusedSymbolIndex = i;
 				break;
 			}
 		}
