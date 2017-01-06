@@ -135,6 +135,7 @@
                   AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <TextBox Name="testTextBox" Width="100" Height="70"></TextBox>
                 <TextBox Name="pathBox" Grid.Column="1" Grid.Row ="0" Grid.ColumnSpan="3"/>
+                <Rectangle PointerExited="Rectangle_PointerExited" DragLeave="Rectangle_DragLeave"></Rectangle>
             </Grid>
         </Canvas>
     </ScrollViewer>

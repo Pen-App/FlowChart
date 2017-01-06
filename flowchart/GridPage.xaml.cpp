@@ -56,7 +56,9 @@ void GridPage::makeRectangle(Grid^ parentGrid, int rowIndex, int columnIndex)
 
 	tempRect->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerEntered);
 	tempRect->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerPressed);
+	tempRect->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerExited);
 	tempRect->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragEnter);
+	tempRect->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragLeave);
 	parentGrid->Children->Append(tempRect);
 }
 
@@ -308,6 +310,17 @@ void GridPage::appendTopRow()
 			int rowPropertyValueInt = safe_cast<int>(rowPropertyValueObject);
 			symbolInPageGrid->SetValue(Grid::RowProperty, rowPropertyValueInt + 1);
 		}
+		else
+		{
+			Rectangle^ rt = safe_cast<Rectangle^>(symbolInPageGrid);
+			if (rt->Name->Length() != 0)
+			{
+				Object^ rowPropertyValueObject =
+					symbolInPageGrid->GetValue(Grid::RowProperty);
+				int rowPropertyValueInt = safe_cast<int>(rowPropertyValueObject);
+				rt->SetValue(Grid::RowProperty, rowPropertyValueInt + 1);
+			}
+		}
 	}
 }
 
@@ -330,6 +343,17 @@ void GridPage::appendLeftColumn()
 				symbolInPageGrid->GetValue(Grid::ColumnProperty);
 			int columnPropertyValueInt = safe_cast<int>(columnPropertyValueObject);
 			symbolInPageGrid->SetValue(Grid::ColumnProperty, columnPropertyValueInt + 1);
+		}
+		else
+		{
+			Rectangle^ rt = safe_cast<Rectangle^>(symbolInPageGrid);
+			if (rt->Name->Length() != 0)
+			{
+				Object^ columnPropertyValueObject =
+					symbolInPageGrid->GetValue(Grid::ColumnProperty);
+				int columnPropertyValueInt = safe_cast<int>(columnPropertyValueObject);
+				rt->SetValue(Grid::ColumnProperty, columnPropertyValueInt + 1);
+			}
 		}
 	}
 }
@@ -380,6 +404,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 
 		makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
 		makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
+		makeSymbolRectangle(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
 
 		showFocusedSymbolButtons(tempSymbolNo);
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
@@ -401,8 +426,9 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		}
 	}
 	else if(!isSymbolIn){ //symbol 이동 로직
+		moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
-
+		
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
 		if (curColumnIndex == 0)
 		{
@@ -420,16 +446,26 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		{
 			appendRow();
 		}
+				
+		
+		
 	}
 
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
+	
 }
 
 //마우스가 rectangle위로 올라가있으면 rectangle이 자신이 속한 행,열 인덱스를 curRowIndex와 curColumnIndex에 기록한다. 
 void flowchart::GridPage::Rectangle_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
+	auto tempRectangleName = ((Rectangle^)sender)->Name;
+	if (tempRectangleName->Length() != 0)
+	{
+		isSymbolIn = true;
+	}
+
 	auto columnIdx = ((Rectangle^)sender)->GetValue(PageGrid->ColumnProperty);
 	auto rowIdx = ((Rectangle^)sender)->GetValue(PageGrid->RowProperty);
 
@@ -442,6 +478,12 @@ void flowchart::GridPage::Rectangle_PointerEntered(Platform::Object^ sender, Win
 //마우스가 드래그된 상태에서 rectangle위로 올라가도 행,열 인덱스가 자동으로 curRowIndex와 curColumnIndex에 기록된다. 
 void flowchart::GridPage::Rectangle_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
+	auto tempRectangleName = ((Rectangle^)sender)->Name;
+	if (tempRectangleName->Length() != 0)
+	{
+		isSymbolIn = true;
+	}
+
 	auto columnIdx = ((Rectangle^)sender)->GetValue(PageGrid->ColumnProperty);
 	auto rowIdx = ((Rectangle^)sender)->GetValue(PageGrid->RowProperty);
 
@@ -452,6 +494,13 @@ void flowchart::GridPage::Rectangle_DragEnter(Platform::Object^ sender, Windows:
 //symbol이 없는 곳에서 마우스 클릭하면 모든 버튼이 숨겨진다. 
 void flowchart::GridPage::Rectangle_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
+	auto tempRectangleName = ((Rectangle^)sender)->Name;
+	if (tempRectangleName->Length() != 0)
+	{
+		isSymbolIn = true;
+	}
+
+
 	if (!isSymbolIn) {
 		hideAllButtons();
 	}
@@ -681,11 +730,13 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	Button^ tempButton2 = nullptr;
 	Button^ tempButton3 = nullptr;
 	Image^ tempImage = nullptr;
+	
 
 	tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + focusedSymbolNo));
 	tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + focusedSymbolNo));
 	tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + focusedSymbolNo));
 	tempImage = safe_cast<Image^>(PageGrid->FindName("i" + focusedSymbolType + " " + focusedSymbolNo));
+	
 
 	tempButton1->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempButton1->SetValue(parentGrid->ColumnProperty, newColumnIndex);
@@ -695,6 +746,18 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	tempButton3->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 	tempImage->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempImage->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+	
+
+
+	//parentGrid->UpdateLayout();
+}
+
+void flowchart::GridPage::moveSymbolRectangle(Grid ^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
+{
+	Rectangle^ tempRectangle = nullptr;
+	tempRectangle = safe_cast<Rectangle^>(PageGrid->FindName("r" + focusedSymbolType + " " + focusedSymbolNo));
+	tempRectangle->SetValue(parentGrid->RowProperty, newRowIndex);
+	tempRectangle->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 
 	parentGrid->UpdateLayout();
 }
@@ -856,4 +919,37 @@ void flowchart::GridPage::PageGridCanvas_PointerRelease(Platform::Object ^sender
 		PageGridCanvas->Children->RemoveAtEnd();
 		PageGridCanvas->UpdateLayout();
 	}
+}
+
+void flowchart::GridPage::makeSymbolRectangle(Grid ^ parentGrid, UINT64 symbolNo, int symbolType, int rowIndex, int columnIndex)
+{
+	Rectangle^ tempRect = ref new Rectangle();
+	tempRect->Style = RECTANGLE_STYLE;
+	auto dasharray = ref new DoubleCollection;
+	dasharray->Append(5);
+	tempRect->StrokeDashArray = dasharray;
+	tempRect->SetValue(parentGrid->ColumnProperty, columnIndex);
+	tempRect->SetValue(parentGrid->RowProperty, rowIndex);
+	tempRect->AllowDrop = true;
+	tempRect->SetValue(Canvas::ZIndexProperty, 1);
+	tempRect->SetValue(NameProperty, "r" + symbolType + " " + symbolNo);
+
+	tempRect->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerEntered);
+	tempRect->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerPressed);
+	tempRect->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerExited);
+	tempRect->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragEnter);
+	tempRect->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragLeave);
+	parentGrid->Children->Append(tempRect);
+}
+
+
+void flowchart::GridPage::Rectangle_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+	isSymbolIn = false;
+}
+
+
+void flowchart::GridPage::Rectangle_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+{
+	isSymbolIn = false;
 }
