@@ -235,6 +235,22 @@ void GridPage::makeButtons(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int 
 
 }
 
+void flowchart::GridPage::makeTitleTextBlock(Grid ^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
+{
+	TextBlock^ tempTextBlock = ref new TextBlock();
+	tempTextBlock->Style = TITLE_TEXTBLOCK;
+}
+
+void flowchart::GridPage::makeContentTextBlock(Grid ^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
+{
+	
+}
+
+void flowchart::GridPage::makeTextBlocks(Grid ^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
+{
+	
+}
+
 
 //grid를 전체 새로 그려주는 함수 : 작동 이상으로 쓰이지 않음.-----------------
 void GridPage::refreshGridPage(Grid^ parentGrid)

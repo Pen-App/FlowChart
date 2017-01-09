@@ -74,6 +74,21 @@
             <Setter Property="Width" Value="70"></Setter>
             <Setter Property="Height" Value="40"></Setter>
         </Style>
+        
+        <!--titlt바, content바 style-->
+        <Style TargetType="TextBlock" x:Name="TITLE_TEXTBLOCK" x:Key="TITLE_TEXTBLOCK" >
+            <Setter Property="VerticalAlignment" Value="Top"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+            <Setter Property="Width" Value="70"></Setter>
+            <Setter Property="Margin" Value="10"></Setter>
+            <Setter Property="TextTrimming" Value="WordEllipsis"></Setter>
+        </Style>
+
+        <Style TargetType="TextBlock" x:Name="CONTENT_TEXTBLOCK" x:Key="CONTENT_TEXTBLOCK" >
+            <Setter Property="VerticalAlignment" Value="Center"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Center"></Setter>
+        </Style>
+
 
         <!-- Flyout Detail style -->
         <Flyout Placement="Right" x:Name="FLYOUT_DETAIL" x:Key="FLYOUT_DETAIL">

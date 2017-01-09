@@ -63,6 +63,11 @@ namespace flowchart
 		void makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int rowIndex, int columnIndex);
 		void makeButtons(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex);
 
+		//TITLE_TEXTBLOCK, CONTENT_TEXTBLOCK 만들기
+		void makeTitleTextBlock(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex);
+		void makeContentTextBlock(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex);
+		void makeTextBlocks(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex);
+
 		//4. 화면 전체를 다시 그려주는 함수
 		void refreshGridPage(Grid^ parentGrid);
 
