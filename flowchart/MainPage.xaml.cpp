@@ -41,3 +41,79 @@ void flowchart::MainPage::Image_DropCompleted(Windows::UI::Xaml::UIElement^ send
 {
 	App::selectedSymbolNumber = -1;
 }
+
+void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+{
+	OutputDebugString(L"ListBox_Drop\n");
+
+	wchar_t asdf[234];
+	swprintf_s(asdf, L"draggingSymbolNo : %d\n", App::draggingSymbolNo);
+	OutputDebugString(asdf);
+
+	if (App::draggingSymbolNo != -1)
+	{
+		Button^ tempButton1 = nullptr;
+		Button^ tempButton2 = nullptr;
+		Button^ tempButton3 = nullptr;
+		Image^ tempImage = nullptr;
+
+		Page^ varGridPage = (Page^)(GridContentFrame->Content);
+		Grid^ varPageGrid = (Grid^)(varGridPage->FindName("PageGrid"));
+
+		tempButton1 = safe_cast<Button^>(varPageGrid->FindName("b1 " + App::draggingSymbolNo));
+		tempButton2 = safe_cast<Button^>(varPageGrid->FindName("b2 " + App::draggingSymbolNo));
+		tempButton3 = safe_cast<Button^>(varPageGrid->FindName("b3 " + App::draggingSymbolNo));
+		tempImage = safe_cast<Image^>(varPageGrid->FindName("i" + App::draggingSymbolType + " " + App::draggingSymbolNo));
+
+		UIElement^ UIButton1 = safe_cast<UIElement^>(varPageGrid->FindName("b1 " + App::draggingSymbolNo));
+		UIElement^ UIButton2 = safe_cast<UIElement^>(varPageGrid->FindName("b2 " + App::draggingSymbolNo));
+		UIElement^ UIButton3 = safe_cast<UIElement^>(varPageGrid->FindName("b3 " + App::draggingSymbolNo));
+		UIElement^ UIImage = safe_cast<UIElement^>(varPageGrid->FindName("i" + App::draggingSymbolType + " " + App::draggingSymbolNo));
+
+		for (int i = 0; i < varPageGrid->Children->Size; i++)
+		{			
+			if (varPageGrid->Children->GetAt(i) == UIImage)
+			{
+				for (int j = 0; j < 5; j++) {
+					varPageGrid->Children->RemoveAt(i);
+				}
+				break;
+			}
+		}
+		varPageGrid->UpdateLayout();
+		
+		//for (int i = 0; i < App::symbolVector->Size; i++)
+		//{
+		//	if (App::symbolVector->GetAt(i)->SymbolNo == App::draggingSymbolNo)
+		//	{
+		//		App::symbolVector->RemoveAt(i);
+		//	}
+		//}
+		App::symbolVector->RemoveAt(App::focusedSymbolIndex);
+	}
+}
+
+
+void flowchart::MainPage::ListBox_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
+{
+	e->AcceptedOperation = Windows::ApplicationModel::DataTransfer::DataPackageOperation::Move;
+	e->DragUIOverride->IsGlyphVisible = false; //복사, 이동, 금지 아이콘 띄우지 말기
+	e->DragUIOverride->Caption = L"Delete";
+}
+
+
+void flowchart::MainPage::ZoomInButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	Page^ varGridPage = (Page^)(GridContentFrame->Content);
+	ScrollViewer^ varScrollViewer = (ScrollViewer^)(varGridPage->FindName("PageGridScrollViewer"));
+	varScrollViewer->ZoomToFactor((varScrollViewer->ZoomFactor + 0.1));
+	varScrollViewer->UpdateLayout();
+}
+
+void flowchart::MainPage::ZoomOutButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	Page^ varGridPage = (Page^)(GridContentFrame->Content);
+	ScrollViewer^ varScrollViewer = (ScrollViewer^)(varGridPage->FindName("PageGridScrollViewer"));
+	varScrollViewer->ZoomToFactor((varScrollViewer->ZoomFactor - 0.1));
+	varScrollViewer->UpdateLayout();
+}

@@ -19,5 +19,9 @@ namespace flowchart
 	private:
 		void Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args);
 		void Image_DropCompleted(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DropCompletedEventArgs^ args);
+		void ListBox_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void ListBox_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void ZoomInButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void ZoomOutButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

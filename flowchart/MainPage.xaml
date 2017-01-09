@@ -14,6 +14,8 @@
             </CommandBar.Content>
             <AppBarButton Icon="Accept" Label="appbarbutton"/>
             <AppBarButton Icon="Cancel" Label="appbarbutton"/>
+            <AppBarButton Icon="ZoomIn" Label="ZoomIn" Click="ZoomInButtonClick"/>
+            <AppBarButton Icon="ZoomOut" Label="ZoomOut" Click="ZoomOutButtonClick"/>
         </CommandBar>
     </Page.TopAppBar>
     
@@ -30,17 +32,16 @@
             <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>
 
-        <!--앱바-->
-        <!--<AppBar Grid.Row="0"   Height="auto" Grid.ColumnSpan="3">
-            <TextBox Grid.Row="0" Grid.Column="1" Width="200" ></TextBox>
-        </AppBar>-->
-
         <Frame Name="GridContentFrame" Grid.Row="1" Grid.ColumnSpan="2" AllowDrop="True">
             <!--그리드 컨텐츠 들어갈 자리-->
         </Frame>
 
         <!--도형선택 리스트 -->
-        <ListBox CanDrag="True" Grid.Row="1" Grid.Column="2">
+        <ListBox CanDrag="True" 
+                 AllowDrop="True" 
+                 DragOver="ListBox_DragOver"
+                 Drop="ListBox_Drop" 
+                 Grid.Row="1" Grid.Column="2">
             <!--<Image DragStarting="Image_DragStarting" Drop="Image_Drop" DropCompleted="Image_DropCompleted"></Image>-->
             <ListBoxItem HorizontalAlignment="Center">
                 <Image Name="s1" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/process.png" Height="50" Width="150" Stretch="Uniform"></Image>
