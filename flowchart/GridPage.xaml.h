@@ -122,5 +122,6 @@ namespace flowchart
 		void Button_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Button_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void Button_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e);
 	};
 }
