@@ -953,3 +953,32 @@ void flowchart::GridPage::Rectangle_DragLeave(Platform::Object^ sender, Windows:
 {
 	isSymbolIn = false;
 }
+
+
+void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e)
+{
+	wchar_t debugStr[256];
+	swprintf_s(debugStr, L"zoomLevel : %f\n", PageGridScrollViewer->ZoomFactor);
+	OutputDebugString(debugStr);
+
+	while (
+		PageGridCanvas->ActualWidth * PageGridScrollViewer->ZoomFactor
+		<
+		PageGridScrollViewer->ActualWidth)
+	{
+		appendColumn();
+		PageGrid->UpdateLayout();
+		PageGridCanvas->UpdateLayout();
+		PageGridScrollViewer->UpdateLayout();
+	}
+	while (
+		PageGridCanvas->ActualHeight * PageGridScrollViewer->ZoomFactor
+		<
+		PageGridScrollViewer->ActualHeight)
+	{
+		appendRow();
+		PageGrid->UpdateLayout();
+		PageGridCanvas->UpdateLayout();
+		PageGridScrollViewer->UpdateLayout();
+	}
+}

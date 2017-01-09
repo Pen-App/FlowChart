@@ -113,5 +113,6 @@ namespace flowchart
 		void makeSymbolRectangle(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int rowIndex, int columnIndex);
 		void Rectangle_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Rectangle_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+		void PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e);
 	};
 }
