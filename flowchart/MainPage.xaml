@@ -12,6 +12,8 @@
             <CommandBar.Content>
                 <Grid/>
             </CommandBar.Content>
+            <AppBarButton Icon="OpenFile" Label="OpenFile"/>
+            <AppBarButton Icon="Save" Label="SaveFile"/>
             <AppBarButton Icon="Accept" Label="appbarbutton"/>
             <AppBarButton Icon="Cancel" Label="appbarbutton"/>
             <AppBarButton Icon="ZoomIn" Label="ZoomIn" Click="ZoomInButtonClick"/>
