@@ -43,6 +43,17 @@
             <Setter Property="Height" Value="20"/>
         </Style>
 
+        <!--4. 제목 버튼 스타일-->
+        <Style TargetType="Button" x:Name="BUTTON_STYLE_TITLE" x:Key="BUTTON_STYLE_TITLE">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="Content" Value="&#xE82E;"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+
+
+
         <!--도형별 이미지 스타일 6개-->
         <Style TargetType="Image" x:Name="IMAGE_PROCESS" x:Key="IMAGE_PROCESS">
             <Setter Property="Source" Value="Assets/process.png"></Setter>
