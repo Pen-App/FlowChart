@@ -140,7 +140,6 @@ void GridPage::makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int 
 	tempName += symbolNo;
 	tempImage->Name = tempName;
 	parentGrid->Children->Append(tempImage);
-	//parentGrid->UpdateLayout();
 }
 
 //버튼 1개 만들기 : buttonType 파라미터에 따라서 세가지 종류의 버튼을 만들수 있다. 
@@ -233,6 +232,36 @@ void GridPage::makeButtons(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int 
 	makeButton(parentGrid, symbolNo, 2, rowIndex, columnIndex);
 	makeButton(parentGrid, symbolNo, 3, rowIndex, columnIndex);
 
+}
+
+void flowchart::GridPage::makeTitleTextBlock(Grid ^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
+{
+	TextBlock^ tempTextBlock = ref new TextBlock();
+	tempTextBlock->Style = TITLE_TEXTBLOCK;
+	tempTextBlock->Name = "title " + symbolNo;
+	tempTextBlock->Text = "title " + symbolNo;
+	tempTextBlock->SetValue(Canvas::ZIndexProperty, 2);
+	tempTextBlock->SetValue(parentGrid->ColumnProperty, columnIndex);
+	tempTextBlock->SetValue(parentGrid->RowProperty, rowIndex);
+	parentGrid->Children->Append(tempTextBlock);
+}
+
+void flowchart::GridPage::makeContentTextBlock(Grid ^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
+{
+	TextBlock^ tempTextBlock = ref new TextBlock();
+	tempTextBlock->Style = CONTENT_TEXTBLOCK;
+	tempTextBlock->Name = "content " + symbolNo;
+	tempTextBlock->Text = "content " + symbolNo;
+	tempTextBlock->SetValue(Canvas::ZIndexProperty, 2);
+	tempTextBlock->SetValue(parentGrid->ColumnProperty, columnIndex);
+	tempTextBlock->SetValue(parentGrid->RowProperty, rowIndex);
+	parentGrid->Children->Append(tempTextBlock);
+}
+
+void flowchart::GridPage::makeTextBlocks(Grid ^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
+{
+	makeTitleTextBlock(parentGrid, symbolNo, rowIndex, columnIndex);
+	makeContentTextBlock(parentGrid, symbolNo, rowIndex, columnIndex);
 }
 
 
@@ -407,9 +436,12 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		App::symbolVector->Append(tempSymbolInfo);
 		App::focusedSymbolIndex = App::symbolVector->Size - 1;
 
+		
 		makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
+		makeTextBlocks(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
 		makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
 		makeSymbolRectangle(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
+		
 
 		showFocusedSymbolButtons(tempSymbolNo);
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
@@ -433,7 +465,8 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 	else if(!isSymbolIn){ //symbol 이동 로직
 		moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
-		
+		moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
 		if (curColumnIndex == 0)
 		{
@@ -761,6 +794,20 @@ void flowchart::GridPage::moveSymbolRectangle(Grid ^ parentGrid, UINT64 focusedS
 	tempRectangle->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 
 	parentGrid->UpdateLayout();
+}
+
+void flowchart::GridPage::moveTextBlocks(Grid ^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
+{
+	TextBlock^ tempTitleTextBlock = nullptr;
+	TextBlock^ tempContentTextBlock = nullptr;
+
+	tempTitleTextBlock = safe_cast<TextBlock^>(PageGrid->FindName("title " + focusedSymbolNo));
+	tempContentTextBlock = safe_cast<TextBlock^>(PageGrid->FindName("content " + focusedSymbolNo));
+
+	tempTitleTextBlock->SetValue(parentGrid->RowProperty, newRowIndex);
+	tempTitleTextBlock->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+	tempContentTextBlock->SetValue(parentGrid->RowProperty, newRowIndex);
+	tempContentTextBlock->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 }
 
 void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
