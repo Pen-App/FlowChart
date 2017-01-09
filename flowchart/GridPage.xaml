@@ -124,7 +124,8 @@
     <ScrollViewer x:Name="PageGridScrollViewer" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"
                   MinZoomFactor="0.5" MaxZoomFactor="2.0"
                   PointerWheelChanged="PageGridScrollViewer_PointerWheelChanged"
-                  SizeChanged="PageGridScrollViewer_SizeChanged">
+                  SizeChanged="PageGridScrollViewer_SizeChanged"
+                  ViewChanged="PageGridScrollViewer_ViewChanged">
         <Canvas x:Name="PageGridCanvas"
                 Width="1000" Height="700"
                 PointerPressed="PageGridCanvas_PointerPress"
