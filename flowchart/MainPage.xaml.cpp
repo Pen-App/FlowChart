@@ -74,7 +74,7 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 		{			
 			if (varPageGrid->Children->GetAt(i) == UIImage)
 			{
-				for (int j = 0; j < 7; j++) {
+				for (int j = 0; j < 8; j++) {
 					varPageGrid->Children->RemoveAt(i);
 				}
 				break;
