@@ -1054,3 +1054,21 @@ void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sen
 		PageGridScrollViewer->UpdateLayout();
 	}
 }
+
+
+void flowchart::GridPage::makeConnectLine()
+{
+
+}
+
+
+void flowchart::GridPage::moveConnectLine()
+{
+
+}
+
+
+void flowchart::GridPage::deleteConnectLine()
+{
+
+}

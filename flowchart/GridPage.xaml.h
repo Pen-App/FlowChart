@@ -127,5 +127,14 @@ namespace flowchart
 
 		//스크롤뷰어가 줌 인,아웃이 됬을 때 발생하는 이벤트
 		void PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e);
+
+		//연결선 만들어주는 함수
+		void makeConnectLine();
+		
+		//연결선 이동하는 함수
+		void moveConnectLine();
+
+		//연결선 지우는 함수
+		void deleteConnectLine();
 	};
 }
