@@ -176,9 +176,6 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 		tempButton->Style = BUTTON_STYLE_CONTENTS;
 		horizontal = 0;
 		vertical = 2;
-
-		// ContentButton을 클릭했을 때 flyout 이벤트
-		tempButton->Click += ref new RoutedEventHandler(this, &flowchart::GridPage::ContentButtonClick);
 		break;
 
 	case 3:
@@ -190,7 +187,17 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 		// DetailButton을 클릭했을 때 flyout 이벤트
 		tempButton->Click += ref new RoutedEventHandler(this, &flowchart::GridPage::DetailButtonClick);
 		break;
+
+	case 4:
+		tempButton->Name = "b4 " + symbolNo;
+		tempButton->Style = BUTTON_STYLE_TITLE;
+		horizontal = 0;
+		vertical = 0;
+		// ContentButton을 클릭했을 때 flyout 이벤트
+		tempButton->Click += ref new RoutedEventHandler(this, &flowchart::GridPage::ContentButtonClick);
+		break;
 	}
+
 	tempButton->SetValue(HorizontalAlignmentProperty, horizontal);
 	tempButton->SetValue(VerticalAlignmentProperty, vertical);
 	parentGrid->Children->Append(tempButton);
@@ -231,6 +238,7 @@ void GridPage::makeButtons(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int 
 	makeButton(parentGrid, symbolNo, 1, rowIndex, columnIndex);
 	makeButton(parentGrid, symbolNo, 2, rowIndex, columnIndex);
 	makeButton(parentGrid, symbolNo, 3, rowIndex, columnIndex);
+	makeButton(parentGrid, symbolNo, 4, rowIndex, columnIndex);
 
 }
 
@@ -655,26 +663,31 @@ void flowchart::GridPage::showFocusedSymbolButtons(UINT64 focusedSymbolNo)
 	Button^ tempButton1;
 	Button^ tempButton2;
 	Button^ tempButton3;
+	Button^ tempButton4;
 
 	for (UINT64 i = 0; i < App::symbolVector->Size; i++) {
 		tempSymbolNo = App::symbolVector->GetAt(i)->SymbolNo;
 		tempButton1 = nullptr;
 		tempButton2 = nullptr;
 		tempButton3 = nullptr;
+		tempButton4 = nullptr;
 
 		tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + tempSymbolNo));
 		tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + tempSymbolNo));
 		tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + tempSymbolNo));
+		tempButton4 = safe_cast<Button^>(PageGrid->FindName("b4 " + tempSymbolNo));
 
 		if (tempSymbolNo == focusedSymbolNo) {
 			tempButton1->SetValue(VisibilityProperty, 0);
 			tempButton2->SetValue(VisibilityProperty, 0);
 			tempButton3->SetValue(VisibilityProperty, 0);
+			tempButton4->SetValue(VisibilityProperty, 0);
 		}
 		else {
 			tempButton1->SetValue(VisibilityProperty, 1);
 			tempButton2->SetValue(VisibilityProperty, 1);
 			tempButton3->SetValue(VisibilityProperty, 1);
+			tempButton4->SetValue(VisibilityProperty, 1);
 		}
 	}
 }
@@ -685,21 +698,24 @@ void flowchart::GridPage::hideAllButtons()
 	Button^ tempButton1;
 	Button^ tempButton2;
 	Button^ tempButton3;
+	Button^ tempButton4;
+
 	for (UINT64 i = 0; i < App::symbolVector->Size; i++) {
 		tempSymbolNo = App::symbolVector->GetAt(i)->SymbolNo;
 		tempButton1 = nullptr;
 		tempButton2 = nullptr;
 		tempButton3 = nullptr;
+		tempButton4 = nullptr;
 
 		tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + tempSymbolNo));
 		tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + tempSymbolNo));
 		tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + tempSymbolNo));
-
+		tempButton4 = safe_cast<Button^>(PageGrid->FindName("b4 " + tempSymbolNo));
 
 		tempButton1->SetValue(VisibilityProperty, 1);
 		tempButton2->SetValue(VisibilityProperty, 1);
 		tempButton3->SetValue(VisibilityProperty, 1);
-
+		tempButton4->SetValue(VisibilityProperty, 1);
 	}
 	PageGrid->UpdateLayout();
 }
@@ -767,12 +783,15 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	Button^ tempButton1 = nullptr;
 	Button^ tempButton2 = nullptr;
 	Button^ tempButton3 = nullptr;
+	Button^ tempButton4 = nullptr;
 	Image^ tempImage = nullptr;
 	
 
 	tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + focusedSymbolNo));
 	tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + focusedSymbolNo));
 	tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + focusedSymbolNo));
+	tempButton4 = safe_cast<Button^>(PageGrid->FindName("b4 " + focusedSymbolNo));
+
 	tempImage = safe_cast<Image^>(PageGrid->FindName("i" + focusedSymbolType + " " + focusedSymbolNo));
 	
 
@@ -782,6 +801,9 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	tempButton2->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 	tempButton3->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempButton3->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+	tempButton4->SetValue(parentGrid->RowProperty, newRowIndex);
+	tempButton4->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+
 	tempImage->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempImage->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 }
@@ -924,9 +946,8 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		//3. startSymbolInfo의 path에 connectSymbolInfo넣기
 		startSymbolInfo->Path->Append(connectSymbolInfo);
 		
-
 		//debugging
-		String^ tempStr = L"";
+		String^ tempStr = "startSymbol:" + connectorStartSymbolNo + " ";
 		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
 		{
 			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
@@ -941,7 +962,7 @@ void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, W
 {
 	if (isLineDrawing)
 	{
-		OutputDebugString(L"move\n");
+		//OutputDebugString(L"move\n");
 		Line^ tempLine = (Line^)(PageGridCanvas->FindName(L"tempLine"));
 		auto movedPoint = e->GetCurrentPoint(this)->Position;
 		tempLine->X2 = (movedPoint.X + PageGridScrollViewer->HorizontalOffset) / PageGridScrollViewer->ZoomFactor;
@@ -1006,6 +1027,9 @@ void flowchart::GridPage::Rectangle_DragLeave(Platform::Object^ sender, Windows:
 void flowchart::GridPage::Button_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = true;
+	//1. 버튼의 symbolNo를 알아낸다. 
+	auto tempButtonName = ((Button^)sender)->Name;
+	focusedSymbolNo = std::stoi(tempButtonName->Data() + 3);
 }
 
 
