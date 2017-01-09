@@ -437,10 +437,12 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		App::symbolVector->Append(tempSymbolInfo);
 		App::focusedSymbolIndex = App::symbolVector->Size - 1;
 
+		
 		makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
+		makeTextBlocks(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
 		makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
 		makeSymbolRectangle(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
-		makeTextBlocks(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
+		
 
 		showFocusedSymbolButtons(tempSymbolNo);
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌

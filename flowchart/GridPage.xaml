@@ -83,12 +83,16 @@
             <Setter Property="Width" Value="70"></Setter>
             <Setter Property="FontSize" Value="10"></Setter>
             <Setter Property="TextTrimming" Value="WordEllipsis"></Setter>
+            <Setter Property="IsHitTestVisible" Value="False"></Setter>
+           
         </Style>
 
         <Style TargetType="TextBlock" x:Name="CONTENT_TEXTBLOCK" x:Key="CONTENT_TEXTBLOCK" >
             <Setter Property="VerticalAlignment" Value="Center"></Setter>
             <Setter Property="HorizontalAlignment" Value="Center"></Setter>
             <Setter Property="FontSize" Value="10"></Setter>
+            <Setter Property="IsHitTestVisible" Value="False"></Setter>
+
         </Style>
 
 
