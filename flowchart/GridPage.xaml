@@ -110,7 +110,7 @@
         <!-- Flyout Detail style -->
         <Flyout Placement="Right" x:Name="FLYOUT_DETAIL" x:Key="FLYOUT_DETAIL">
             <Flyout.FlyoutPresenterStyle>
-                <Style TargetType = "FlyoutPresenter" x:Name="FLYOUT_STYLE_PRESENTER">
+                <Style TargetType = "FlyoutPresenter">
                     <Setter Property = "BorderThickness" Value = "3" />
                     <Setter Property = "Background" Value="White"/>
                     <Setter Property = "BorderBrush" Value="Black" />
@@ -118,7 +118,7 @@
             </Flyout.FlyoutPresenterStyle>
             <StackPanel>
                 <TextBox 
-                    Name="DetailText" 
+                    Name="DetailText"
                     TextWrapping="Wrap"
                     Width="200"
                     Height="150"
@@ -126,6 +126,31 @@
                     PlaceholderText="세부내용을 입력해주세요"
                     AcceptsReturn="True"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    TextChanging="DetailText_TextChanging"
+                    />
+            </StackPanel>
+        </Flyout>
+
+        <!-- Flyout Content style -->
+        <Flyout Placement="Left" x:Name="FLYOUT_CONTENT" x:Key="FLYOUT_CONTENT">
+            <Flyout.FlyoutPresenterStyle>
+                <Style TargetType = "FlyoutPresenter">
+                    <Setter Property = "BorderThickness" Value = "3" />
+                    <Setter Property = "Background" Value="White"/>
+                    <Setter Property = "BorderBrush" Value="Black" />
+                </Style>
+            </Flyout.FlyoutPresenterStyle>
+            <StackPanel>
+                <TextBox 
+                    Name="ContentText"
+                    TextWrapping="Wrap"
+                    Width="200"
+                    Height="150"
+                    Header="내용"
+                    PlaceholderText="Symbol안에 들어갈 내용"
+                    AcceptsReturn="True"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    TextChanging="ContentText_TextChanging"
                     />
             </StackPanel>
         </Flyout>
@@ -141,13 +166,14 @@
             </Flyout.FlyoutPresenterStyle>
             <StackPanel>
                 <TextBox 
-                    Name="FLYOUT_TITLE_TEXT" 
+                    Name="TitleText"
                     Header="제목"
                     TextWrapping="Wrap" 
                     Width="200"
                     Height="60"
                     MaxLength="12"
                     PlaceholderText="Symbol의 제목"
+                    TextChanging="TitleText_TextChanging"
                     />
             </StackPanel>
         </Flyout>

@@ -176,6 +176,9 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 		tempButton->Style = BUTTON_STYLE_CONTENTS;
 		horizontal = 0;
 		vertical = 2;
+
+		// TitleButton을 클릭했을 때 flyout 이벤트
+		tempButton->Click += ref new RoutedEventHandler(this, &flowchart::GridPage::TitleButtonClick);
 		break;
 
 	case 3:
@@ -204,13 +207,20 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 
 }
 
-// Content버튼 클릭했을때 flyout이 나오도록
-void GridPage::ContentButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+// Title버튼 클릭했을때 flyout이 나오도록
+void GridPage::TitleButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	Button ^ button = (Button ^)sender;
 	Flyout^ flyout = ref new Flyout();	// flyout
-	TextBlock^ textblock = ref new TextBlock();
 
+	
+	if (App::focusedSymbolIndex == -1)	
+	{	// 선택된 도형이 없을시 -> 도형이 처음 생성되었을 때
+		TitleText->Text = nullptr;
+	} else
+	{	// 선택된 도형에 저장되어 있는 내용이 있을 때
+		TitleText->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Title;
+	}
 	flyout = FLYOUT_TITLE;
 	flyout->ShowAt(button);
 }
@@ -219,16 +229,33 @@ void GridPage::DetailButtonClick(Platform::Object^ sender, Windows::UI::Xaml::Ro
 {
 	Button ^ button = (Button ^)sender;
 	Flyout^ flyout = ref new Flyout();	// flyout
+	
+	if (App::focusedSymbolIndex == -1)
+	{	// 선택된 도형이 없을시 -> 도형이 처음 생성되었을 때
+		DetailText->Text = nullptr;
+	}
+	else
+	{	// 선택된 도형에 저장되어 있는 내용이 있을 때
+		DetailText->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Detail;
+	}
 	flyout = FLYOUT_DETAIL;
-	//TextBox^ textbox = ref new TextBox();
+	flyout->ShowAt(button);
+}
+// Content버튼 클릭했을때 flyout 나오도록
+void GridPage::ContentButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	Button ^ button = (Button ^)sender;
+	Flyout^ flyout = ref new Flyout();	// flyout
 
-	//textbox->Width = 150;
-	//textbox->Height = 100;
-	//textbox->TextWrapping = TextWrapping::Wrap;
-
-	//flyout->Placement = FlyoutPlacementMode::Right;	// flyout이 오른쪽에 나오도록
-	//flyout->FlyoutPresenterStyle = FLYOUT_STYLE_PRESENTER;	// textbox가 flyout을 다 차지하는 style
-	//flyout->Content = textbox;	// flyout 내부에 textbox 삽입
+	if (App::focusedSymbolIndex == -1)
+	{	// 선택된 도형이 없을시 -> 도형이 처음 생성되었을 때
+		ContentText->Text = nullptr;
+	}
+	else
+	{	// 선택된 도형에 저장되어 있는 내용이 있을 때
+		ContentText->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Content;
+	}
+	flyout = FLYOUT_CONTENT;
 	flyout->ShowAt(button);
 }
 
@@ -1095,4 +1122,28 @@ void flowchart::GridPage::moveConnectLine()
 void flowchart::GridPage::deleteConnectLine()
 {
 
+}
+
+
+// Detail Flyout에서 텍스트를 입력받는 중일 때
+void flowchart::GridPage::DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
+{
+	// vector에 저장
+	App::symbolVector->GetAt(App::focusedSymbolIndex)->Detail = sender->Text;
+}
+
+// Title Flyout에서 텍스트를 입력받는 중일 때
+void flowchart::GridPage::TitleText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
+{
+	App::symbolVector->GetAt(App::focusedSymbolIndex)->Title = sender->Text;
+	TextBlock^ title = safe_cast<TextBlock^>(PageGrid->FindName("title " + focusedSymbolNo));
+	title->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Title;
+}
+
+// Content Flyout에서 텍스트를 입력받는 중일 때
+void flowchart::GridPage::ContentText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
+{
+	App::symbolVector->GetAt(App::focusedSymbolIndex)->Content = sender->Text;
+	TextBlock^ content = safe_cast<TextBlock^>(PageGrid->FindName("content " + focusedSymbolNo));
+	content->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Content;
 }
