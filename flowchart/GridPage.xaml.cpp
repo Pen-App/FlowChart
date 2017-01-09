@@ -140,7 +140,6 @@ void GridPage::makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int 
 	tempName += symbolNo;
 	tempImage->Name = tempName;
 	parentGrid->Children->Append(tempImage);
-	//parentGrid->UpdateLayout();
 }
 
 //버튼 1개 만들기 : buttonType 파라미터에 따라서 세가지 종류의 버튼을 만들수 있다. 
