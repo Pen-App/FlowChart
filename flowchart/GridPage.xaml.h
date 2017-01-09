@@ -85,7 +85,7 @@ namespace flowchart
 		void Rectangle_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 	
 		//6. 버튼을 클릭했을때 flyout 처리부분
-		void ContentButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void TitleButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void DetailButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 
 		//7. 그리드 안에 Symbol이 존재하는지 체크 
@@ -127,5 +127,9 @@ namespace flowchart
 
 		//스크롤뷰어가 줌 인,아웃이 됬을 때 발생하는 이벤트
 		void PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e);
-	};
+		
+		// Flyout에서 글을 작성할 때 실시간으로 내용을 받아오는 이벤트
+		void DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
+		void TitleText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
+};
 }

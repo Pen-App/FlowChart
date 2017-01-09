@@ -107,7 +107,8 @@
             </Flyout.FlyoutPresenterStyle>
             <StackPanel>
                 <TextBox 
-                    Name="DetailText" 
+                    Name="DetailText"
+                    Text=""
                     TextWrapping="Wrap"
                     Width="200"
                     Height="150"
@@ -115,6 +116,7 @@
                     PlaceholderText="세부내용을 입력해주세요"
                     AcceptsReturn="True"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    TextChanging="DetailText_TextChanging"
                     />
             </StackPanel>
         </Flyout>
@@ -130,13 +132,15 @@
             </Flyout.FlyoutPresenterStyle>
             <StackPanel>
                 <TextBox 
-                    Name="FLYOUT_TITLE_TEXT" 
+                    Name="TitleText"
                     Header="제목"
+                    Text=""
                     TextWrapping="Wrap" 
                     Width="200"
                     Height="60"
                     MaxLength="12"
                     PlaceholderText="Symbol의 제목"
+                    TextChanging="TitleText_TextChanging"
                     />
             </StackPanel>
         </Flyout>
