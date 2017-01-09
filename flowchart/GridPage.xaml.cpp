@@ -751,10 +751,6 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	tempButton3->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 	tempImage->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempImage->SetValue(parentGrid->ColumnProperty, newColumnIndex);
-	
-
-
-	//parentGrid->UpdateLayout();
 }
 
 void flowchart::GridPage::moveSymbolRectangle(Grid ^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)

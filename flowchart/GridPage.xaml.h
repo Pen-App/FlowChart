@@ -117,6 +117,8 @@ namespace flowchart
 		void Button_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Button_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void Button_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
+
+		//스크롤뷰어가 줌 인,아웃이 됬을 때 발생하는 이벤트
 		void PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e);
 	};
 }
