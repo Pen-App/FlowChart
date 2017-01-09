@@ -1080,9 +1080,9 @@ void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sen
 }
 
 
-void flowchart::GridPage::makeConnectLine()
+void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 {
-
+	
 }
 
 

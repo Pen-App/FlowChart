@@ -129,7 +129,7 @@ namespace flowchart
 		void PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e);
 
 		//연결선 만들어주는 함수
-		void makeConnectLine();
+		void makeConnectLine(UINT16 from, UINT16 to);
 		
 		//연결선 이동하는 함수
 		void moveConnectLine();
