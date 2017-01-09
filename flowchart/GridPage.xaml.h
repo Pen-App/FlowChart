@@ -87,6 +87,7 @@ namespace flowchart
 		//6. 버튼을 클릭했을때 flyout 처리부분
 		void TitleButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void DetailButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void ContentButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 
 		//7. 그리드 안에 Symbol이 존재하는지 체크 
 		void Image_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
@@ -131,5 +132,6 @@ namespace flowchart
 		// Flyout에서 글을 작성할 때 실시간으로 내용을 받아오는 이벤트
 		void DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
 		void TitleText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
+		void ContentText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
 };
 }

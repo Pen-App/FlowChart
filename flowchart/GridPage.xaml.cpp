@@ -190,14 +190,24 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 		// DetailButton을 클릭했을 때 flyout 이벤트
 		tempButton->Click += ref new RoutedEventHandler(this, &flowchart::GridPage::DetailButtonClick);
 		break;
+
+	case 4:
+		tempButton->Name = "b4 " + symbolNo;
+		tempButton->Style = BUTTON_STYLE_TITLE;
+		horizontal = 0;
+		vertical = 0;
+		// ContentButton을 클릭했을 때 flyout 이벤트
+		tempButton->Click += ref new RoutedEventHandler(this, &flowchart::GridPage::ContentButtonClick);
+		break;
 	}
+
 	tempButton->SetValue(HorizontalAlignmentProperty, horizontal);
 	tempButton->SetValue(VerticalAlignmentProperty, vertical);
 	parentGrid->Children->Append(tempButton);
 
 }
 
-// Content버튼 클릭했을때 flyout이 나오도록
+// Title버튼 클릭했을때 flyout이 나오도록
 void GridPage::TitleButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	Button ^ button = (Button ^)sender;
@@ -231,6 +241,23 @@ void GridPage::DetailButtonClick(Platform::Object^ sender, Windows::UI::Xaml::Ro
 	flyout = FLYOUT_DETAIL;
 	flyout->ShowAt(button);
 }
+// Content버튼 클릭했을때 flyout 나오도록
+void GridPage::ContentButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	Button ^ button = (Button ^)sender;
+	Flyout^ flyout = ref new Flyout();	// flyout
+
+	if (App::focusedSymbolIndex == -1)
+	{	// 선택된 도형이 없을시 -> 도형이 처음 생성되었을 때
+		ContentText->Text = nullptr;
+	}
+	else
+	{	// 선택된 도형에 저장되어 있는 내용이 있을 때
+		ContentText->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Content;
+	}
+	flyout = FLYOUT_CONTENT;
+	flyout->ShowAt(button);
+}
 
 //버튼 3종류 한꺼번에 만들기
 void GridPage::makeButtons(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
@@ -238,6 +265,7 @@ void GridPage::makeButtons(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int 
 	makeButton(parentGrid, symbolNo, 1, rowIndex, columnIndex);
 	makeButton(parentGrid, symbolNo, 2, rowIndex, columnIndex);
 	makeButton(parentGrid, symbolNo, 3, rowIndex, columnIndex);
+	makeButton(parentGrid, symbolNo, 4, rowIndex, columnIndex);
 
 }
 
@@ -662,26 +690,31 @@ void flowchart::GridPage::showFocusedSymbolButtons(UINT64 focusedSymbolNo)
 	Button^ tempButton1;
 	Button^ tempButton2;
 	Button^ tempButton3;
+	Button^ tempButton4;
 
 	for (UINT64 i = 0; i < App::symbolVector->Size; i++) {
 		tempSymbolNo = App::symbolVector->GetAt(i)->SymbolNo;
 		tempButton1 = nullptr;
 		tempButton2 = nullptr;
 		tempButton3 = nullptr;
+		tempButton4 = nullptr;
 
 		tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + tempSymbolNo));
 		tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + tempSymbolNo));
 		tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + tempSymbolNo));
+		tempButton4 = safe_cast<Button^>(PageGrid->FindName("b4 " + tempSymbolNo));
 
 		if (tempSymbolNo == focusedSymbolNo) {
 			tempButton1->SetValue(VisibilityProperty, 0);
 			tempButton2->SetValue(VisibilityProperty, 0);
 			tempButton3->SetValue(VisibilityProperty, 0);
+			tempButton4->SetValue(VisibilityProperty, 0);
 		}
 		else {
 			tempButton1->SetValue(VisibilityProperty, 1);
 			tempButton2->SetValue(VisibilityProperty, 1);
 			tempButton3->SetValue(VisibilityProperty, 1);
+			tempButton4->SetValue(VisibilityProperty, 1);
 		}
 	}
 }
@@ -692,21 +725,24 @@ void flowchart::GridPage::hideAllButtons()
 	Button^ tempButton1;
 	Button^ tempButton2;
 	Button^ tempButton3;
+	Button^ tempButton4;
+
 	for (UINT64 i = 0; i < App::symbolVector->Size; i++) {
 		tempSymbolNo = App::symbolVector->GetAt(i)->SymbolNo;
 		tempButton1 = nullptr;
 		tempButton2 = nullptr;
 		tempButton3 = nullptr;
+		tempButton4 = nullptr;
 
 		tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + tempSymbolNo));
 		tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + tempSymbolNo));
 		tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + tempSymbolNo));
-
+		tempButton4 = safe_cast<Button^>(PageGrid->FindName("b4 " + tempSymbolNo));
 
 		tempButton1->SetValue(VisibilityProperty, 1);
 		tempButton2->SetValue(VisibilityProperty, 1);
 		tempButton3->SetValue(VisibilityProperty, 1);
-
+		tempButton4->SetValue(VisibilityProperty, 1);
 	}
 	PageGrid->UpdateLayout();
 }
@@ -774,12 +810,15 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	Button^ tempButton1 = nullptr;
 	Button^ tempButton2 = nullptr;
 	Button^ tempButton3 = nullptr;
+	Button^ tempButton4 = nullptr;
 	Image^ tempImage = nullptr;
 	
 
 	tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + focusedSymbolNo));
 	tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + focusedSymbolNo));
 	tempButton3 = safe_cast<Button^>(PageGrid->FindName("b3 " + focusedSymbolNo));
+	tempButton4 = safe_cast<Button^>(PageGrid->FindName("b4 " + focusedSymbolNo));
+
 	tempImage = safe_cast<Image^>(PageGrid->FindName("i" + focusedSymbolType + " " + focusedSymbolNo));
 	
 
@@ -789,6 +828,9 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	tempButton2->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 	tempButton3->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempButton3->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+	tempButton4->SetValue(parentGrid->RowProperty, newRowIndex);
+	tempButton4->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+
 	tempImage->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempImage->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 }
@@ -931,9 +973,8 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		//3. startSymbolInfo의 path에 connectSymbolInfo넣기
 		startSymbolInfo->Path->Append(connectSymbolInfo);
 		
-
 		//debugging
-		String^ tempStr = L"";
+		String^ tempStr = "startSymbol:" + connectorStartSymbolNo + " ";
 		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
 		{
 			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
@@ -948,7 +989,7 @@ void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, W
 {
 	if (isLineDrawing)
 	{
-		OutputDebugString(L"move\n");
+		//OutputDebugString(L"move\n");
 		Line^ tempLine = (Line^)(PageGridCanvas->FindName(L"tempLine"));
 		auto movedPoint = e->GetCurrentPoint(this)->Position;
 		tempLine->X2 = (movedPoint.X + PageGridScrollViewer->HorizontalOffset) / PageGridScrollViewer->ZoomFactor;
@@ -1013,6 +1054,9 @@ void flowchart::GridPage::Rectangle_DragLeave(Platform::Object^ sender, Windows:
 void flowchart::GridPage::Button_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = true;
+	//1. 버튼의 symbolNo를 알아낸다. 
+	auto tempButtonName = ((Button^)sender)->Name;
+	focusedSymbolNo = std::stoi(tempButtonName->Data() + 3);
 }
 
 
@@ -1062,17 +1106,25 @@ void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sen
 	}
 }
 
-// Detail Flyout 텍스트가 입력받는 중일 때
+// Detail Flyout에서 텍스트를 입력받는 중일 때
 void flowchart::GridPage::DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
 {
 	// vector에 저장
 	App::symbolVector->GetAt(App::focusedSymbolIndex)->Detail = sender->Text;
 }
 
-// Title Flyout 텍스트가 입력받는 중일 때
+// Title Flyout에서 텍스트를 입력받는 중일 때
 void flowchart::GridPage::TitleText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
 {
 	App::symbolVector->GetAt(App::focusedSymbolIndex)->Title = sender->Text;
 	TextBlock^ title = safe_cast<TextBlock^>(PageGrid->FindName("title " + focusedSymbolNo));
 	title->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Title;
+}
+
+// Content Flyout에서 텍스트를 입력받는 중일 때
+void flowchart::GridPage::ContentText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
+{
+	App::symbolVector->GetAt(App::focusedSymbolIndex)->Content = sender->Text;
+	TextBlock^ content = safe_cast<TextBlock^>(PageGrid->FindName("content " + focusedSymbolNo));
+	content->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Content;
 }

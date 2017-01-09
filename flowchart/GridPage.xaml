@@ -43,6 +43,17 @@
             <Setter Property="Height" Value="20"/>
         </Style>
 
+        <!--4. 제목 버튼 스타일-->
+        <Style TargetType="Button" x:Name="BUTTON_STYLE_TITLE" x:Key="BUTTON_STYLE_TITLE">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+            <Setter Property="Content" Value="&#xE82E;"/>
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+        </Style>
+
+
+
         <!--도형별 이미지 스타일 6개-->
         <Style TargetType="Image" x:Name="IMAGE_PROCESS" x:Key="IMAGE_PROCESS">
             <Setter Property="Source" Value="Assets/process.png"></Setter>
@@ -99,7 +110,7 @@
         <!-- Flyout Detail style -->
         <Flyout Placement="Right" x:Name="FLYOUT_DETAIL" x:Key="FLYOUT_DETAIL">
             <Flyout.FlyoutPresenterStyle>
-                <Style TargetType = "FlyoutPresenter" x:Name="FLYOUT_STYLE_PRESENTER">
+                <Style TargetType = "FlyoutPresenter">
                     <Setter Property = "BorderThickness" Value = "3" />
                     <Setter Property = "Background" Value="White"/>
                     <Setter Property = "BorderBrush" Value="Black" />
@@ -108,7 +119,6 @@
             <StackPanel>
                 <TextBox 
                     Name="DetailText"
-                    Text=""
                     TextWrapping="Wrap"
                     Width="200"
                     Height="150"
@@ -117,6 +127,30 @@
                     AcceptsReturn="True"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                     TextChanging="DetailText_TextChanging"
+                    />
+            </StackPanel>
+        </Flyout>
+
+        <!-- Flyout Content style -->
+        <Flyout Placement="Left" x:Name="FLYOUT_CONTENT" x:Key="FLYOUT_CONTENT">
+            <Flyout.FlyoutPresenterStyle>
+                <Style TargetType = "FlyoutPresenter">
+                    <Setter Property = "BorderThickness" Value = "3" />
+                    <Setter Property = "Background" Value="White"/>
+                    <Setter Property = "BorderBrush" Value="Black" />
+                </Style>
+            </Flyout.FlyoutPresenterStyle>
+            <StackPanel>
+                <TextBox 
+                    Name="ContentText"
+                    TextWrapping="Wrap"
+                    Width="200"
+                    Height="150"
+                    Header="내용"
+                    PlaceholderText="Symbol안에 들어갈 내용"
+                    AcceptsReturn="True"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto"
+                    TextChanging="ContentText_TextChanging"
                     />
             </StackPanel>
         </Flyout>
@@ -134,7 +168,6 @@
                 <TextBox 
                     Name="TitleText"
                     Header="제목"
-                    Text=""
                     TextWrapping="Wrap" 
                     Width="200"
                     Height="60"
