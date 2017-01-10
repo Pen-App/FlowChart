@@ -19,12 +19,15 @@ using namespace Windows::UI::Xaml::Data;
 using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
+using namespace Windows::UI::ViewManagement;
 
 // 빈 페이지 항목 템플릿은 http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 에 문서화되어 있습니다.
 
 MainPage::MainPage()
 {
 	InitializeComponent();
+	ApplicationView::PreferredLaunchViewSize = Size(1000, 700);
+	ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
 	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 }
 
