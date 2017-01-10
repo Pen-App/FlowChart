@@ -132,7 +132,7 @@ namespace flowchart
 		void makeConnectLine(UINT16 from, UINT16 to);
 
 		//연결선 이동하는 함수
-		void moveConnectLine();
+		void moveConnectLine(UINT16 movedSymbolNo);
 
 		//연결선 지우는 함수
 		void deleteConnectLine();
