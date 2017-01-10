@@ -973,6 +973,13 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		//3. startSymbolInfo의 path에 connectSymbolInfo넣기
 		startSymbolInfo->Path->Append(connectSymbolInfo);
 		
+		//4. 간이 연결선 삭제
+		PageGridCanvas->Children->RemoveAtEnd();
+
+		//5. 실제 연결선 생성
+		makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
+		isLineDrawing = false;
+
 		//debugging
 		String^ tempStr = "startSymbol:" + connectorStartSymbolNo + " ";
 		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
@@ -983,6 +990,12 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		
 	}
 	OutputDebugString(L"canvas_press!!!\n");
+	if (isLineDrawing)
+	{
+		isLineDrawing = false;
+		PageGridCanvas->Children->RemoveAtEnd();
+		PageGridCanvas->UpdateLayout();
+	}
 }
 
 void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
@@ -1000,20 +1013,6 @@ void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, W
 	{
 		mouseXPos = e->GetCurrentPoint(this)->Position.X;
 		mouseYPos = e->GetCurrentPoint(this)->Position.Y;
-	}
-}
-
-void flowchart::GridPage::PageGridCanvas_PointerRelease(Platform::Object ^sender,
-	Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e)
-{
-	//throw ref new Platform::NotImplementedException();
-	OutputDebugString(L"Release\n");
-
-	if (isLineDrawing)
-	{
-		isLineDrawing = false;
-		PageGridCanvas->Children->RemoveAtEnd();
-		PageGridCanvas->UpdateLayout();
 	}
 }
 
@@ -1109,7 +1108,43 @@ void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sen
 
 void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 {
+	SymbolInfo^ fromInfo = nullptr;
+	SymbolInfo^ toInfo = nullptr;
+
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		SymbolInfo^ tempInfo = App::symbolVector->GetAt(i);
+
+		if (tempInfo->SymbolNo == from)
+		{
+			fromInfo = tempInfo;
+		}
+		else if (tempInfo->SymbolNo == to)
+		{
+			toInfo = tempInfo;
+		}
+	}
+
+	double fromXPos, fromYPos;
+	double toXPos, toYPos;
 	
+	fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+	fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+	toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+	toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+
+	Line^ connectLine = ref new Line;
+
+	wchar_t connectLineNameWc[200];
+	swprintf_s(connectLineNameWc, L"connectLine %d to %d", from, to);
+	connectLine->Name = ref new String(connectLineNameWc);
+	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+	connectLine->StrokeThickness = 1;
+	connectLine->X1 = fromXPos;
+	connectLine->Y1 = fromYPos;
+	connectLine->X2 = toXPos;
+	connectLine->Y2 = toYPos;
+	PageGridCanvas->Children->Append(connectLine);
 }
 
 

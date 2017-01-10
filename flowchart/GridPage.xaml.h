@@ -115,7 +115,6 @@ namespace flowchart
 		void ConnectorButtonPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void PageGridCanvas_PointerPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void PageGridCanvas_PointerMove(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
-		void PageGridCanvas_PointerRelease(Platform::Object ^sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e);
 
 		// symbol 이미지 밑에 깔아서 함께 움직이는 rectangle 만들기 
 		void makeSymbolRectangle(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int rowIndex, int columnIndex);
