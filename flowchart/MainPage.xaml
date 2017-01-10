@@ -8,16 +8,36 @@
     mc:Ignorable="d">
 
     <Page.TopAppBar>
-        <CommandBar>
+        <CommandBar
+            VerticalAlignment="Top"
+            VerticalContentAlignment="Top"
+            IsSticky="True"
+            Background="#0B467B" 
+            Foreground="White" 
+            IsOpen="True">
             <CommandBar.Content>
-                <Grid/>
+                <StackPanel Orientation="Horizontal" Margin="20,0">
+                    <AppBarButton Icon="OpenFile" Label="OpenFile" Foreground="White"/>
+                    <AppBarButton Icon="Save" Label="SaveFile" Foreground="White"/>
+                    <AppBarSeparator/>
+                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" Padding="13">
+                        <TextBlock Text="File Name" 
+                               FontSize="18"
+                               VerticalAlignment="Center"
+                               Margin="0,0,20,0"
+                               />
+                        <TextBox Width="400" 
+                             VerticalAlignment="Center"
+                             HorizontalAlignment="Center"
+                             />
+                    </StackPanel>
+                </StackPanel>
             </CommandBar.Content>
-            <AppBarButton Icon="OpenFile" Label="OpenFile"/>
-            <AppBarButton Icon="Save" Label="SaveFile"/>
-            <AppBarButton Icon="Accept" Label="appbarbutton"/>
-            <AppBarButton Icon="Cancel" Label="appbarbutton"/>
-            <AppBarButton Icon="ZoomIn" Label="ZoomIn" Click="ZoomInButtonClick"/>
-            <AppBarButton Icon="ZoomOut" Label="ZoomOut" Click="ZoomOutButtonClick"/>
+            <!--<AppBarButton Icon="OpenFile" Label="OpenFile" Foreground="White"/>
+            <AppBarButton Icon="Save" Label="SaveFile" Foreground="White"/>-->
+            <AppBarSeparator/>
+            <AppBarButton Icon="ZoomIn" Label="ZoomIn" Click="ZoomInButtonClick" Foreground="White"/>
+            <AppBarButton Icon="ZoomOut" Label="ZoomOut" Click="ZoomOutButtonClick" Foreground="White"/>
         </CommandBar>
     </Page.TopAppBar>
     
@@ -43,7 +63,10 @@
                  AllowDrop="True" 
                  DragOver="ListBox_DragOver"
                  Drop="ListBox_Drop" 
-                 Grid.Row="1" Grid.Column="2">
+                 Grid.Row="1" Grid.Column="2"
+                 Padding="20"
+                 Background="#B5D6EC"
+                 >
             <!--<Image DragStarting="Image_DragStarting" Drop="Image_Drop" DropCompleted="Image_DropCompleted"></Image>-->
             <ListBoxItem HorizontalAlignment="Center">
                 <Image Name="s1" DragStarting="Image_DragStarting" DropCompleted="Image_DropCompleted" CanDrag="True" Source="/Assets/process.png" Height="50" Width="150" Stretch="Uniform"></Image>
