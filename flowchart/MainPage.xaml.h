@@ -23,5 +23,6 @@ namespace flowchart
 		void ListBox_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void ZoomInButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void ZoomOutButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void deleteConnectLine(UINT16 deleteSymbolNo);
 	};
 }

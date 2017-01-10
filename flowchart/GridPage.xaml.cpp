@@ -391,6 +391,26 @@ void GridPage::appendTopRow()
 			}
 		}
 	}
+
+	//벡터 내용 수정
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		App::symbolVector->GetAt(i)->RowIndex++;
+	}
+
+	//연결선 한 행의 길이씩 아래로 옴김
+	for (int i = 0; i < PageGridCanvas->Children->Size; i++)
+	{
+		UIElement^ pageGridCanvasChild = PageGridCanvas->Children->GetAt(i);
+		
+		swprintf_s(elementType, L"%s", pageGridCanvasChild->ToString()->Data());
+		if (wcscmp(elementType, L"Windows.UI.Xaml.Shapes.Line") == 0)
+		{
+			Line^ connectorLine = safe_cast<Line^>(pageGridCanvasChild);
+			connectorLine->Y1 += rowHeight;
+			connectorLine->Y2 += rowHeight;
+		}
+	}
 }
 
 void GridPage::appendLeftColumn()
@@ -423,6 +443,26 @@ void GridPage::appendLeftColumn()
 				int columnPropertyValueInt = safe_cast<int>(columnPropertyValueObject);
 				rt->SetValue(Grid::ColumnProperty, columnPropertyValueInt + 1);
 			}
+		}
+	}
+
+	//벡터 내용 수정
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		App::symbolVector->GetAt(i)->ColumnIndex++;
+	}
+
+	//연결선 한 열의 길이씩 오른쪽으로 옴김
+	for (int i = 0; i < PageGridCanvas->Children->Size; i++)
+	{
+		UIElement^ pageGridCanvasChild = PageGridCanvas->Children->GetAt(i);
+
+		swprintf_s(elementType, L"%s", pageGridCanvasChild->ToString()->Data());
+		if (wcscmp(elementType, L"Windows.UI.Xaml.Shapes.Line") == 0)
+		{
+			Line^ connectorLine = safe_cast<Line^>(pageGridCanvasChild);
+			connectorLine->X1 += columnWidth;
+			connectorLine->X2 += columnWidth;
 		}
 	}
 }
@@ -501,6 +541,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+		moveConnectLine(focusedSymbolNo);
 
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
 		if (curColumnIndex == 0)
@@ -519,9 +560,6 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		{
 			appendRow();
 		}
-				
-		
-		
 	}
 
 	PageGrid->UpdateLayout();
@@ -833,6 +871,16 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 
 	tempImage->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempImage->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		if (App::symbolVector->GetAt(i)->SymbolNo == focusedSymbolNo)
+		{
+			App::symbolVector->GetAt(i)->ColumnIndex = newColumnIndex;
+			App::symbolVector->GetAt(i)->RowIndex = newRowIndex;
+			break;
+		}
+	}
 }
 
 void flowchart::GridPage::moveSymbolRectangle(Grid ^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
@@ -973,6 +1021,13 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		//3. startSymbolInfo의 path에 connectSymbolInfo넣기
 		startSymbolInfo->Path->Append(connectSymbolInfo);
 		
+		//4. 간이 연결선 삭제
+		PageGridCanvas->Children->RemoveAtEnd();
+
+		//5. 실제 연결선 생성
+		makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
+		isLineDrawing = false;
+
 		//debugging
 		String^ tempStr = "startSymbol:" + connectorStartSymbolNo + " ";
 		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
@@ -983,6 +1038,12 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		
 	}
 	OutputDebugString(L"canvas_press!!!\n");
+	if (isLineDrawing)
+	{
+		isLineDrawing = false;
+		PageGridCanvas->Children->RemoveAtEnd();
+		PageGridCanvas->UpdateLayout();
+	}
 }
 
 void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
@@ -1000,20 +1061,6 @@ void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, W
 	{
 		mouseXPos = e->GetCurrentPoint(this)->Position.X;
 		mouseYPos = e->GetCurrentPoint(this)->Position.Y;
-	}
-}
-
-void flowchart::GridPage::PageGridCanvas_PointerRelease(Platform::Object ^sender,
-	Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e)
-{
-	//throw ref new Platform::NotImplementedException();
-	OutputDebugString(L"Release\n");
-
-	if (isLineDrawing)
-	{
-		isLineDrawing = false;
-		PageGridCanvas->Children->RemoveAtEnd();
-		PageGridCanvas->UpdateLayout();
 	}
 }
 
@@ -1105,6 +1152,137 @@ void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sen
 		PageGridScrollViewer->UpdateLayout();
 	}
 }
+
+
+void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
+{
+	SymbolInfo^ fromInfo = nullptr;
+	SymbolInfo^ toInfo = nullptr;
+
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		SymbolInfo^ tempInfo = App::symbolVector->GetAt(i);
+
+		if (tempInfo->SymbolNo == from)
+		{
+			fromInfo = tempInfo;
+		}
+		else if (tempInfo->SymbolNo == to)
+		{
+			toInfo = tempInfo;
+		}
+	}
+
+	double fromXPos, fromYPos;
+	double toXPos, toYPos;
+	
+	fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+	fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+	toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+	toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+
+	Line^ connectLine = ref new Line;
+
+	wchar_t connectLineNameWc[200];
+	swprintf_s(connectLineNameWc, L"connectLine %d to %d", from, to);
+	connectLine->Name = ref new String(connectLineNameWc);
+	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+	connectLine->StrokeThickness = 1;
+	connectLine->X1 = fromXPos;
+	connectLine->Y1 = fromYPos;
+	connectLine->X2 = toXPos;
+	connectLine->Y2 = toYPos;
+	PageGridCanvas->Children->Append(connectLine);
+}
+
+
+void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
+{
+	//move된 심볼의 정보를 찾는다
+	SymbolInfo^ movedSymbolInfo = nullptr;
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		if (App::symbolVector->GetAt(i)->SymbolNo == movedSymbolNo)
+		{
+			movedSymbolInfo = App::symbolVector->GetAt(i);
+			break;
+		}
+	}
+
+	//모든 심볼정보를 순회하며, move된 심볼과 연결된 심볼의 연결선을 알맞게 움직여준다
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
+
+		//움직인 심볼에서 나온 선을 움직인다
+		if (tempSymbolInfo == movedSymbolInfo)
+		{
+			//연결된 심볼의 정보를 순회
+			for (int j = 0; j < movedSymbolInfo->Path->Size; j++)
+			{
+				//선이름 생성
+				SymbolInfo^ connectSymbolInfo = movedSymbolInfo->Path->GetAt(j);
+				String^ connectLineNameStr = L"connectLine ";
+				connectLineNameStr += movedSymbolInfo->SymbolNo;
+				connectLineNameStr += L" to ";
+				connectLineNameStr += connectSymbolInfo->SymbolNo;
+
+				//선이름으로 선을 찾아서 움직여줌
+				UIElement^ childPageGridCanvas = nullptr;
+				for (int k = 0; k < PageGridCanvas->Children->Size; k++)
+				{
+					childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
+					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
+					{
+						Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+						{
+							connectLine->X1 = (tempSymbolInfo->ColumnIndex * columnWidth) + (columnWidth/2.0);
+							connectLine->Y1 = (tempSymbolInfo->RowIndex * rowHeight) + (rowHeight/2.0);
+							break;
+						}
+					}
+				}
+			}
+		}
+		//다른 심볼에서 나온 움직인 심볼과 연결된 선을 움직인다
+		else
+		{
+			//연결된 심볼의 정보를 순회
+			for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				//움직인 심볼과 연결됨
+				if (tempSymbolInfo->Path->GetAt(j) == movedSymbolInfo)
+				{
+					//선이름 생성
+					String^ connectLineNameStr = L"connectLine ";
+					connectLineNameStr += tempSymbolInfo->SymbolNo;
+					connectLineNameStr += L" to ";
+					connectLineNameStr += movedSymbolNo;
+
+					//선이름으로 선을 찾아서 움직여줌
+					UIElement^ childPageGridCanvas = nullptr;
+					for (int k = 0; k < PageGridCanvas->Children->Size; k++)
+					{
+						childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
+						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
+						{
+							Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+							{
+								connectLine->X2 = (movedSymbolInfo->ColumnIndex * columnWidth) + (columnWidth / 2.0);
+								connectLine->Y2 = (movedSymbolInfo->RowIndex * rowHeight) + (rowHeight / 2.0);
+								break;
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
+}
+
 
 // Detail Flyout에서 텍스트를 입력받는 중일 때
 void flowchart::GridPage::DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
