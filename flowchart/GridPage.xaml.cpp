@@ -1284,12 +1284,6 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 }
 
 
-void flowchart::GridPage::deleteConnectLine()
-{
-
-}
-
-
 // Detail Flyout에서 텍스트를 입력받는 중일 때
 void flowchart::GridPage::DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
 {
