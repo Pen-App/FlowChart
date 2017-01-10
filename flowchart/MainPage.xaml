@@ -19,8 +19,8 @@
             >
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Margin="20,0">
-                    <AppBarButton Icon="OpenFile" Label="OpenFile" Foreground="White"/>
-                    <AppBarButton Icon="Save" Label="SaveFile" Foreground="White"/>
+                    <AppBarButton x:Name="OpenFile" Icon="OpenFile" Label="OpenFile" Click="OpenFile_Click" Foreground="White"/>
+                    <AppBarButton x:Name="SaveFile" Icon="Save" Label="SaveFile" Click="SaveFile_Click" Foreground="White"/>
                     <AppBarSeparator/>
                     <StackPanel Orientation="Horizontal" Margin="20,0,0,0" Padding="13">
                         <TextBlock Text="File Name" 
@@ -36,8 +36,7 @@
                     </StackPanel>
                 </StackPanel>
             </CommandBar.Content>
-            <!--<AppBarButton Icon="OpenFile" Label="OpenFile" Foreground="White"/>
-            <AppBarButton Icon="Save" Label="SaveFile" Foreground="White"/>-->
+
             <AppBarSeparator/>
             <AppBarButton Icon="ZoomIn" Label="ZoomIn" Click="ZoomInButtonClick" Foreground="White"/>
             <AppBarButton Icon="ZoomOut" Label="ZoomOut" Click="ZoomOutButtonClick" Foreground="White"/>

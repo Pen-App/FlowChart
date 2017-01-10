@@ -19,7 +19,9 @@ using namespace Windows::UI::Xaml::Data;
 using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
-using namespace Windows::UI::ViewManagement;
+using namespace Windows::UI::ViewManagement;	// ApplicationView 크기 관리
+using namespace Windows::Data::Xml::Dom;	// 파일 입출력
+using namespace Windows::Storage::Pickers;	// 선택기 사용 파일저장
 
 // 빈 페이지 항목 템플릿은 http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 에 문서화되어 있습니다.
 
@@ -84,14 +86,7 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 			}
 		}
 		varPageGrid->UpdateLayout();
-		
-		//for (int i = 0; i < App::symbolVector->Size; i++)
-		//{
-		//	if (App::symbolVector->GetAt(i)->SymbolNo == App::draggingSymbolNo)
-		//	{
-		//		App::symbolVector->RemoveAt(i);
-		//	}
-		//}
+
 		App::symbolVector->RemoveAt(App::focusedSymbolIndex);
 	}
 }
@@ -119,4 +114,18 @@ void flowchart::MainPage::ZoomOutButtonClick(Platform::Object^ sender, Windows::
 	ScrollViewer^ varScrollViewer = (ScrollViewer^)(varGridPage->FindName("PageGridScrollViewer"));
 	varScrollViewer->ZoomToFactor((varScrollViewer->ZoomFactor - 0.1));
 	varScrollViewer->UpdateLayout();
+}
+
+// 파일 오픈
+void flowchart::MainPage::OpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+
+}
+
+// 파일 저장
+void flowchart::MainPage::SaveFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	XmlDocument^ xmlDocument = ref new XmlDocument;	// xml 문서형식 사용
+	XmlElement^ rootElement = xmlDocument->CreateElement(FileName->Text);	// root 항목 설정
+	xmlDocument->AppendChild(rootElement);	// 이항목이 xmlDocument의 root항목이 될수 있게 추가
 }
