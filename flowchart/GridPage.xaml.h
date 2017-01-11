@@ -30,10 +30,10 @@ namespace flowchart
 	public:
 		GridPage();
 
-		
+
 
 	private:
-		
+
 		int curRowIndex; //그리드의 행,열 인덱스
 		int curColumnIndex;
 
@@ -55,7 +55,7 @@ namespace flowchart
 
 		//1. 배경 rectangle 만들기
 		void makeRectangle(Grid^ parentGrid, int rowIndex, int columnIndex);
-		
+
 		//2. symbol이미지 그려주기 
 		void makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int rowIndex, int columnIndex);
 
@@ -79,11 +79,11 @@ namespace flowchart
 
 		void PageGrid_DragOver(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
-		
+
 		void Rectangle_PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Rectangle_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void Rectangle_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
-	
+
 		//6. 버튼을 클릭했을때 flyout 처리부분
 		void TitleButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void DetailButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
@@ -97,7 +97,7 @@ namespace flowchart
 		void Image_DropComplete(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DropCompletedEventArgs^ args);
 		void Image_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
 		void Image_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
-		
+
 		//. focused 된 버튼만 보여주게 만드는 함수, 모든 버튼을 숨기는 함수
 		void showFocusedSymbolButtons(UINT64 focusedSymbolNo);
 		void hideAllButtons();
@@ -115,7 +115,6 @@ namespace flowchart
 		void ConnectorButtonPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void PageGridCanvas_PointerPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void PageGridCanvas_PointerMove(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
-		void PageGridCanvas_PointerRelease(Platform::Object ^sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^e);
 
 		// symbol 이미지 밑에 깔아서 함께 움직이는 rectangle 만들기 
 		void makeSymbolRectangle(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int rowIndex, int columnIndex);
@@ -128,10 +127,16 @@ namespace flowchart
 
 		//스크롤뷰어가 줌 인,아웃이 됬을 때 발생하는 이벤트
 		void PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e);
-		
+
+		//연결선 만들어주는 함수
+		void makeConnectLine(UINT16 from, UINT16 to);
+
+		//연결선 이동하는 함수
+		void moveConnectLine(UINT16 movedSymbolNo);
+
 		// Flyout에서 글을 작성할 때 실시간으로 내용을 받아오는 이벤트
 		void DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
 		void TitleText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
 		void ContentText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
-};
+	};
 }

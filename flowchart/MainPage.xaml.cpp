@@ -85,6 +85,9 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 				break;
 			}
 		}
+
+		deleteConnectLine(App::draggingSymbolNo);
+
 		varPageGrid->UpdateLayout();
 
 		App::symbolVector->RemoveAt(App::focusedSymbolIndex);
@@ -128,4 +131,92 @@ void flowchart::MainPage::SaveFile_Click(Platform::Object^ sender, Windows::UI::
 	XmlDocument^ xmlDocument = ref new XmlDocument;	// xml 문서형식 사용
 	XmlElement^ rootElement = xmlDocument->CreateElement(FileName->Text);	// root 항목 설정
 	xmlDocument->AppendChild(rootElement);	// 이항목이 xmlDocument의 root항목이 될수 있게 추가
+}
+
+void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
+{
+	Page^ varGridPage = (Page^)(GridContentFrame->Content);
+	Canvas^ varPageGridCanvas = safe_cast<Canvas^>(varGridPage->FindName("PageGridCanvas"));
+
+	//삭제된 심볼의 정보를 찾는다
+	SymbolInfo^ deleteSymbolInfo = nullptr;
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		if (App::symbolVector->GetAt(i)->SymbolNo == deleteSymbolNo)
+		{
+			deleteSymbolInfo = App::symbolVector->GetAt(i);
+			break;
+		}
+	}
+
+	//모든 심볼정보를 순회하며, 삭제된 심볼과 연결된 심볼의 연결선을 삭제한다.
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
+
+		//삭제된 심볼에서 나온 선을 삭제한다.
+		if (tempSymbolInfo == deleteSymbolInfo)
+		{
+			//연결된 심볼의 정보를 순회
+			for (int j = 0; j < deleteSymbolInfo->Path->Size; j++)
+			{
+				//선이름 생성
+				SymbolInfo^ connectSymbolInfo = deleteSymbolInfo->Path->GetAt(j);
+				String^ connectLineNameStr = L"connectLine ";
+				connectLineNameStr += deleteSymbolInfo->SymbolNo;
+				connectLineNameStr += L" to ";
+				connectLineNameStr += connectSymbolInfo->SymbolNo;
+
+				//선이름으로 선을 찾아서 삭제
+				UIElement^ childPageGridCanvas = nullptr;
+				for (int k = 0; k < varPageGridCanvas->Children->Size; k++)
+				{
+					childPageGridCanvas = varPageGridCanvas->Children->GetAt(k);
+					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
+					{
+						Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+						{
+							varPageGridCanvas->Children->RemoveAt(k);
+							break;
+						}
+					}
+				}
+			}
+		}
+		//다른 심볼에서 나온 삭제된 심볼과 연결된 선을 삭제한다
+		else
+		{
+			//연결된 심볼의 정보를 순회
+			for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				//삭제된 심볼과 연결됨
+				if (tempSymbolInfo->Path->GetAt(j) == deleteSymbolInfo)
+				{
+					//선이름 생성
+					String^ connectLineNameStr = L"connectLine ";
+					connectLineNameStr += tempSymbolInfo->SymbolNo;
+					connectLineNameStr += L" to ";
+					connectLineNameStr += deleteSymbolNo;
+
+					//선이름으로 선을 찾아서 삭제함
+					UIElement^ childPageGridCanvas = nullptr;
+					for (int k = 0; k < varPageGridCanvas->Children->Size; k++)
+					{
+						childPageGridCanvas = varPageGridCanvas->Children->GetAt(k);
+						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
+						{
+							Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+							{
+								varPageGridCanvas->Children->RemoveAt(k);
+								break;
+							}
+						}
+					}
+					break;
+				}
+			}
+		}
+	}
 }

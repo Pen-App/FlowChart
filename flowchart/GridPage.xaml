@@ -191,7 +191,6 @@
         <Canvas x:Name="PageGridCanvas"
                 Width="1000" Height="700"
                 PointerPressed="PageGridCanvas_PointerPress"
-                PointerReleased="PageGridCanvas_PointerRelease" 
                 PointerMoved="PageGridCanvas_PointerMove">
             <Grid Name="PageGrid" 
                   Width="1000" Height="700"
