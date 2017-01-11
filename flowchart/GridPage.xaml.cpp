@@ -1025,7 +1025,10 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		PageGridCanvas->Children->RemoveAtEnd();
 
 		//5. 실제 연결선 생성
-		makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
+		//makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
+		makeConnectorLinesAll();
+		
+		
 		isLineDrawing = false;
 
 		//debugging
@@ -1305,4 +1308,214 @@ void flowchart::GridPage::ContentText_TextChanging(Windows::UI::Xaml::Controls::
 	App::symbolVector->GetAt(App::focusedSymbolIndex)->Content = sender->Text;
 	TextBlock^ content = safe_cast<TextBlock^>(PageGrid->FindName("content " + focusedSymbolNo));
 	content->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Content;
+}
+
+// 두 startSymbol에 대한 endSymbol의 방향을 알아내는 함수
+int flowchart::GridPage::getEndSymbolDirection(int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex)
+{
+	int horizontalDiff = 0; //좌우 위치 차이
+	int verticalDiff = 0; // 상하 위치 차이
+
+	//1. 위치 차이를 구한다. 
+	horizontalDiff = startColumnIndex - endColumnIndex;
+	verticalDiff = startRowIndex - endRowIndex;
+
+	//2. 높이가 같을 때 즉 상하위치차가 0일때 => 좌, 우 만 가르쳐 주면 된다. 
+	if (verticalDiff == 0)
+	{
+		if (horizontalDiff > 0) //start가 오른쪽에 있을 때, end는 좌에 있겠지.
+		{
+			return DIRECTION::LEFT;
+		}
+		else
+		{
+			return DIRECTION::RIGHT;
+		}
+	}
+
+	//3. 좌우가 같을 때 즉 좌우 위치차가 0일때 => 상, 하만 가르쳐 주면 된다. 
+	if (horizontalDiff == 0)
+	{
+		if (verticalDiff > 0) // start가 아래쪽에 있다. end는 위에 있겠지.
+		{
+			return DIRECTION::UP;
+		}
+		else
+		{
+			return DIRECTION::DOWN;
+		}
+	}
+
+	//------------대각선 방향들 
+	if (verticalDiff > 0) // start가 아래 쪽에 있는 상황, 즉 upleft, upright 가르쳐주면 된다. 
+	{
+		if (horizontalDiff > 0)
+		{
+			return DIRECTION::UPLEFT;
+		}
+		else
+		{
+			return DIRECTION::UPRIGHT;
+		}
+	}
+	else
+	{
+		if (horizontalDiff > 0)
+		{
+			return DIRECTION::DOWNLEFT;
+		}
+		else
+		{
+			return DIRECTION::DOWNRIGHT;
+		}
+	}
+
+	
+
+}
+
+// symbolInfo의 row, column index를 알아내는 함수
+int flowchart::GridPage::getRowIndex(Grid ^ parentGrid, int symbolType, UINT64 symbolNo)
+{
+	Image^ tempImage = safe_cast<Image^>(parentGrid->FindName("i" + symbolType + " " + symbolNo));
+	return safe_cast<int>(tempImage->GetValue(parentGrid->RowProperty));
+}
+int flowchart::GridPage::getColumnIndex(Grid ^ parentGrid, int symbolType, UINT64 symbolNo)
+{
+	Image^ tempImage = safe_cast<Image^>(parentGrid->FindName("i" + symbolType + " " + symbolNo));
+	return safe_cast<int>(tempImage->GetValue(parentGrid->ColumnProperty));
+}
+
+void flowchart::GridPage::makeConnectorLinesAll()
+{
+	//1. App::symbolVector를 돈다. 
+	for (UINT64 i = 0; i < App::symbolVector->Size; i++)
+	{
+		SymbolInfo^ startSymbolInfo = App::symbolVector->GetAt(i); //symbolInfo 하나 고른다.
+		UINT64 startSymbolNo = startSymbolInfo->SymbolNo;
+		int startSymbolType = startSymbolInfo->SymbolType;
+		
+		//2. 두번째 루프를 돈다. 선택된 symbolInfo와 연결된 symbolInfo들을 살펴본다. 
+		for (UINT64 j = 0; j < startSymbolInfo->Path->Size; j++)
+		{
+			SymbolInfo^ endSymbolInfo = startSymbolInfo->Path->GetAt(j); //연결된 symbolInfo를 하나 고른다.
+			UINT64 endSymbolNo = endSymbolInfo->SymbolNo;
+			int endSymbolType = endSymbolInfo->SymbolType;
+			
+			makeConnectorLine(PageGrid, PageGridCanvas, startSymbolType, startSymbolNo, endSymbolType, endSymbolNo);
+
+		
+
+		}
+	
+	}
+}
+
+void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanvas, int startSymbolType, UINT64 startSymbolNo, int endSymbolType, UINT64 endSymbolNo)
+{
+	
+
+	//1. 시작,끝 symbol의 행,열 index를 구한다. 
+	int startRowIndex = getRowIndex(parentGrid, startSymbolType, startSymbolNo);
+	int startColumnIndex = getColumnIndex(parentGrid, startSymbolType, startSymbolNo);
+	int endRowIndex = getRowIndex(parentGrid, endSymbolType, endSymbolNo);
+	int endColumnIndex = getColumnIndex(parentGrid, endSymbolType, endSymbolNo);
+
+	//2. endSymbol의 상대적 위치 정보를 구한다.
+	int directionInfo = getEndSymbolDirection(startRowIndex, startColumnIndex, endRowIndex, endColumnIndex);
+
+	//line을 그을 startX, startY, endX, endY 준비 //점이 4개 필요함. 
+	double startX1, startY1, endX1, endY1, startX2, startY2, endX2, endY2;
+
+	//3. direction에 따른 분기 
+	switch (directionInfo)
+	{
+	case DIRECTION::UP :
+	case DIRECTION::DOWN:
+		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0)*8;
+		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
+		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
+		startY2 = startRowIndex*rowHeight + (rowHeight / 2.0);
+		endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
+		endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
+		endX2 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
+		endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+		break;
+		
+	case DIRECTION::LEFT:
+	case DIRECTION::RIGHT:
+		startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0);
+		startY1 = startRowIndex*rowHeight + (rowHeight / 10.0)*3;
+		startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0);
+		startY2 = startRowIndex*rowHeight + (rowHeight / 10.0);
+		endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 3;
+		endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY2 = endRowIndex*rowHeight + (rowHeight / 10.0);
+		break;
+	
+		
+	case DIRECTION::UPLEFT:
+	case DIRECTION::UPRIGHT:
+		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0)*9;
+		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
+		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
+		startY2 = endRowIndex*rowHeight + rowHeight;
+		endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 8;
+		endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY2 = endRowIndex*rowHeight + rowHeight;
+		break;
+	
+	
+	case DIRECTION::DOWNLEFT:
+	case DIRECTION::DOWNRIGHT:
+		startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0);
+		startY1 = startRowIndex*rowHeight + (rowHeight / 10.0) * 8;
+		startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0);
+		startY2 = endRowIndex*rowHeight;
+		endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 2;
+		endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY2 = endRowIndex*rowHeight;
+		break;
+	}
+
+	//4. 점들을 이어준다. 
+	Line^ startLine = ref new Line;
+	Line^ connectLine = ref new Line;
+	Line^ endLine = ref new Line;
+
+	startLine->Name = "line start " + startSymbolNo + " " + endSymbolNo;
+	connectLine->Name = "line connect " + startSymbolNo + " " + endSymbolNo;
+	endLine->Name = "line end " + startSymbolNo + " " + endSymbolNo;
+	startLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+	endLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+
+	startLine->StrokeThickness = 1;
+	connectLine->StrokeThickness = 1;
+	endLine->StrokeThickness = 1;
+
+
+	startLine->X1 = startX1;
+	startLine->Y1 = startY1;
+	startLine->X2 = startX2;
+	startLine->Y2 = startY2;
+
+	connectLine->X1 = startX2;
+	connectLine->Y1 = startY2;
+	connectLine->X2 = endX2;
+	connectLine->Y2 = endY2;
+
+	endLine->X1 = endX1;
+	endLine->Y1 = endY1;
+	endLine->X2 = endX2;
+	endLine->Y2 = endY2;
+
+	parentCanvas->Children->Append(startLine);
+	parentCanvas->Children->Append(connectLine);
+	parentCanvas->Children->Append(endLine);
+
+	parentCanvas->UpdateLayout();
 }

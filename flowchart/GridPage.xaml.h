@@ -19,6 +19,16 @@ using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::UI::Xaml::Shapes;
 using namespace Windows::UI;
 
+
+namespace DIRECTION
+{
+	enum
+	{
+		UP, DOWN, RIGHT, LEFT, UPRIGHT, UPLEFT, DOWNRIGHT, DOWNLEFT
+	};
+};
+
+
 namespace flowchart
 {
 	/// <summary>
@@ -138,5 +148,20 @@ namespace flowchart
 		void DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
 		void TitleText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
 		void ContentText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
+
+		// 두 startSymbol에 대한 endSymbol의 방향을 알아내는 함수
+		int getEndSymbolDirection(int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex);
+
+		// symbolInfo의 row, column index를 알아내는 함수
+		int getRowIndex(Grid ^ parentGrid, int symbolType, UINT64 symbolNo);
+		int getColumnIndex(Grid ^ parentGrid, int symbolType, UINT64 symbolNo);
+
+		// 모든 symbol 연결선 그어주는 함수
+		void makeConnectorLinesAll();
+
+		//두 symbol간에 연결선 그어주는 함수
+		void makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanvas, int startSymbolType, UINT64 startSymbolNo, int endSymbolType, UINT64 endSymbolNo);
+
+
 	};
 }
