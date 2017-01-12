@@ -9,6 +9,7 @@
 #include "SymbolInfo.h"
 #include <collection.h>
 
+using namespace Windows::UI::Xaml::Media;
 
 
 //typedef UINT64 LONGINT;
@@ -32,6 +33,7 @@ namespace flowchart
 		static property UINT64 draggingSymbolNo;
 		static property int draggingSymbolType;
 		static property int focusedSymbolIndex;	// 선택된 symbolInfoVector의 index
+		static property SolidColorBrush^ connectorBrush;
 
 	private:
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);

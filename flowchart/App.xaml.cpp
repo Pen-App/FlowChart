@@ -32,6 +32,8 @@ App::App()
     InitializeComponent();
     Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
 	symbolVector = ref new Vector<SymbolInfo^>();
+	connectorBrush = ref new SolidColorBrush(Windows::UI::Colors::Red);
+		
 
 	symbolIdCount = 0;
 	selectedSymbolNumber = -1;

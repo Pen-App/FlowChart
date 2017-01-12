@@ -107,7 +107,7 @@ void GridPage::makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int 
 	tempImage->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragEnter);
 	tempImage->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Image_DragLeave);
 	tempImage->SetValue(Canvas::ZIndexProperty, 2);
-	
+
 	String^ tempName = "i";
 
 	//type이 1이고 symbolNo가 77인 이미지의 경우 "i1 77" 이라는 name이 부여된다. 
@@ -165,8 +165,8 @@ void GridPage::makeButton(Grid^ parentGrid, UINT64 symbolNo, int buttonType, int
 		tempButton->CanDrag = true;
 		tempButton->ClickMode = ClickMode::Press;
 		tempButton->AddHandler(
-			UIElement::PointerPressedEvent, 
-			ref new Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::ConnectorButtonPress), 
+			UIElement::PointerPressedEvent,
+			ref new Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::ConnectorButtonPress),
 			true);
 		horizontal = 2;
 		vertical = 2;
@@ -213,11 +213,12 @@ void GridPage::TitleButtonClick(Platform::Object^ sender, Windows::UI::Xaml::Rou
 	Button ^ button = (Button ^)sender;
 	Flyout^ flyout = ref new Flyout();	// flyout
 
-	
-	if (App::focusedSymbolIndex == -1)	
+
+	if (App::focusedSymbolIndex == -1)
 	{	// 선택된 도형이 없을시 -> 도형이 처음 생성되었을 때
 		TitleText->Text = nullptr;
-	} else
+	}
+	else
 	{	// 선택된 도형에 저장되어 있는 내용이 있을 때
 		TitleText->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Title;
 	}
@@ -229,7 +230,7 @@ void GridPage::DetailButtonClick(Platform::Object^ sender, Windows::UI::Xaml::Ro
 {
 	Button ^ button = (Button ^)sender;
 	Flyout^ flyout = ref new Flyout();	// flyout
-	
+
 	if (App::focusedSymbolIndex == -1)
 	{	// 선택된 도형이 없을시 -> 도형이 처음 생성되었을 때
 		DetailText->Text = nullptr;
@@ -402,7 +403,7 @@ void GridPage::appendTopRow()
 	for (int i = 0; i < PageGridCanvas->Children->Size; i++)
 	{
 		UIElement^ pageGridCanvasChild = PageGridCanvas->Children->GetAt(i);
-		
+
 		swprintf_s(elementType, L"%s", pageGridCanvasChild->ToString()->Data());
 		if (wcscmp(elementType, L"Windows.UI.Xaml.Shapes.Line") == 0)
 		{
@@ -475,13 +476,13 @@ void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::U
 {
 	e->DragUIOverride->IsCaptionVisible = true;
 
-	if (App::selectedSymbolNumber != -1 && !isSymbolIn) 
+	if (App::selectedSymbolNumber != -1 && !isSymbolIn)
 	{
 		e->AcceptedOperation = DataPackageOperation::Copy;
 		e->DragUIOverride->Caption = "추가";
 		e->DragUIOverride->IsGlyphVisible = true;
 	}
-	else if(App::selectedSymbolNumber == -1 && !isSymbolIn)
+	else if (App::selectedSymbolNumber == -1 && !isSymbolIn)
 	{
 		e->AcceptedOperation = DataPackageOperation::Move;
 		e->DragUIOverride->Caption = "이동";
@@ -493,7 +494,7 @@ void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::U
 		e->DragUIOverride->IsCaptionVisible = false;
 		e->DragUIOverride->IsGlyphVisible = true;
 	}
-	
+
 }
 
 //드래그된 상태에서 마우스버튼을 놓았을때, 즉 drop했을 때 어떤 일이 일어나는가?
@@ -501,7 +502,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 {
 	if (App::selectedSymbolNumber != -1 && !isSymbolIn) { //symbol 생성 로직
 		//1. map에 새로운 symbolInfo 객체를 추가시킨다. 
-		UINT64 tempSymbolNo = App::symbolIdCount;	
+		UINT64 tempSymbolNo = App::symbolIdCount;
 		App::symbolIdCount++;
 		SymbolInfo^ tempSymbolInfo = ref new SymbolInfo();
 		tempSymbolInfo->SymbolType = App::selectedSymbolNumber;
@@ -511,12 +512,12 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		App::symbolVector->Append(tempSymbolInfo);
 		App::focusedSymbolIndex = App::symbolVector->Size - 1;
 
-		
+
 		makeImage(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
 		makeTextBlocks(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
 		makeButtons(PageGrid, tempSymbolNo, curRowIndex, curColumnIndex);
 		makeSymbolRectangle(PageGrid, tempSymbolNo, App::selectedSymbolNumber, curRowIndex, curColumnIndex);
-		
+
 
 		showFocusedSymbolButtons(tempSymbolNo);
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
@@ -537,7 +538,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 			appendRow();
 		}
 	}
-	else if(!isSymbolIn){ //symbol 이동 로직
+	else if (!isSymbolIn) { //symbol 이동 로직
 		moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
@@ -565,7 +566,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
-	
+
 }
 
 //마우스가 rectangle위로 올라가있으면 rectangle이 자신이 속한 행,열 인덱스를 curRowIndex와 curColumnIndex에 기록한다. 
@@ -651,7 +652,7 @@ void flowchart::GridPage::Image_DragEnter(Platform::Object^ sender, Windows::UI:
 void flowchart::GridPage::Image_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = false;
-	
+
 	OutputDebugString(L"Image_PointerExited!!!\n");
 }
 void flowchart::GridPage::Image_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
@@ -685,7 +686,7 @@ void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows
 		showFocusedSymbolButtons(focusedSymbolNo);
 		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 	}
-	
+
 	OutputDebugString(L"Image_clicked!!!\n");
 }
 
@@ -702,7 +703,7 @@ void flowchart::GridPage::Image_DragStarting(Windows::UI::Xaml::UIElement^ sende
 		wchar_t tempImageType[3];
 		wcsncpy_s(tempImageType, tempImageName->Data(), 2);
 		focusedSymbolType = _wtoi(tempImageType + 1);
-		
+
 		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
 		showFocusedSymbolButtons(focusedSymbolNo);
 		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
@@ -813,7 +814,7 @@ void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Obj
 
 	while (
 		PageGridCanvas->ActualWidth * PageGridScrollViewer->ZoomFactor
-		< 
+		<
 		PageGridScrollViewer->ActualWidth)
 	{
 		appendColumn();
@@ -823,7 +824,7 @@ void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Obj
 	}
 	while (
 		PageGridCanvas->ActualHeight * PageGridScrollViewer->ZoomFactor
-		< 
+		<
 		PageGridScrollViewer->ActualHeight)
 	{
 		appendRow();
@@ -850,7 +851,7 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	Button^ tempButton3 = nullptr;
 	Button^ tempButton4 = nullptr;
 	Image^ tempImage = nullptr;
-	
+
 
 	tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + focusedSymbolNo));
 	tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + focusedSymbolNo));
@@ -858,7 +859,7 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	tempButton4 = safe_cast<Button^>(PageGrid->FindName("b4 " + focusedSymbolNo));
 
 	tempImage = safe_cast<Image^>(PageGrid->FindName("i" + focusedSymbolType + " " + focusedSymbolNo));
-	
+
 
 	tempButton1->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempButton1->SetValue(parentGrid->ColumnProperty, newColumnIndex);
@@ -922,7 +923,7 @@ void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sen
 		PageGridScrollViewer->ActualHeight);
 	OutputDebugString(debugstr);
 
-	if (PageGridScrollViewer->ZoomFactor >= 1) 
+	if (PageGridScrollViewer->ZoomFactor >= 1)
 	{
 		while (gridRenderWidth < (PageGridScrollViewer->ActualWidth*PageGridScrollViewer->ZoomFactor))
 		{
@@ -987,12 +988,12 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 {
 	if (isSymbolIn && isLineDrawing && connectorStartSymbolNo != focusedSymbolNo) {
 		//그래프에 추가시킨다. 
-		
+
 		UINT64 tempSymbolNo;
 		SymbolInfo^ startSymbolInfo = nullptr;
 		SymbolInfo^ connectSymbolInfo = nullptr;
 		//1. 기준이 되는 symbolInfo 찾기, app::vector에서
-		for (UINT64 i = 0; i < App::symbolVector->Size; i++) 
+		for (UINT64 i = 0; i < App::symbolVector->Size; i++)
 		{
 			if (App::symbolVector->GetAt(i)->SymbolNo == connectorStartSymbolNo)
 			{
@@ -1020,25 +1021,25 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 
 		//3. startSymbolInfo의 path에 connectSymbolInfo넣기
 		startSymbolInfo->Path->Append(connectSymbolInfo);
-		
+
 		//4. 간이 연결선 삭제
 		PageGridCanvas->Children->RemoveAtEnd();
 
 		//5. 실제 연결선 생성
 		//makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
 		makeConnectorLinesAll();
-		
-		
+
+
 		isLineDrawing = false;
 
 		//debugging
 		String^ tempStr = "startSymbol:" + connectorStartSymbolNo + " ";
 		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
 		{
-			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
+			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", ";
 		}
 		pathBox->Text = tempStr;
-		
+
 	}
 	OutputDebugString(L"canvas_press!!!\n");
 	if (isLineDrawing)
@@ -1178,7 +1179,7 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 
 	double fromXPos, fromYPos;
 	double toXPos, toYPos;
-	
+
 	fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 	fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 	toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
@@ -1240,8 +1241,8 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 						Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
 						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 						{
-							connectLine->X1 = (tempSymbolInfo->ColumnIndex * columnWidth) + (columnWidth/2.0);
-							connectLine->Y1 = (tempSymbolInfo->RowIndex * rowHeight) + (rowHeight/2.0);
+							connectLine->X1 = (tempSymbolInfo->ColumnIndex * columnWidth) + (columnWidth / 2.0);
+							connectLine->Y1 = (tempSymbolInfo->RowIndex * rowHeight) + (rowHeight / 2.0);
 							break;
 						}
 					}
@@ -1370,7 +1371,7 @@ int flowchart::GridPage::getEndSymbolDirection(int startRowIndex, int startColum
 		}
 	}
 
-	
+
 
 }
 
@@ -1394,27 +1395,25 @@ void flowchart::GridPage::makeConnectorLinesAll()
 		SymbolInfo^ startSymbolInfo = App::symbolVector->GetAt(i); //symbolInfo 하나 고른다.
 		UINT64 startSymbolNo = startSymbolInfo->SymbolNo;
 		int startSymbolType = startSymbolInfo->SymbolType;
-		
+
 		//2. 두번째 루프를 돈다. 선택된 symbolInfo와 연결된 symbolInfo들을 살펴본다. 
 		for (UINT64 j = 0; j < startSymbolInfo->Path->Size; j++)
 		{
 			SymbolInfo^ endSymbolInfo = startSymbolInfo->Path->GetAt(j); //연결된 symbolInfo를 하나 고른다.
 			UINT64 endSymbolNo = endSymbolInfo->SymbolNo;
 			int endSymbolType = endSymbolInfo->SymbolType;
-			
+
 			makeConnectorLine(PageGrid, PageGridCanvas, startSymbolType, startSymbolNo, endSymbolType, endSymbolNo);
 
-		
+
 
 		}
-	
+
 	}
 }
 
 void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanvas, int startSymbolType, UINT64 startSymbolNo, int endSymbolType, UINT64 endSymbolNo)
 {
-	
-
 	//1. 시작,끝 symbol의 행,열 index를 구한다. 
 	int startRowIndex = getRowIndex(parentGrid, startSymbolType, startSymbolNo);
 	int startColumnIndex = getColumnIndex(parentGrid, startSymbolType, startSymbolNo);
@@ -1425,97 +1424,135 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 	int directionInfo = getEndSymbolDirection(startRowIndex, startColumnIndex, endRowIndex, endColumnIndex);
 
 	//line을 그을 startX, startY, endX, endY 준비 //점이 4개 필요함. 
-	double startX1, startY1, endX1, endY1, startX2, startY2, endX2, endY2;
+	float startX1, startY1, endX1, endY1, startX2, startY2, endX2, endY2;
 
-	//3. direction에 따른 분기 
+	//3. direction에 따른 분기 : endSymbol과의 몇칸 떨어져있는지 계산해주는 변수 추가.
+	int distBlockNum = 0;
+
 	switch (directionInfo)
 	{
-	case DIRECTION::UP :
+	case DIRECTION::UP:
 	case DIRECTION::DOWN:
-		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0)*8;
-		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
-		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
-		startY2 = startRowIndex*rowHeight + (rowHeight / 2.0);
+		//1. 거리 구해주기
+		distBlockNum = endRowIndex - startRowIndex;
+		if (distBlockNum == -1) //endSymbol이 바로 위에 있을 때
+		{
+			startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0);
+			startY1 = startRowIndex*rowHeight + (rowHeight / 10.0)*2;
+			startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0);
+			startY2 = startRowIndex*rowHeight;
+			endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+			endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 8;
+			endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+			endY2 = endRowIndex*rowHeight + rowHeight;
+			break;
+		}
+		if (distBlockNum == 1) //endSymbol이 바로 아래에 있을 때
+		{
+			startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0);
+			startY1 = startRowIndex*rowHeight + (rowHeight / 10.0) * 8;
+			startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0);
+			startY2 = startRowIndex*rowHeight + rowHeight;
+			endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+			endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 2;
+			endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+			endY2 = endRowIndex*rowHeight;
+			break;
+		}
+
+		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
+		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum *3;
+		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum)*2;
+		startY2 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum * 3;
 		endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
-		endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
-		endX2 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
-		endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+		endY1 = endRowIndex*rowHeight + (rowHeight / 2.0) ;
+		endX2 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum) * 2;
+		endY2 = endRowIndex*rowHeight + (rowHeight / 2.0) ;
 		break;
-		
+
 	case DIRECTION::LEFT:
 	case DIRECTION::RIGHT:
-		startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0);
-		startY1 = startRowIndex*rowHeight + (rowHeight / 10.0)*3;
-		startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0);
-		startY2 = startRowIndex*rowHeight + (rowHeight / 10.0);
-		endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
-		endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 3;
-		endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
-		endY2 = endRowIndex*rowHeight + (rowHeight / 10.0);
-		break;
-	
-		
-	case DIRECTION::UPLEFT:
-	case DIRECTION::UPRIGHT:
-		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0)*9;
-		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
-		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
-		startY2 = endRowIndex*rowHeight + rowHeight;
-		endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
-		endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 8;
-		endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
-		endY2 = endRowIndex*rowHeight + rowHeight;
-		break;
-	
-	
-	case DIRECTION::DOWNLEFT:
-	case DIRECTION::DOWNRIGHT:
-		startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0);
-		startY1 = startRowIndex*rowHeight + (rowHeight / 10.0) * 8;
-		startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0);
-		startY2 = endRowIndex*rowHeight;
+		distBlockNum = endColumnIndex - startColumnIndex;
+		if (distBlockNum == -1) //endSymbol이 바로 왼쪽에 있을 때
+		{
+			startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 2;
+			startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
+			startX2 = startColumnIndex*columnWidth;
+			startY2 = startRowIndex*rowHeight + (rowHeight / 2.0);
+			endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0)*8;
+			endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
+			endX2 = endColumnIndex*columnWidth + columnWidth;
+			endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+			break;
+		}
+		if (distBlockNum == 1) //endSymbol이 바로 오른쪽에 있을 때
+		{
+			startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
+			startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
+			startX2 = startColumnIndex*columnWidth + columnWidth;
+			startY2 = startRowIndex*rowHeight + (rowHeight / 2.0);
+			endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 2;
+			endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
+			endX2 = endColumnIndex*columnWidth;
+			endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+			break;
+		}
+		startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0) - distBlockNum * 2;
+		startY1 = startRowIndex*rowHeight + (rowHeight / 10.0) * 2 ;
+		startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0) - distBlockNum * 2;
+		startY2 = startRowIndex*rowHeight + (rowHeight / 10.0) - abs(distBlockNum) * 3;
 		endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
 		endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 2;
 		endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
-		endY2 = endRowIndex*rowHeight;
+		endY2 = endRowIndex*rowHeight + (rowHeight / 10.0) - abs(distBlockNum) * 3;
+		break;
+
+
+	case DIRECTION::UPLEFT:
+	case DIRECTION::DOWNLEFT:
+		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0)*2;
+		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
+		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0);
+		startY2 = startRowIndex*rowHeight + (rowHeight / 2.0);
+		endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0)*8;
+		endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
+		endX2 = startColumnIndex*columnWidth + (columnWidth / 10.0);
+		endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+		break;
+
+
+	case DIRECTION::UPRIGHT:
+	case DIRECTION::DOWNRIGHT:
+		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
+		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
+		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
+		startY2 = startRowIndex*rowHeight + (rowHeight / 2.0);
+		endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 2;
+		endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
+		endX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
+		endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
 		break;
 	}
 
 	//4. 점들을 이어준다. 
-	Line^ startLine = ref new Line;
-	Line^ connectLine = ref new Line;
-	Line^ endLine = ref new Line;
+	Polyline^ connectLine = ref new Polyline;
+	Point s1, s2, e1, e2;
+	PointCollection^ connectorPoints = ref new PointCollection;
+	s1 = { startX1, startY1 };
+	s2 = { startX2, startY2 };
+	e1 = { endX1, endY1 };
+	e2 = { endX2, endY2 };
+	connectorPoints->Append(s1);
+	connectorPoints->Append(s2);
+	connectorPoints->Append(e2);
+	connectorPoints->Append(e1);
 
-	startLine->Name = "line start " + startSymbolNo + " " + endSymbolNo;
-	connectLine->Name = "line connect " + startSymbolNo + " " + endSymbolNo;
-	endLine->Name = "line end " + startSymbolNo + " " + endSymbolNo;
-	startLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
-	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
-	endLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
-
-	startLine->StrokeThickness = 1;
+	connectLine->Name = "connectLine " + startSymbolNo + " " + endSymbolNo;
+	connectLine->CanDrag = true;
+	connectLine->Stroke = App::connectorBrush;
 	connectLine->StrokeThickness = 1;
-	endLine->StrokeThickness = 1;
+	connectLine->Points = connectorPoints;
 
-
-	startLine->X1 = startX1;
-	startLine->Y1 = startY1;
-	startLine->X2 = startX2;
-	startLine->Y2 = startY2;
-
-	connectLine->X1 = startX2;
-	connectLine->Y1 = startY2;
-	connectLine->X2 = endX2;
-	connectLine->Y2 = endY2;
-
-	endLine->X1 = endX1;
-	endLine->Y1 = endY1;
-	endLine->X2 = endX2;
-	endLine->Y2 = endY2;
-
-	parentCanvas->Children->Append(startLine);
 	parentCanvas->Children->Append(connectLine);
-	parentCanvas->Children->Append(endLine);
-
 	parentCanvas->UpdateLayout();
 }
