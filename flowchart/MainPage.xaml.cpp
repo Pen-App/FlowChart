@@ -21,7 +21,9 @@ using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::UI::ViewManagement;	// ApplicationView 크기 관리
 using namespace Windows::Data::Xml::Dom;	// 파일 입출력
+using namespace Windows::Storage;
 using namespace Windows::Storage::Pickers;	// 선택기 사용 파일저장
+using namespace Concurrency;
 
 // 빈 페이지 항목 템플릿은 http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 에 문서화되어 있습니다.
 
@@ -128,9 +130,56 @@ void flowchart::MainPage::OpenFile_Click(Platform::Object^ sender, Windows::UI::
 // 파일 저장
 void flowchart::MainPage::SaveFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	XmlDocument^ xmlDocument = ref new XmlDocument;	// xml 문서형식 사용
-	XmlElement^ rootElement = xmlDocument->CreateElement(FileName->Text);	// root 항목 설정
-	xmlDocument->AppendChild(rootElement);	// 이항목이 xmlDocument의 root항목이 될수 있게 추가
+	if (App::symbolVector->Size <= 0)	// 바뀐 내용이 없을 경우
+	{
+		return;
+	}
+	FileSavePicker^ savePicker = ref new FileSavePicker();
+	savePicker->SuggestedStartLocation = PickerLocationId::DocumentsLibrary;
+
+	auto fileType = ref new Vector<String^>();
+	fileType->Append(".xml");
+	fileType->Append(".pap");
+	savePicker->FileTypeChoices->Insert("PenApp Files", fileType);
+
+	savePicker->DefaultFileExtension = ".xaml";
+	savePicker->SuggestedFileName = FileName->Text;
+	FileName->Text = savePicker->SuggestedFileName;
+
+	task<StorageFile ^>(savePicker->PickSaveFileAsync()).then([this](StorageFile^ file)
+	{
+		if (file != nullptr)
+		{
+			XmlDocument^ xmlDocument = ref new XmlDocument;	// xml 문서형식 사용
+			XmlElement^ rootElement = xmlDocument->CreateElement("file");	// root 항목 설정
+			rootElement->SetAttribute("fileName", FileName->Text);
+			xmlDocument->AppendChild(rootElement);	// 이항목이 xmlDocument의 root항목이 될수 있게 추가
+
+			for (int i = 0; i < App::symbolVector->Size; i++)
+			{
+				XmlElement^ xmlElement = xmlDocument->CreateElement("symbol");
+				SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
+				xmlElement->SetAttribute("no", symbolInfo->SymbolNo + "");
+				xmlElement->SetAttribute("rowIndex", symbolInfo->RowIndex + "");
+				xmlElement->SetAttribute("columnIndex", symbolInfo->ColumnIndex + "");
+				xmlElement->SetAttribute("symbolType", symbolInfo->SymbolType + "");
+				xmlElement->SetAttribute("title", symbolInfo->Title);
+				xmlElement->SetAttribute("content", symbolInfo->Content);
+				xmlElement->SetAttribute("detail", symbolInfo->Detail);
+				rootElement->AppendChild(xmlElement);
+
+				XmlElement^ pathElement = xmlDocument->CreateElement("path");
+				if (symbolInfo->Path->Size != 0) {
+					for (int j = 0; j < symbolInfo->Path->Size; j++)
+					{
+						pathElement->SetAttribute("symbolNo", symbolInfo->Path->GetAt(j)->SymbolNo + "");
+					}
+				}
+				xmlElement->AppendChild(pathElement);
+			}
+			task<void>(xmlDocument->SaveToFileAsync(file));
+		}
+	});
 }
 
 void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)

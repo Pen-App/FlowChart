@@ -21,7 +21,7 @@ ref class SymbolInfo sealed
 private:
 
 	UINT64 symbolNo = 0;	// symbol의 고유번호
-	int rowIndex, columnIndex;	// Grid 내에서 index
+	int rowIndex = -1, columnIndex = -1;	// Grid 내에서 index
 	// 1.process 2.decision 3.preparation 4.terminator 5.data 6. document
 	int symbolType = 0;	// symbol의 종류
 	String^ title = nullptr;	// 제목
