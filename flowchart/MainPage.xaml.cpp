@@ -127,13 +127,20 @@ void flowchart::MainPage::OpenFile_Click(Platform::Object^ sender, Windows::UI::
 
 }
 
-// 파일 저장
+// 파일 저장 클릭시
 void flowchart::MainPage::SaveFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	if (App::symbolVector->Size <= 0)	// 바뀐 내용이 없을 경우
+	if (App::symbolVector->Size <= 0)	// 추가한 도형이 없을 경우
 	{
 		return;
 	}
+	FileSavePicker^ savePicker = SaveFilePath();
+	SaveFileContent(savePicker);
+}
+
+// 저장할 경로 및 파일형식 설정
+FileSavePicker^ flowchart::MainPage::SaveFilePath()
+{
 	FileSavePicker^ savePicker = ref new FileSavePicker();
 	savePicker->SuggestedStartLocation = PickerLocationId::DocumentsLibrary;
 
@@ -146,6 +153,12 @@ void flowchart::MainPage::SaveFile_Click(Platform::Object^ sender, Windows::UI::
 	savePicker->SuggestedFileName = FileName->Text;
 	FileName->Text = savePicker->SuggestedFileName;
 
+	return savePicker;
+}
+
+// xml 파싱해서 파일 저장
+void flowchart::MainPage::SaveFileContent(FileSavePicker^ savePicker)
+{
 	task<StorageFile ^>(savePicker->PickSaveFileAsync()).then([this](StorageFile^ file)
 	{
 		if (file != nullptr)
@@ -172,12 +185,12 @@ void flowchart::MainPage::SaveFile_Click(Platform::Object^ sender, Windows::UI::
 				if (symbolInfo->Path->Size != 0) {
 					for (int j = 0; j < symbolInfo->Path->Size; j++)
 					{
-						pathElement->SetAttribute("symbolNo", symbolInfo->Path->GetAt(j)->SymbolNo + "");
+						pathElement->SetAttribute("noIndex"+j, symbolInfo->Path->GetAt(j)->SymbolNo + "");
 					}
 				}
-				xmlElement->AppendChild(pathElement);
-			}
-			task<void>(xmlDocument->SaveToFileAsync(file));
+			xmlElement->AppendChild(pathElement);
+		}
+		task<void>(xmlDocument->SaveToFileAsync(file));
 		}
 	});
 }
