@@ -28,7 +28,7 @@ namespace flowchart
 		
 		// 파일 저장부분
 		void SaveFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void SaveSymbolInfoElement(Windows::Storage::Pickers::FileSavePicker^ savePicker);
+		void SaveFileContent(Windows::Storage::Pickers::FileSavePicker^ savePicker);
 		Windows::Storage::Pickers::FileSavePicker^ SaveFilePath();
 
 		void deleteConnectLine(UINT16 deleteSymbolNo);

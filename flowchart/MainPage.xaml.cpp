@@ -134,6 +134,24 @@ void flowchart::MainPage::SaveFile_Click(Platform::Object^ sender, Windows::UI::
 	{
 		return;
 	}
+
+	Image^ tmpImg = nullptr;
+	SymbolInfo^ symbolInfo = nullptr;
+
+	// row, column을 찾을 pageGrid 찾기
+	Page^ gridContent = (Page^)(GridContentFrame->Content);
+	Grid^ pageGrid = (Grid^)(gridContent->FindName("PageGrid"));
+
+	// 저장하기전 바뀌었던 column, row Index들을 다시 vector에 갱신해줌
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		symbolInfo = App::symbolVector->GetAt(i);
+		tmpImg = safe_cast<Image^>(pageGrid->FindName("i" + symbolInfo->SymbolType
+														+ " " + symbolInfo->SymbolNo));
+		symbolInfo->RowIndex =  safe_cast<int>(tmpImg->GetValue(pageGrid->RowProperty));
+		symbolInfo->ColumnIndex = safe_cast<int>(tmpImg->GetValue(pageGrid->ColumnProperty));
+	}
+
 	FileSavePicker^ savePicker = SaveFilePath();
 	SaveFileContent(savePicker);
 }
