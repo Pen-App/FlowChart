@@ -162,6 +162,10 @@ namespace flowchart
 		//두 symbol간에 연결선 그어주는 함수
 		void makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanvas, int startSymbolType, UINT64 startSymbolNo, int endSymbolType, UINT64 endSymbolNo);
 
-
+		//두 symbol간에 떨어진 block 갯수 구해주는 함수
+		int getDistance(int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex);
+		
+		//두 symbol 중간에 가로막는 symbol이 있는지 구해주는 함수
+		bool isBlocked(int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex);
 	};
 }

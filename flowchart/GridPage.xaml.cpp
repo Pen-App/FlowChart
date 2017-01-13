@@ -1605,3 +1605,14 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 	parentCanvas->Children->Append(connectLine);
 	parentCanvas->UpdateLayout();
 }
+
+int flowchart::GridPage::getDistance(int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex)
+{
+
+	return 0;
+}
+
+bool flowchart::GridPage::isBlocked(int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex)
+{
+	return false;
+}
