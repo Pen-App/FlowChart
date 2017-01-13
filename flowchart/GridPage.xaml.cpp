@@ -1424,10 +1424,16 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 	int directionInfo = getEndSymbolDirection(startRowIndex, startColumnIndex, endRowIndex, endColumnIndex);
 
 	//line을 그을 startX, startY, endX, endY 준비 //점이 4개 필요함. 
-	float startX1, startY1, endX1, endY1, startX2, startY2, endX2, endY2;
+	float startX1, startY1, endX1, endY1, startX2, startY2, endX2, endY2, middleX1, middleY1, middleX2, middleY2;
 
 	//3. direction에 따른 분기 : endSymbol과의 몇칸 떨어져있는지 계산해주는 변수 추가.
 	int distBlockNum = 0;
+
+	//. 선미리 준비
+
+	Polyline^ connectLine = ref new Polyline;
+	Point s1, s2, e1, e2, m1, m2;
+	PointCollection^ connectorPoints = ref new PointCollection;
 
 	switch (directionInfo)
 	{
@@ -1445,9 +1451,9 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 			endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 8;
 			endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
 			endY2 = endRowIndex*rowHeight + rowHeight;
-			break;
+			
 		}
-		if (distBlockNum == 1) //endSymbol이 바로 아래에 있을 때
+		else if (distBlockNum == 1) //endSymbol이 바로 아래에 있을 때
 		{
 			startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0);
 			startY1 = startRowIndex*rowHeight + (rowHeight / 10.0) * 8;
@@ -1457,17 +1463,28 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 			endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 2;
 			endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
 			endY2 = endRowIndex*rowHeight;
-			break;
+			
 		}
-
-		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
-		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum *3;
-		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum)*2;
-		startY2 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum * 3;
-		endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
-		endY1 = endRowIndex*rowHeight + (rowHeight / 2.0) ;
-		endX2 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum) * 2;
-		endY2 = endRowIndex*rowHeight + (rowHeight / 2.0) ;
+		else
+		{
+			startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
+			startY1 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum * 3;
+			startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum) * 2;
+			startY2 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum * 3;
+			endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
+			endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
+			endX2 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum) * 2;
+			endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+		}
+		
+		s1 = { startX1, startY1 };
+		s2 = { startX2, startY2 };
+		e1 = { endX1, endY1 };
+		e2 = { endX2, endY2 };
+		connectorPoints->Append(s1);
+		connectorPoints->Append(s2);
+		connectorPoints->Append(e2);
+		connectorPoints->Append(e1);
 		break;
 
 	case DIRECTION::LEFT:
@@ -1483,9 +1500,9 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 			endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
 			endX2 = endColumnIndex*columnWidth + columnWidth;
 			endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
-			break;
+			
 		}
-		if (distBlockNum == 1) //endSymbol이 바로 오른쪽에 있을 때
+		else if (distBlockNum == 1) //endSymbol이 바로 오른쪽에 있을 때
 		{
 			startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
 			startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
@@ -1495,29 +1512,56 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 			endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
 			endX2 = endColumnIndex*columnWidth;
 			endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
-			break;
+			
 		}
-		startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0) - distBlockNum * 2;
-		startY1 = startRowIndex*rowHeight + (rowHeight / 10.0) * 2 ;
-		startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0) - distBlockNum * 2;
-		startY2 = startRowIndex*rowHeight + (rowHeight / 10.0) - abs(distBlockNum) * 3;
-		endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
-		endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 2;
-		endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
-		endY2 = endRowIndex*rowHeight + (rowHeight / 10.0) - abs(distBlockNum) * 3;
+		else
+		{
+			startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0) - distBlockNum * 2;
+			startY1 = startRowIndex*rowHeight + (rowHeight / 10.0) * 2;
+			startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0) - distBlockNum * 2;
+			startY2 = startRowIndex*rowHeight + (rowHeight / 10.0) - abs(distBlockNum) * 3;
+			endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+			endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 2;
+			endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+			endY2 = endRowIndex*rowHeight + (rowHeight / 10.0) - abs(distBlockNum) * 3;
+		}
+	
+		s1 = { startX1, startY1 };
+		s2 = { startX2, startY2 };
+		e1 = { endX1, endY1 };
+		e2 = { endX2, endY2 };
+		connectorPoints->Append(s1);
+		connectorPoints->Append(s2);
+		connectorPoints->Append(e2);
+		connectorPoints->Append(e1);
 		break;
 
 
 	case DIRECTION::UPLEFT:
 	case DIRECTION::DOWNLEFT:
-		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0)*2;
+		startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 2;
 		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
 		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0);
 		startY2 = startRowIndex*rowHeight + (rowHeight / 2.0);
-		endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0)*8;
-		endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
-		endX2 = startColumnIndex*columnWidth + (columnWidth / 10.0);
-		endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+		endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 8;
+		endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY2 = endRowIndex*rowHeight + (rowHeight / 10.0) * 9;
+		middleX1 = startColumnIndex*columnWidth + (columnWidth / 10.0);
+		middleY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 9;
+
+
+		s1 = { startX1, startY1 };
+		s2 = { startX2, startY2 };
+		m1 = { middleX1, middleY1 };
+		e1 = { endX1, endY1 };
+		e2 = { endX2, endY2 };
+		connectorPoints->Append(s1);
+		connectorPoints->Append(s2);
+		connectorPoints->Append(m1);
+		connectorPoints->Append(e2);
+		connectorPoints->Append(e1);
+
 		break;
 
 
@@ -1527,25 +1571,30 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 		startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
 		startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
 		startY2 = startRowIndex*rowHeight + (rowHeight / 2.0);
-		endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 2;
-		endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
-		endX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
-		endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+		endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 8;
+		endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
+		endY2 = endRowIndex*rowHeight + (rowHeight / 10.0) * 9;
+		middleX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9;
+		middleY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 9;
+
+
+		s1 = { startX1, startY1 };
+		s2 = { startX2, startY2 };
+		m1 = { middleX1, middleY1};
+		e1 = { endX1, endY1 };
+		e2 = { endX2, endY2 };
+		connectorPoints->Append(s1);
+		connectorPoints->Append(s2);
+		connectorPoints->Append(m1);
+		connectorPoints->Append(e2);
+		connectorPoints->Append(e1);
 		break;
 	}
 
 	//4. 점들을 이어준다. 
-	Polyline^ connectLine = ref new Polyline;
-	Point s1, s2, e1, e2;
-	PointCollection^ connectorPoints = ref new PointCollection;
-	s1 = { startX1, startY1 };
-	s2 = { startX2, startY2 };
-	e1 = { endX1, endY1 };
-	e2 = { endX2, endY2 };
-	connectorPoints->Append(s1);
-	connectorPoints->Append(s2);
-	connectorPoints->Append(e2);
-	connectorPoints->Append(e1);
+	
+	
 
 	connectLine->Name = "connectLine " + startSymbolNo + " " + endSymbolNo;
 	connectLine->CanDrag = true;
