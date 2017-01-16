@@ -1205,11 +1205,11 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
 		turn1Y = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		turn2X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
-		turn2Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
+		turn2Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		turn3X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
-		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0);
-		toYPos = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		break;
 	}
 	case 3:
@@ -1275,11 +1275,11 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
 		turn1Y = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		turn2X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
-		turn2Y = ((toInfo->RowIndex)*rowHeight) + (columnWidth / 2.0);
+		turn2Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		turn3X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
-		turn3Y = ((toInfo->RowIndex)*rowHeight) + (columnWidth / 2.0);
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0);
-		toYPos = ((toInfo->RowIndex)*rowHeight) + (columnWidth / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		break;
 	}
 	case 8:
@@ -1383,14 +1383,20 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 				for (int k = 0; k < PageGridCanvas->Children->Size; k++)
 				{
 					childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
-					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
+					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
 					{
-						Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+						/*Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
 						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 						{
 							connectLine->X1 = (tempSymbolInfo->ColumnIndex * columnWidth) + (columnWidth/2.0);
 							connectLine->Y1 = (tempSymbolInfo->RowIndex * rowHeight) + (rowHeight/2.0);
 							break;
+						}*/
+						Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
+						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+						{
+							PageGridCanvas->Children->RemoveAt(k);
+							makeConnectLine(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo);
 						}
 					}
 				}
@@ -1416,13 +1422,20 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 					for (int k = 0; k < PageGridCanvas->Children->Size; k++)
 					{
 						childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
-						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
+						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
 						{
-							Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+							/*Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
 							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 							{
 								connectLine->X2 = (movedSymbolInfo->ColumnIndex * columnWidth) + (columnWidth / 2.0);
 								connectLine->Y2 = (movedSymbolInfo->RowIndex * rowHeight) + (rowHeight / 2.0);
+								break;
+							}*/
+							Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
+							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+							{
+								PageGridCanvas->Children->RemoveAt(k);
+								makeConnectLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
 								break;
 							}
 						}
