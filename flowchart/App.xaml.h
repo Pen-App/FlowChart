@@ -34,7 +34,7 @@ namespace flowchart
 		static property int draggingSymbolType;
 		static property int focusedSymbolIndex;	// 선택된 symbolInfoVector의 index
 		static property SolidColorBrush^ connectorBrush;
-		static property Map<UINT64, int> connectedSymbolNumMap;
+		//static property Map<UINT64, int> connectedSymbolNumMap;
 
 	private:
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);

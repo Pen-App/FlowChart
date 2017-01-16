@@ -1614,5 +1614,31 @@ int flowchart::GridPage::getDistance(int directionInfo, int startRowIndex, int s
 
 bool flowchart::GridPage::isBlocked(int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex)
 {
-	return false;
+	int startRowIndex, endRowIndex;
+	int startColumnIndex, endColumnIndex;
+
+	switch (directionInfo)
+	{
+	case DIRECTION::UP:
+	case DIRECTION::DOWN:
+		
+		break;
+
+	case DIRECTION::LEFT:
+	case DIRECTION::RIGHT:
+		
+		break;
+
+
+	case DIRECTION::UPLEFT:
+	case DIRECTION::DOWNLEFT:
+		
+		break;
+
+
+	case DIRECTION::UPRIGHT:
+	case DIRECTION::DOWNRIGHT:
+		
+		break;
+	}
 }
