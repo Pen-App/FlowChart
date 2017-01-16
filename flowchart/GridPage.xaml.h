@@ -166,6 +166,9 @@ namespace flowchart
 		int getDistance(int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex);
 		
 		//두 symbol 중간에 가로막는 symbol이 있는지 구해주는 함수
-		bool isBlocked(int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex);
+		bool isBlocked(Grid^ parentGrid, int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex);
+
+		//모든 라인 지우기
+		void removeAllConnectors(Canvas^ parentCanvas);
 	};
 }

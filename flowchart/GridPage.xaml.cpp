@@ -22,6 +22,7 @@ using namespace Windows::ApplicationModel::DataTransfer;
 using namespace Platform::Collections;
 using namespace Windows::Foundation::Collections;
 
+
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 //GridPage 생성자 : 생성과 동시에 makeGridArray로 행열을 그려준다. 
@@ -41,52 +42,6 @@ GridPage::GridPage()
 	isLineDrawing = false;
 }
 
-//행,열 하나하나 마다 rectangle을 채워넣는 함수 : 마우스 커서가 어떤 행,열 인덱스위에 올라가있는지 이벤트를 받기 위해서
-void GridPage::makeRectangle(Grid^ parentGrid, int rowIndex, int columnIndex)
-{
-	Rectangle^ tempRect = ref new Rectangle();
-	tempRect->Style = RECTANGLE_STYLE;
-	auto dasharray = ref new DoubleCollection;
-	dasharray->Append(5);
-	tempRect->StrokeDashArray = dasharray;
-	tempRect->SetValue(parentGrid->ColumnProperty, columnIndex);
-	tempRect->SetValue(parentGrid->RowProperty, rowIndex);
-	tempRect->AllowDrop = true;
-	tempRect->SetValue(Canvas::ZIndexProperty, 1);
-
-	tempRect->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerEntered);
-	tempRect->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerPressed);
-	tempRect->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerExited);
-	tempRect->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragEnter);
-	tempRect->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragLeave);
-	parentGrid->Children->Append(tempRect);
-}
-
-//행열을 그려주는 함수: parentGrid에 rowNum, columnNum만큼 행열을 만들어주고, makeRectangle로 한개씩 사각형을 채워넣는다.
-void GridPage::makeGridArray(Grid^ parentGrid, int rowNum, int columnNum, int rowHeight, int columnWidth)
-{
-	//1. 행을 그린다. 
-	for (int i = 0; i < rowNum; i++) {
-		RowDefinition^ tempRow = ref new RowDefinition();
-		tempRow->Height = rowHeight;
-		parentGrid->RowDefinitions->Append(tempRow);
-	}
-
-	//2. 열을 그린다. 
-	for (int i = 0; i < columnNum; i++) {
-		ColumnDefinition^ tempColumn = ref new ColumnDefinition();
-		tempColumn->Width = columnWidth;
-		parentGrid->ColumnDefinitions->Append(tempColumn);
-	}
-
-	//3. rectangle을 채워넣어본다. 
-	for (int i = 0; i < rowNum; i++) {
-		for (int j = 0; j < columnNum; j++) {
-			//1. rectangle 채우기 
-			makeRectangle(parentGrid, i, j);
-		}
-	}
-}
 
 //이미지 그려주기 : symbolType(1~6)에 따라서 해당 행,열에 symbol모양을 그려준다. 
 void GridPage::makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int rowIndex, int columnIndex)
@@ -260,6 +215,53 @@ void GridPage::ContentButtonClick(Platform::Object^ sender, Windows::UI::Xaml::R
 	flyout->ShowAt(button);
 }
 
+//행,열 하나하나 마다 rectangle을 채워넣는 함수 : 마우스 커서가 어떤 행,열 인덱스위에 올라가있는지 이벤트를 받기 위해서
+void GridPage::makeRectangle(Grid^ parentGrid, int rowIndex, int columnIndex)
+{
+	Rectangle^ tempRect = ref new Rectangle();
+	tempRect->Style = RECTANGLE_STYLE;
+	auto dasharray = ref new DoubleCollection;
+	dasharray->Append(5);
+	tempRect->StrokeDashArray = dasharray;
+	tempRect->SetValue(parentGrid->ColumnProperty, columnIndex);
+	tempRect->SetValue(parentGrid->RowProperty, rowIndex);
+	tempRect->AllowDrop = true;
+	tempRect->SetValue(Canvas::ZIndexProperty, 1);
+
+	tempRect->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerEntered);
+	tempRect->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerPressed);
+	tempRect->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerExited);
+	tempRect->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragEnter);
+	tempRect->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragLeave);
+	parentGrid->Children->Append(tempRect);
+}
+
+//행열을 그려주는 함수: parentGrid에 rowNum, columnNum만큼 행열을 만들어주고, makeRectangle로 한개씩 사각형을 채워넣는다.
+void GridPage::makeGridArray(Grid^ parentGrid, int rowNum, int columnNum, int rowHeight, int columnWidth)
+{
+	//1. 행을 그린다. 
+	for (int i = 0; i < rowNum; i++) {
+		RowDefinition^ tempRow = ref new RowDefinition();
+		tempRow->Height = rowHeight;
+		parentGrid->RowDefinitions->Append(tempRow);
+	}
+
+	//2. 열을 그린다. 
+	for (int i = 0; i < columnNum; i++) {
+		ColumnDefinition^ tempColumn = ref new ColumnDefinition();
+		tempColumn->Width = columnWidth;
+		parentGrid->ColumnDefinitions->Append(tempColumn);
+	}
+
+	//3. rectangle을 채워넣어본다. 
+	for (int i = 0; i < rowNum; i++) {
+		for (int j = 0; j < columnNum; j++) {
+			//1. rectangle 채우기 
+			makeRectangle(parentGrid, i, j);
+		}
+	}
+}
+
 //버튼 3종류 한꺼번에 만들기
 void GridPage::makeButtons(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
 {
@@ -300,7 +302,26 @@ void flowchart::GridPage::makeTextBlocks(Grid ^ parentGrid, UINT64 symbolNo, int
 	makeContentTextBlock(parentGrid, symbolNo, rowIndex, columnIndex);
 }
 
+void flowchart::GridPage::makeSymbolRectangle(Grid ^ parentGrid, UINT64 symbolNo, int symbolType, int rowIndex, int columnIndex)
+{
+	Rectangle^ tempRect = ref new Rectangle();
+	tempRect->Style = RECTANGLE_STYLE;
+	auto dasharray = ref new DoubleCollection;
+	dasharray->Append(5);
+	tempRect->StrokeDashArray = dasharray;
+	tempRect->SetValue(parentGrid->ColumnProperty, columnIndex);
+	tempRect->SetValue(parentGrid->RowProperty, rowIndex);
+	tempRect->AllowDrop = true;
+	tempRect->SetValue(Canvas::ZIndexProperty, 1);
+	tempRect->SetValue(NameProperty, "r" + symbolType + " " + symbolNo);
 
+	tempRect->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerEntered);
+	tempRect->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerPressed);
+	tempRect->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerExited);
+	tempRect->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragEnter);
+	tempRect->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragLeave);
+	parentGrid->Children->Append(tempRect);
+}
 //grid를 전체 새로 그려주는 함수 : 작동 이상으로 쓰이지 않음.-----------------
 void GridPage::refreshGridPage(Grid^ parentGrid)
 {
@@ -562,6 +583,8 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 			appendRow();
 		}
 	}
+	removeAllConnectors(PageGridCanvas);
+	makeConnectorLinesAll();
 
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
@@ -639,7 +662,7 @@ void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows
 	wcsncpy_s(tempImageType, tempImageName->Data(), 2);
 	focusedSymbolType = _wtoi(tempImageType + 1);
 
-	testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
+	//testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 
 	OutputDebugString(L"Image_PointerEntered!!!\n");
 }
@@ -684,7 +707,7 @@ void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows
 
 		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
 		showFocusedSymbolButtons(focusedSymbolNo);
-		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
+		//testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 	}
 
 	OutputDebugString(L"Image_clicked!!!\n");
@@ -706,7 +729,7 @@ void flowchart::GridPage::Image_DragStarting(Windows::UI::Xaml::UIElement^ sende
 
 		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
 		showFocusedSymbolButtons(focusedSymbolNo);
-		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
+		//testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 
 		//App.xaml.h.DraggingSymbolNo 설정
 		App::draggingSymbolNo = focusedSymbolNo;
@@ -1068,26 +1091,7 @@ void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, W
 	}
 }
 
-void flowchart::GridPage::makeSymbolRectangle(Grid ^ parentGrid, UINT64 symbolNo, int symbolType, int rowIndex, int columnIndex)
-{
-	Rectangle^ tempRect = ref new Rectangle();
-	tempRect->Style = RECTANGLE_STYLE;
-	auto dasharray = ref new DoubleCollection;
-	dasharray->Append(5);
-	tempRect->StrokeDashArray = dasharray;
-	tempRect->SetValue(parentGrid->ColumnProperty, columnIndex);
-	tempRect->SetValue(parentGrid->RowProperty, rowIndex);
-	tempRect->AllowDrop = true;
-	tempRect->SetValue(Canvas::ZIndexProperty, 1);
-	tempRect->SetValue(NameProperty, "r" + symbolType + " " + symbolNo);
 
-	tempRect->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerEntered);
-	tempRect->PointerPressed += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerPressed);
-	tempRect->PointerExited += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Rectangle_PointerExited);
-	tempRect->DragEnter += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragEnter);
-	tempRect->DragLeave += ref new Windows::UI::Xaml::DragEventHandler(this, &flowchart::GridPage::Rectangle_DragLeave);
-	parentGrid->Children->Append(tempRect);
-}
 
 
 void flowchart::GridPage::Rectangle_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
@@ -1389,6 +1393,8 @@ int flowchart::GridPage::getColumnIndex(Grid ^ parentGrid, int symbolType, UINT6
 
 void flowchart::GridPage::makeConnectorLinesAll()
 {
+	removeAllConnectors(PageGridCanvas);
+
 	//1. App::symbolVector를 돈다. 
 	for (UINT64 i = 0; i < App::symbolVector->Size; i++)
 	{
@@ -1444,14 +1450,14 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 		if (distBlockNum == -1) //endSymbol이 바로 위에 있을 때
 		{
 			startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0);
-			startY1 = startRowIndex*rowHeight + (rowHeight / 10.0)*2;
+			startY1 = startRowIndex*rowHeight + (rowHeight / 10.0) * 2;
 			startX2 = startColumnIndex*columnWidth + (columnWidth / 2.0);
 			startY2 = startRowIndex*rowHeight;
 			endX1 = endColumnIndex*columnWidth + (columnWidth / 2.0);
 			endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 8;
 			endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
 			endY2 = endRowIndex*rowHeight + rowHeight;
-			
+
 		}
 		else if (distBlockNum == 1) //endSymbol이 바로 아래에 있을 때
 		{
@@ -1463,20 +1469,23 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 			endY1 = endRowIndex*rowHeight + (rowHeight / 10.0) * 2;
 			endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
 			endY2 = endRowIndex*rowHeight;
-			
+
 		}
 		else
 		{
-			startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
-			startY1 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum * 3;
-			startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum) * 2;
-			startY2 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum * 3;
-			endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
-			endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
-			endX2 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum) * 2;
-			endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+			
+				startX1 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
+				startY1 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum * 3;
+				startX2 = startColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum) * 2;
+				startY2 = startRowIndex*rowHeight + (rowHeight / 2.0) - distBlockNum * 3;
+				endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
+				endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
+				endX2 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 9 + abs(distBlockNum) * 2;
+				endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
+			
+			
 		}
-		
+
 		s1 = { startX1, startY1 };
 		s2 = { startX2, startY2 };
 		e1 = { endX1, endY1 };
@@ -1496,11 +1505,11 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 			startY1 = startRowIndex*rowHeight + (rowHeight / 2.0);
 			startX2 = startColumnIndex*columnWidth;
 			startY2 = startRowIndex*rowHeight + (rowHeight / 2.0);
-			endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0)*8;
+			endX1 = endColumnIndex*columnWidth + (columnWidth / 10.0) * 8;
 			endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
 			endX2 = endColumnIndex*columnWidth + columnWidth;
 			endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
-			
+
 		}
 		else if (distBlockNum == 1) //endSymbol이 바로 오른쪽에 있을 때
 		{
@@ -1512,7 +1521,7 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 			endY1 = endRowIndex*rowHeight + (rowHeight / 2.0);
 			endX2 = endColumnIndex*columnWidth;
 			endY2 = endRowIndex*rowHeight + (rowHeight / 2.0);
-			
+
 		}
 		else
 		{
@@ -1525,7 +1534,7 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 			endX2 = endColumnIndex*columnWidth + (columnWidth / 2.0);
 			endY2 = endRowIndex*rowHeight + (rowHeight / 10.0) - abs(distBlockNum) * 3;
 		}
-	
+
 		s1 = { startX1, startY1 };
 		s2 = { startX2, startY2 };
 		e1 = { endX1, endY1 };
@@ -1581,7 +1590,7 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 
 		s1 = { startX1, startY1 };
 		s2 = { startX2, startY2 };
-		m1 = { middleX1, middleY1};
+		m1 = { middleX1, middleY1 };
 		e1 = { endX1, endY1 };
 		e2 = { endX2, endY2 };
 		connectorPoints->Append(s1);
@@ -1593,8 +1602,8 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 	}
 
 	//4. 점들을 이어준다. 
-	
-	
+
+
 
 	connectLine->Name = "connectLine " + startSymbolNo + " " + endSymbolNo;
 	connectLine->CanDrag = true;
@@ -1612,33 +1621,126 @@ int flowchart::GridPage::getDistance(int directionInfo, int startRowIndex, int s
 	return 0;
 }
 
-bool flowchart::GridPage::isBlocked(int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex)
+bool flowchart::GridPage::isBlocked(Grid^ parentGrid, int directionInfo, int startRowIndex, int startColumnIndex, int endRowIndex, int endColumnIndex)
 {
-	int startRowIndex, endRowIndex;
-	int startColumnIndex, endColumnIndex;
+	
+	int upperRowIndex, lowerRowIndex;
+	int rightColumnIndex, leftColumnIndex;
+	IIterable<UIElement^>^ tempChildCollection = nullptr;
 
+	//Image^ tempRectangle = nullptr;
+
+	//위아래, rowIndex, 오른,왼쪽 columnIndex 구하기
+	if (endRowIndex - startRowIndex < 0)
+	{
+		upperRowIndex = endRowIndex;
+		lowerRowIndex = startRowIndex;
+	}
+	else
+	{
+		upperRowIndex = startRowIndex;
+		lowerRowIndex = endRowIndex;
+	}
+
+	if (endColumnIndex - startColumnIndex < 0)
+	{
+		leftColumnIndex = endColumnIndex;
+		rightColumnIndex = startColumnIndex;
+	}
+	else
+	{
+		leftColumnIndex = startColumnIndex;
+		rightColumnIndex = endColumnIndex;
+	}
+
+	//로봇 굴려서 장애물 있는지 구하기 
 	switch (directionInfo)
 	{
 	case DIRECTION::UP:
 	case DIRECTION::DOWN:
+		Point tempPoint;
 		
+		for (int i = upperRowIndex+1; i < lowerRowIndex; i++)
+		{
+			tempPoint = { (i*safe_cast<float>(rowHeight)+1), safe_cast<float>(startColumnIndex)};
+			
+			tempChildCollection = VisualTreeHelper::FindElementsInHostCoordinates(tempPoint, parentGrid);
+			int cnt = 0;
+
+			
+			
+			for each(UIElement^ var in tempChildCollection)
+			{
+				testTextBox->Text = var->ToString();
+				if (cnt >= 1)
+					return true;
+
+				
+				cnt++;
+			}
+		}
+
+		
+
+
+
 		break;
 
 	case DIRECTION::LEFT:
 	case DIRECTION::RIGHT:
-		
+
 		break;
 
 
 	case DIRECTION::UPLEFT:
 	case DIRECTION::DOWNLEFT:
-		
+
 		break;
 
 
 	case DIRECTION::UPRIGHT:
 	case DIRECTION::DOWNRIGHT:
-		
+
 		break;
 	}
+
+	return false;
+}
+
+void flowchart::GridPage::removeAllConnectors(Canvas ^ parentCanvas)
+{
+	UIElement^ tempElement = nullptr;
+	for (UINT64 i = 0; i < App::symbolVector->Size; i++)
+	{
+		SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
+		
+		//연결된 심볼의 정보를 순회
+		for (UINT64 j = 0; j < tempSymbolInfo->Path->Size; j++)
+		{
+			//선이름 생성
+			SymbolInfo^ connectSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+			String^ connectLineNameStr = "connectLine ";
+			connectLineNameStr += tempSymbolInfo->SymbolNo;
+			connectLineNameStr += " ";
+			connectLineNameStr += connectSymbolInfo->SymbolNo;
+
+			//선이름으로 선을 찾아서 삭제
+			UIElement^ childPageGridCanvas = nullptr;
+			for (int k = 0; k < parentCanvas->Children->Size; k++)
+			{
+				childPageGridCanvas = parentCanvas->Children->GetAt(k);
+				testTextBox->Text = childPageGridCanvas->GetType()->FullName;
+				if (childPageGridCanvas->GetType()->FullName->Equals("Windows.UI.Xaml.Shapes.Polyline"))
+				{
+					Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
+					if (connectLine->Name->Equals(connectLineNameStr))
+					{
+						parentCanvas->Children->RemoveAt(k);
+					}
+				}
+			}
+		}
+	}
+
+	parentCanvas->UpdateLayout();
 }
