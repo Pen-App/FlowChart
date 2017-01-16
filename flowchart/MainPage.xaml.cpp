@@ -124,7 +124,27 @@ void flowchart::MainPage::ZoomOutButtonClick(Platform::Object^ sender, Windows::
 // 파일 오픈
 void flowchart::MainPage::OpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	// FileOpenPicker 객체 생성
+	FileOpenPicker^ openPicker = ref new FileOpenPicker();
 
+	// 탐색 시장 경로 지정
+	openPicker->SuggestedStartLocation = PickerLocationId::DocumentsLibrary;
+
+	// 보여줄 파일 종류 설정 (모든 경로일 경우 Append("*"))
+	openPicker->FileTypeFilter->Append(".xml");
+
+	// FileOpenPicker 실행 - PickSingleFileAsync 비동기 함수를 사용 => 한꺼번에 한개의 파일만 선택
+	task<StorageFile ^>(openPicker->PickSingleFileAsync()).then([this](StorageFile ^file) 
+	{
+		if (file != nullptr)
+		{
+			// file->Name에 선택한 파일의 이름이 저장되어 있습니다.
+		}
+		else 
+		{
+			// "취소 버튼을 누른 경우"
+		}
+	});
 }
 
 // 파일 저장 클릭시
