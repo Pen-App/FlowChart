@@ -134,6 +134,9 @@ namespace flowchart
 		//연결선 이동하는 함수
 		void moveConnectLine(UINT16 movedSymbolNo);
 
+		//연결 대상의 방향을 알려주는 함수
+		int getDirectionTartgetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo);
+
 		// Flyout에서 글을 작성할 때 실시간으로 내용을 받아오는 이벤트
 		void DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
 		void TitleText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);

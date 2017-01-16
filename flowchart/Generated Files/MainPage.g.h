@@ -11,6 +11,8 @@ namespace Windows {
     namespace UI {
         namespace Xaml {
             namespace Controls {
+                ref class AppBarButton;
+                ref class TextBox;
                 ref class Frame;
                 ref class Image;
             }
@@ -33,6 +35,9 @@ namespace flowchart
     private:
         bool _contentLoaded;
     
+        private: ::Windows::UI::Xaml::Controls::AppBarButton^ OpenFile;
+        private: ::Windows::UI::Xaml::Controls::AppBarButton^ SaveFile;
+        private: ::Windows::UI::Xaml::Controls::TextBox^ FileName;
         private: ::Windows::UI::Xaml::Controls::Frame^ GridContentFrame;
         private: ::Windows::UI::Xaml::Controls::Image^ s6;
         private: ::Windows::UI::Xaml::Controls::Image^ s5;

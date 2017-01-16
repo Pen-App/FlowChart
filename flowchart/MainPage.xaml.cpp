@@ -272,9 +272,9 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 				for (int k = 0; k < varPageGridCanvas->Children->Size; k++)
 				{
 					childPageGridCanvas = varPageGridCanvas->Children->GetAt(k);
-					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
+					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
 					{
-						Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+						Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
 						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 						{
 							varPageGridCanvas->Children->RemoveAt(k);
@@ -306,7 +306,7 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 						childPageGridCanvas = varPageGridCanvas->Children->GetAt(k);
 						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
 						{
-							Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+							Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
 							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 							{
 								varPageGridCanvas->Children->RemoveAt(k);
