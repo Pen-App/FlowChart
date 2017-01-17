@@ -1173,15 +1173,166 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		}
 	}
 
+	int direction;
 	double fromXPos, fromYPos;
+	double turn1X, turn1Y;
+	double turn2X, turn2Y;
+	double turn3X, turn3Y;
 	double toXPos, toYPos;
-	
-	fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+
+	direction = getDirectionTartgetSymbol(fromInfo, toInfo);
+
+	switch (direction)
+	{
+	case 1:
+	{
+		fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0);
+		fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
+		turn1Y = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn2X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
+		turn2Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
+		turn3X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
+		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
+		break;
+	}
+	case 2:
+	{
+		fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0);
+		fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
+		turn1Y = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn2X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
+		turn2Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn3X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		break;
+	}
+	case 3:
+	{
+		fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		fromYPos = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
+		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn1Y = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
+		turn2X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth+70) / 2.0) + 10;
+		turn2Y = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
+		turn3X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		break;
+	}
+	case 4:
+	{
+		fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		fromYPos = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
+		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn1Y = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
+		turn2X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn2Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
+		turn3X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
+		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
+		break;
+	}
+	case 5:
+	{
+		fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		fromYPos = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0);
+		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn1Y = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
+		turn2X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn2Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
+		turn3X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
+		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0);
+		break;
+	}
+	case 6:
+	{
+		fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		fromYPos = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0);
+		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn1Y = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
+		turn2X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
+		turn2Y = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
+		turn3X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		break;
+	}
+	case 7:
+	{
+		fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0);
+		fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
+		turn1Y = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn2X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
+		turn2Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn3X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		break;
+	}
+	case 8:
+	{
+		fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0);
+		fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
+		turn1Y = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn2X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
+		turn2Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
+		turn3X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
+		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
+		toYPos = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0);
+		break;
+	}
+	default:
+	{
+		fromXPos = 0;
+		fromYPos = 0;
+		turn1X = 0;
+		turn1Y = 0;
+		turn2X = 0;
+		turn2Y = 0;
+		turn3X = 0;
+		turn3Y = 0;
+		toXPos = 0;
+		toYPos = 0;
+	}
+	}
+
+	/*fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 	fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 	toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
-	toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+	toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);*/
 
-	Line^ connectLine = ref new Line;
+	Polyline^ connectLine = ref new Polyline;
+
+	wchar_t connectLineNameWc[200];
+	swprintf_s(connectLineNameWc, L"connectLine %d to %d", from, to);
+	connectLine->Name = ref new String(connectLineNameWc);
+	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+	connectLine->StrokeThickness = 1;
+	PointCollection^ connectLinePoints = ref new PointCollection;
+	connectLinePoints->Append(*(ref new Point(fromXPos, fromYPos)));
+	connectLinePoints->Append(*(ref new Point(turn1X, turn1Y)));
+	connectLinePoints->Append(*(ref new Point(turn2X, turn2Y)));
+	connectLinePoints->Append(*(ref new Point(turn3X, turn3Y)));
+	connectLinePoints->Append(*(ref new Point(toXPos, toYPos)));
+	connectLine->Points = connectLinePoints;
+	PageGridCanvas->Children->Append(connectLine);
+
+	/*Line^ connectLine = ref new Line;
 
 	wchar_t connectLineNameWc[200];
 	swprintf_s(connectLineNameWc, L"connectLine %d to %d", from, to);
@@ -1192,7 +1343,7 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	connectLine->Y1 = fromYPos;
 	connectLine->X2 = toXPos;
 	connectLine->Y2 = toYPos;
-	PageGridCanvas->Children->Append(connectLine);
+	PageGridCanvas->Children->Append(connectLine);*/
 }
 
 
@@ -1232,14 +1383,20 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 				for (int k = 0; k < PageGridCanvas->Children->Size; k++)
 				{
 					childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
-					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
+					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
 					{
-						Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+						/*Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
 						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 						{
 							connectLine->X1 = (tempSymbolInfo->ColumnIndex * columnWidth) + (columnWidth/2.0);
 							connectLine->Y1 = (tempSymbolInfo->RowIndex * rowHeight) + (rowHeight/2.0);
 							break;
+						}*/
+						Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
+						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+						{
+							PageGridCanvas->Children->RemoveAt(k);
+							makeConnectLine(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo);
 						}
 					}
 				}
@@ -1265,13 +1422,20 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 					for (int k = 0; k < PageGridCanvas->Children->Size; k++)
 					{
 						childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
-						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Line") == 0)
+						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
 						{
-							Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
+							/*Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
 							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 							{
 								connectLine->X2 = (movedSymbolInfo->ColumnIndex * columnWidth) + (columnWidth / 2.0);
 								connectLine->Y2 = (movedSymbolInfo->RowIndex * rowHeight) + (rowHeight / 2.0);
+								break;
+							}*/
+							Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
+							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+							{
+								PageGridCanvas->Children->RemoveAt(k);
+								makeConnectLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
 								break;
 							}
 						}
@@ -1281,6 +1445,56 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 			}
 		}
 	}
+}
+
+//연결 대상의 방향을 알려주는 함수
+int flowchart::GridPage::getDirectionTartgetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo)
+{
+	int direction;
+
+	if (fromInfo->ColumnIndex > toInfo->ColumnIndex)
+	{
+		if (fromInfo->RowIndex > toInfo->RowIndex)
+		{
+			direction = 1;
+		}
+		else if (fromInfo->RowIndex == toInfo->RowIndex)
+		{
+			direction = 4;
+		}
+		else
+		{
+			direction = 6;
+		}
+	}
+	else if (fromInfo->ColumnIndex == toInfo->ColumnIndex)
+	{
+		if (fromInfo->RowIndex > toInfo->RowIndex)
+		{
+			direction = 2;
+		}
+		else
+		{
+			direction = 7;
+		}
+	}
+	else
+	{
+		if (fromInfo->RowIndex > toInfo->RowIndex)
+		{
+			direction = 3;
+		}
+		else if (fromInfo->RowIndex == toInfo->RowIndex)
+		{
+			direction = 5;
+		}
+		else
+		{
+			direction = 8;
+		}
+	}
+
+	return direction;
 }
 
 
