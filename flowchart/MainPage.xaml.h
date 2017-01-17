@@ -24,12 +24,16 @@ namespace flowchart
 		void ZoomInButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void ZoomOutButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 
+		// 파일 열기부분
+		void OpenFileInit();
 		void OpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void OpenFileContent(Windows::Storage::StorageFile^ file);
+		void OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlDocument^ xmlDocument);
 		
 		// 파일 저장부분
+		void SaveFileInit();
 		void SaveFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-		void SaveFileContent(Windows::Storage::Pickers::FileSavePicker^ savePicker);
-		Windows::Storage::Pickers::FileSavePicker^ SaveFilePath();
+		void SaveFileContent(Windows::Storage::StorageFile^ file);
 
 		void deleteConnectLine(UINT16 deleteSymbolNo);
 	};

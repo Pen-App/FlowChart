@@ -143,99 +143,105 @@ void flowchart::MainPage::OpenFile_Click(Platform::Object^ sender, Windows::UI::
 	// FileOpenPicker 실행 - PickSingleFileAsync 비동기 함수를 사용 => 한꺼번에 한개의 파일만 선택
 	task<StorageFile ^>(openPicker->PickSingleFileAsync()).then([this](StorageFile ^file) 
 	{
-		if (file != nullptr)
-		{
-			// symbolVector 초기화
-			App::symbolVector->Clear();
-			this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
-
-			// file->Name에 선택한 파일의 이름이 저장되어 있습니다.
-			create_task(XmlDocument::LoadFromFileAsync(file)).then([this](XmlDocument^ xmlDocument)
-			{
-				// document에서 해당 노드를 검색하여 노드가 존재하는 경우
-				XmlNodeList ^items = xmlDocument->SelectNodes("file");
-				if (items != nullptr)
-				{
-					// Root 노드를 얻는다
-					IXmlNode^ rootNode = items->GetAt(0);
-					XmlNodeList^ symbolList = rootNode->ChildNodes;
-					for (int i = 0; i < symbolList->Size; i++)
-					{
-						SymbolInfo^ symbolInfo = ref new SymbolInfo();
-						IXmlNode^ symbolNode = symbolList->GetAt(i);
-
-						// 'title'의 이름을 가진 아이템 노드를 반환 & vector에 저장
-						IXmlNode^ titleNode = symbolNode->Attributes->GetNamedItem("title");
-						if(titleNode != nullptr)
-							symbolInfo->Title = (String^)titleNode->NodeValue;
-
-						// 'detail'의 이름을 가진 아이템 노드를 반환 & vector에 저장
-						IXmlNode^ detailNode = symbolNode->Attributes->GetNamedItem("detail");
-						if(detailNode != nullptr)
-							symbolInfo->Detail = (String^)detailNode->NodeValue;
-
-						// 'content'의 이름을 가진 아이템 노드를 반환 & vector에 저장
-						IXmlNode^ contentNode = symbolNode->Attributes->GetNamedItem("content");
-						if (contentNode != nullptr)
-							symbolInfo->Content = (String^)contentNode->NodeValue;
-
-						// 'symbolType'의 이름을 가진 아이템 노드를 반환 & vector에 저장
-						IXmlNode^ symbolTypeNode = symbolNode->Attributes->GetNamedItem("symbolType");
-						if (symbolTypeNode != nullptr)
-							symbolInfo->SymbolType = _wtof(((String^)symbolTypeNode->NodeValue)->Data());
-
-						// 'columnIndex'의 이름을 가진 아이템 노드를 반환 & vector에 저장
-						IXmlNode^ columnIndexNode = symbolNode->Attributes->GetNamedItem("columnIndex");
-						if (columnIndexNode != nullptr)
-							symbolInfo->ColumnIndex = _wtof(((String^)columnIndexNode->NodeValue)->Data());
-
-						// 'rowIndex'의 이름을 가진 아이템 노드를 반환 & vector에 저장
-						IXmlNode^ rowIndexNode = symbolNode->Attributes->GetNamedItem("rowIndex");
-						if (rowIndexNode != nullptr)
-							symbolInfo->RowIndex = _wtof(((String^)rowIndexNode->NodeValue)->Data());
-
-						// 'no'의 이름을 가진 아이템 노드를 반환 & vector에 저장
-						IXmlNode^ noNode = symbolNode->Attributes->GetNamedItem("no");
-						if (noNode != nullptr)
-							symbolInfo->SymbolNo = _wtof(((String^)noNode->NodeValue)->Data());
-
-						// 'path'의 이름을 가진 아이템 노드를 반환 & vector에 저장
-						IXmlNode^ pathNode = symbolNode->ChildNodes->GetAt(0);
-						String^ pathTest = nullptr;
-						for (int j = 0; j < pathNode->Attributes->Size ; j++)
-						{
-							SymbolInfo^ pathSymbolInfo = ref new SymbolInfo();
-
-							IXmlNode^ pathSymbolNode = pathNode->Attributes->GetNamedItem("noIndex"+j);
-							if (pathSymbolNode == nullptr)	// path에 정보가 없다면 for문을 빠져나감
-								break;
-							pathSymbolInfo->SymbolNo = _wtof(((String^)pathSymbolNode->NodeValue)->Data());
-							pathTest += ", " + pathSymbolInfo->SymbolNo;
-							symbolInfo->Path->Append(pathSymbolInfo);
-						}
-
-						App::symbolVector->Append(symbolInfo);
-						MessageDialog ^msg = ref new MessageDialog(
-							"title = " + symbolInfo->Title
-							+ "\ndetail = " + symbolInfo->Detail
-							+ "\ncontent = " + symbolInfo->Content
-							+ "\ntype = " + symbolInfo->SymbolType
-							+ "\ncolumn = " + symbolInfo->ColumnIndex
-							+ "\nrow = " + symbolInfo->RowIndex
-							+ "\nno = " + symbolInfo->SymbolNo
-							+ "\npath = " + pathTest
-							+ "\npathSize = " + pathNode->Attributes->Size
-						);
-						msg->ShowAsync();
-					}
-				}
-			});
-		}
-		else 
-		{
-			// "취소 버튼을 누른 경우"
-		}
+		OpenFileContent(file);
 	});
+}
+
+// 파일 열기
+void flowchart::MainPage::OpenFileContent(Windows::Storage::StorageFile^ file)
+{
+	if (file != nullptr)
+	{
+
+		// file->Name에 선택한 파일의 이름이 저장되어 있습니다.
+		create_task(XmlDocument::LoadFromFileAsync(file)).then([this](XmlDocument^ xmlDocument)
+		{
+			OpenFileContentXmlParser(xmlDocument);
+			this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
+		});
+	}
+	else
+	{
+		// "취소 버튼을 누른 경우"
+	}
+}
+
+// 파일을 열기전 프로그램에 남아있던 정보 초기화
+void flowchart::MainPage::OpenFileInit()
+{
+	// symbolVector 초기화
+	App::symbolVector->Clear();
+	App::symbolIdCount = 0;
+	App::selectedSymbolNumber = -1;
+	App::draggingSymbolNo = -1;
+	App::draggingSymbolType = -1;
+	App::focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
+}
+
+// 열은 파일을 xml 파싱해 저장
+void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlDocument^ xmlDocument)
+{
+	XmlNodeList ^items = xmlDocument->SelectNodes("file");
+	// document에서 해당 노드를 검색하여 노드가 존재하는 경우
+	if (items != nullptr)
+	{
+		// Root 노드를 얻는다
+		IXmlNode^ rootNode = items->GetAt(0);
+		XmlNodeList^ symbolList = rootNode->ChildNodes;
+		for (int i = 0; i < symbolList->Size; i++)
+		{
+			SymbolInfo^ symbolInfo = ref new SymbolInfo();
+			IXmlNode^ symbolNode = symbolList->GetAt(i);
+
+			// 'title'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+			IXmlNode^ titleNode = symbolNode->Attributes->GetNamedItem("title");
+			if (titleNode != nullptr)
+				symbolInfo->Title = (String^)titleNode->NodeValue;
+
+			// 'detail'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+			IXmlNode^ detailNode = symbolNode->Attributes->GetNamedItem("detail");
+			if (detailNode != nullptr)
+				symbolInfo->Detail = (String^)detailNode->NodeValue;
+
+			// 'content'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+			IXmlNode^ contentNode = symbolNode->Attributes->GetNamedItem("content");
+			if (contentNode != nullptr)
+				symbolInfo->Content = (String^)contentNode->NodeValue;
+
+			// 'symbolType'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+			IXmlNode^ symbolTypeNode = symbolNode->Attributes->GetNamedItem("symbolType");
+			if (symbolTypeNode != nullptr)
+				symbolInfo->SymbolType = _wtof(((String^)symbolTypeNode->NodeValue)->Data());
+
+			// 'columnIndex'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+			IXmlNode^ columnIndexNode = symbolNode->Attributes->GetNamedItem("columnIndex");
+			if (columnIndexNode != nullptr)
+				symbolInfo->ColumnIndex = _wtof(((String^)columnIndexNode->NodeValue)->Data());
+
+			// 'rowIndex'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+			IXmlNode^ rowIndexNode = symbolNode->Attributes->GetNamedItem("rowIndex");
+			if (rowIndexNode != nullptr)
+				symbolInfo->RowIndex = _wtof(((String^)rowIndexNode->NodeValue)->Data());
+
+			// 'no'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+			IXmlNode^ noNode = symbolNode->Attributes->GetNamedItem("no");
+			if (noNode != nullptr)
+				symbolInfo->SymbolNo = _wtof(((String^)noNode->NodeValue)->Data());
+
+			// 'path'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+			IXmlNode^ pathNode = symbolNode->ChildNodes->GetAt(0);
+			for (int j = 0; j < pathNode->Attributes->Size; j++)
+			{
+				SymbolInfo^ pathSymbolInfo = ref new SymbolInfo();
+
+				IXmlNode^ pathSymbolNode = pathNode->Attributes->GetNamedItem("noIndex" + j);
+				if (pathSymbolNode == nullptr)	// path에 정보가 없다면 for문을 빠져나감
+					break;
+				pathSymbolInfo->SymbolNo = _wtof(((String^)pathSymbolNode->NodeValue)->Data());
+				symbolInfo->Path->Append(pathSymbolInfo);
+			}
+		}
+	}
 }
 
 // 파일 저장 클릭시
@@ -246,30 +252,9 @@ void flowchart::MainPage::SaveFile_Click(Platform::Object^ sender, Windows::UI::
 		return;
 	}
 
-	Image^ tmpImg = nullptr;
-	SymbolInfo^ symbolInfo = nullptr;
+	SaveFileInit();
 
-	// row, column을 찾을 pageGrid 찾기
-	Page^ gridContent = (Page^)(GridContentFrame->Content);
-	Grid^ pageGrid = (Grid^)(gridContent->FindName("PageGrid"));
-
-	// 저장하기전 바뀌었던 column, row Index들을 다시 vector에 갱신해줌
-	for (int i = 0; i < App::symbolVector->Size; i++)
-	{
-		symbolInfo = App::symbolVector->GetAt(i);
-		tmpImg = safe_cast<Image^>(pageGrid->FindName("i" + symbolInfo->SymbolType
-														+ " " + symbolInfo->SymbolNo));
-		symbolInfo->RowIndex =  safe_cast<int>(tmpImg->GetValue(pageGrid->RowProperty));
-		symbolInfo->ColumnIndex = safe_cast<int>(tmpImg->GetValue(pageGrid->ColumnProperty));
-	}
-
-	FileSavePicker^ savePicker = SaveFilePath();
-	SaveFileContent(savePicker);
-}
-
-// 저장할 경로 및 파일형식 설정
-FileSavePicker^ flowchart::MainPage::SaveFilePath()
-{
+	// 저장할 파일 경로 및 파일형식 설정
 	FileSavePicker^ savePicker = ref new FileSavePicker();
 	savePicker->SuggestedStartLocation = PickerLocationId::DocumentsLibrary;
 
@@ -282,46 +267,69 @@ FileSavePicker^ flowchart::MainPage::SaveFilePath()
 	savePicker->SuggestedFileName = FileName->Text;
 	FileName->Text = savePicker->SuggestedFileName;
 
-	return savePicker;
+	// 선택한 경로로 파일 저장
+	task<StorageFile ^>(savePicker->PickSaveFileAsync()).then([this](StorageFile^ file)
+	{
+		SaveFileContent(file);
+	});
+	
+}
+
+// 파일 저장 전 초기화
+void flowchart::MainPage::SaveFileInit()
+{
+	Image^ tmpImg = nullptr;
+	SymbolInfo^ symbolInfo = nullptr;
+
+	// row, column을 찾을 pageGrid 찾기
+	Page^ gridContent = (Page^)(GridContentFrame->Content);
+	Grid^ pageGrid = (Grid^)(gridContent->FindName("PageGrid"));
+
+	// 저장하기전 바뀌었던 column, row Index들을 다시 vector에 갱신해줌
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		symbolInfo = App::symbolVector->GetAt(i);
+		tmpImg = safe_cast<Image^>(pageGrid->FindName("i" + symbolInfo->SymbolType
+			+ " " + symbolInfo->SymbolNo));
+		symbolInfo->RowIndex = safe_cast<int>(tmpImg->GetValue(pageGrid->RowProperty));
+		symbolInfo->ColumnIndex = safe_cast<int>(tmpImg->GetValue(pageGrid->ColumnProperty));
+	}
 }
 
 // xml 파싱해서 파일 저장
-void flowchart::MainPage::SaveFileContent(FileSavePicker^ savePicker)
+void flowchart::MainPage::SaveFileContent(StorageFile^ file)
 {
-	task<StorageFile ^>(savePicker->PickSaveFileAsync()).then([this](StorageFile^ file)
+	if (file != nullptr)
 	{
-		if (file != nullptr)
+		XmlDocument^ xmlDocument = ref new XmlDocument;	// xml 문서형식 사용
+		XmlElement^ rootElement = xmlDocument->CreateElement("file");	// root 항목 설정
+		rootElement->SetAttribute("fileName", FileName->Text);
+		xmlDocument->AppendChild(rootElement);	// 이항목이 xmlDocument의 root항목이 될수 있게 추가
+
+		for (int i = 0; i < App::symbolVector->Size; i++)
 		{
-			XmlDocument^ xmlDocument = ref new XmlDocument;	// xml 문서형식 사용
-			XmlElement^ rootElement = xmlDocument->CreateElement("file");	// root 항목 설정
-			rootElement->SetAttribute("fileName", FileName->Text);
-			xmlDocument->AppendChild(rootElement);	// 이항목이 xmlDocument의 root항목이 될수 있게 추가
+			XmlElement^ xmlElement = xmlDocument->CreateElement("symbol");
+			SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
+			xmlElement->SetAttribute("no", symbolInfo->SymbolNo + "");
+			xmlElement->SetAttribute("rowIndex", symbolInfo->RowIndex + "");
+			xmlElement->SetAttribute("columnIndex", symbolInfo->ColumnIndex + "");
+			xmlElement->SetAttribute("symbolType", symbolInfo->SymbolType + "");
+			xmlElement->SetAttribute("title", symbolInfo->Title);
+			xmlElement->SetAttribute("content", symbolInfo->Content);
+			xmlElement->SetAttribute("detail", symbolInfo->Detail);
+			rootElement->AppendChild(xmlElement);
 
-			for (int i = 0; i < App::symbolVector->Size; i++)
-			{
-				XmlElement^ xmlElement = xmlDocument->CreateElement("symbol");
-				SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
-				xmlElement->SetAttribute("no", symbolInfo->SymbolNo + "");
-				xmlElement->SetAttribute("rowIndex", symbolInfo->RowIndex + "");
-				xmlElement->SetAttribute("columnIndex", symbolInfo->ColumnIndex + "");
-				xmlElement->SetAttribute("symbolType", symbolInfo->SymbolType + "");
-				xmlElement->SetAttribute("title", symbolInfo->Title);
-				xmlElement->SetAttribute("content", symbolInfo->Content);
-				xmlElement->SetAttribute("detail", symbolInfo->Detail);
-				rootElement->AppendChild(xmlElement);
-
-				XmlElement^ pathElement = xmlDocument->CreateElement("path");
-				if (symbolInfo->Path->Size != 0) {
-					for (int j = 0; j < symbolInfo->Path->Size; j++)
-					{
-						pathElement->SetAttribute("noIndex"+j, symbolInfo->Path->GetAt(j)->SymbolNo + "");
-					}
+			XmlElement^ pathElement = xmlDocument->CreateElement("path");
+			if (symbolInfo->Path->Size != 0) {
+				for (int j = 0; j < symbolInfo->Path->Size; j++)
+				{
+					pathElement->SetAttribute("noIndex"+j, symbolInfo->Path->GetAt(j)->SymbolNo + "");
 				}
-			xmlElement->AppendChild(pathElement);
-		}
-		task<void>(xmlDocument->SaveToFileAsync(file));
-		}
-	});
+			}
+		xmlElement->AppendChild(pathElement);
+	}
+	task<void>(xmlDocument->SaveToFileAsync(file));
+	}
 }
 
 void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
