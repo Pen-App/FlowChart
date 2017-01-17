@@ -1447,6 +1447,7 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 	case DIRECTION::DOWN:
 		//1. 거리 구해주기
 		distBlockNum = endRowIndex - startRowIndex;
+		isBlocked(PageGrid, DIRECTION::UP, startRowIndex, startColumnIndex, endRowIndex, endColumnIndex);
 		if (distBlockNum == -1) //endSymbol이 바로 위에 있을 때
 		{
 			startX1 = startColumnIndex*columnWidth + (columnWidth / 2.0);
@@ -1494,6 +1495,7 @@ void flowchart::GridPage::makeConnectorLine(Grid^ parentGrid, Canvas^ parentCanv
 		connectorPoints->Append(s2);
 		connectorPoints->Append(e2);
 		connectorPoints->Append(e1);
+		
 		break;
 
 	case DIRECTION::LEFT:
@@ -1662,8 +1664,9 @@ bool flowchart::GridPage::isBlocked(Grid^ parentGrid, int directionInfo, int sta
 		
 		for (int i = upperRowIndex+1; i < lowerRowIndex; i++)
 		{
-			tempPoint = { (i*safe_cast<float>(rowHeight)+1), safe_cast<float>(startColumnIndex)};
-			
+			tempPoint = { (i*safe_cast<float>(rowHeight*1.5)), (startColumnIndex*safe_cast<float>(columnWidth*1.5))};
+			//testTextBox->Text = upperRowIndex + ", " + lowerRowIndex + ", " + tempPoint.X + ", ", tempPoint.Y + "/";
+			testTextBox->Text = tempPoint.X + ", " + tempPoint.Y + "/";
 			tempChildCollection = VisualTreeHelper::FindElementsInHostCoordinates(tempPoint, parentGrid);
 			int cnt = 0;
 
@@ -1671,13 +1674,15 @@ bool flowchart::GridPage::isBlocked(Grid^ parentGrid, int directionInfo, int sta
 			
 			for each(UIElement^ var in tempChildCollection)
 			{
-				testTextBox->Text = var->ToString();
-				if (cnt >= 1)
-					return true;
-
+				//testTextBox->Text = var->ToString();
+				//if(var->GetType()->FullName->Equals())
 				
-				cnt++;
+				/*if (cnt >= 1)
+					return true;
+				cnt++;*/
+				
 			}
+			
 		}
 
 		
@@ -1709,7 +1714,7 @@ bool flowchart::GridPage::isBlocked(Grid^ parentGrid, int directionInfo, int sta
 
 void flowchart::GridPage::removeAllConnectors(Canvas ^ parentCanvas)
 {
-	UIElement^ tempElement = nullptr;
+	
 	for (UINT64 i = 0; i < App::symbolVector->Size; i++)
 	{
 		SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
@@ -1729,7 +1734,7 @@ void flowchart::GridPage::removeAllConnectors(Canvas ^ parentCanvas)
 			for (int k = 0; k < parentCanvas->Children->Size; k++)
 			{
 				childPageGridCanvas = parentCanvas->Children->GetAt(k);
-				testTextBox->Text = childPageGridCanvas->GetType()->FullName;
+				//testTextBox->Text = childPageGridCanvas->GetType()->FullName;
 				if (childPageGridCanvas->GetType()->FullName->Equals("Windows.UI.Xaml.Shapes.Polyline"))
 				{
 					Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
