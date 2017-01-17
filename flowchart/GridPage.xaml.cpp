@@ -1021,12 +1021,41 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		//3. startSymbolInfo의 path에 connectSymbolInfo넣기
 		startSymbolInfo->Path->Append(connectSymbolInfo);
 		
-		//4. 간이 연결선 삭제
-		PageGridCanvas->Children->RemoveAtEnd();
+		if (startSymbolInfo->SymbolType == 2) 
+		{
+			/*String^ connectSymbolName = ref new String(L"i2 ");
+			connectSymbolName += connectSymbolInfo->SymbolNo;
 
-		//5. 실제 연결선 생성
-		makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
-		isLineDrawing = false;
+			Image^ connectSymbolImage = 
+				safe_cast<Image^>(PageGrid->FindName(connectSymbolName));
+			Flyout^ yesOrNoFlyout = ref new Flyout;
+
+			StackPanel^ yesOrNoButtonPanel = ref new StackPanel;
+			Button^ yesButton = ref new Button;
+			yesButton->Content = L"Yes";
+			Button^ noButton = ref new Button;
+			noButton->Content = L"No";
+			yesOrNoButtonPanel->Children->Append(yesButton);
+			yesOrNoButtonPanel->Children->Append(noButton);
+			yesOrNoFlyout->Content = yesOrNoButtonPanel;
+
+			FlyoutBase::SetAttachedFlyout(
+				safe_cast<FrameworkElement^>(connectSymbolImage),
+				yesOrNoFlyout
+			);
+
+			FlyoutBase::ShowAttachedFlyout(
+				safe_cast<FrameworkElement^>(connectSymbolImage));*/
+		}
+		else
+		{
+			//4. 간이 연결선 삭제
+			PageGridCanvas->Children->RemoveAtEnd();
+
+			//5. 실제 연결선 생성
+			makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
+			isLineDrawing = false;
+		}
 
 		//debugging
 		String^ tempStr = "startSymbol:" + connectorStartSymbolNo + " ";
