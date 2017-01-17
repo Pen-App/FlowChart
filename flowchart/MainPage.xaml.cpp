@@ -25,6 +25,8 @@ using namespace Windows::Storage;
 using namespace Windows::Storage::Pickers;	// 선택기 사용 파일저장
 using namespace Concurrency;
 
+using namespace Windows::UI::Popups;	// 테스트용
+
 // 빈 페이지 항목 템플릿은 http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409 에 문서화되어 있습니다.
 
 MainPage::MainPage()
@@ -130,6 +132,11 @@ void flowchart::MainPage::OpenFile_Click(Platform::Object^ sender, Windows::UI::
 	// 탐색 시장 경로 지정
 	openPicker->SuggestedStartLocation = PickerLocationId::DocumentsLibrary;
 
+	// PickerViewMode::List - 파일을 리스트 형태로 보여줌
+	// PickerViewMode::Thumnail - 파일을 섬네일 이미지 형태로 보여줌
+	// 명시해주지 않으면 기본 ViewMode인 PickerViewMode::List로 보여줌
+	//openPicker->ViewMode = PickerViewMode::Thumbnail;
+
 	// 보여줄 파일 종류 설정 (모든 경로일 경우 Append("*"))
 	openPicker->FileTypeFilter->Append(".xml");
 
@@ -138,7 +145,77 @@ void flowchart::MainPage::OpenFile_Click(Platform::Object^ sender, Windows::UI::
 	{
 		if (file != nullptr)
 		{
+			// symbolVector 초기화
+			App::symbolVector->Clear();
+
 			// file->Name에 선택한 파일의 이름이 저장되어 있습니다.
+			create_task(XmlDocument::LoadFromFileAsync(file)).then([this](XmlDocument^ xmlDocument)
+			{
+				// document에서 해당 노드를 검색하여 노드가 존재하는 경우
+				XmlNodeList ^items = xmlDocument->SelectNodes("file");
+				if (items != nullptr)
+				{
+					// Root 노드를 얻는다
+					IXmlNode^ rootNode = items->GetAt(0);
+					XmlNodeList^ symbolList = rootNode->ChildNodes;
+					for (int i = 0; i < symbolList->Size; i++)
+					{
+						SymbolInfo^ symbolInfo = ref new SymbolInfo();
+						IXmlNode^ symbolNode = symbolList->GetAt(i);
+
+						// 'title'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+						IXmlNode^ titleNode = symbolNode->Attributes->GetNamedItem("title");
+						symbolInfo->Title = (String^)titleNode->NodeValue;
+
+						// 'detail'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+						IXmlNode^ detailNode = symbolNode->Attributes->GetNamedItem("detail");
+						symbolInfo->Detail = (String^)detailNode->NodeValue;
+
+						// 'content'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+						IXmlNode^ contentNode = symbolNode->Attributes->GetNamedItem("content");
+						symbolInfo->Content = (String^)contentNode->NodeValue;
+
+						// 'symbolType'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+						IXmlNode^ symbolTypeNode = symbolNode->Attributes->GetNamedItem("symbolType");
+						symbolInfo->SymbolType = (int)symbolTypeNode->NodeValue;
+
+						// 'columnIndex'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+						IXmlNode^ columnIndexNode = symbolNode->Attributes->GetNamedItem("columnIndex");
+						symbolInfo->ColumnIndex = (int)columnIndexNode->NodeValue;
+
+						// 'rowIndex'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+						IXmlNode^ rowIndexNode = symbolNode->Attributes->GetNamedItem("rowIndex");
+						symbolInfo->RowIndex = (int)rowIndexNode->NodeValue;
+
+						// 'no'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+						IXmlNode^ noNode = symbolNode->Attributes->GetNamedItem("no");
+						symbolInfo->SymbolNo = (int)noNode->NodeValue;
+
+						// 'path'의 이름을 가진 아이템 노드를 반환 & vector에 저장
+						XmlNodeList^ pathList = symbolNode->ChildNodes;
+						for (int j = 0; j < pathList->Size; j++)
+						{
+							IXmlNode^ pathNode = pathList->GetAt(j);
+							SymbolInfo^ pathSymbolInfo = ref new SymbolInfo();
+							pathSymbolInfo->SymbolNo = (int)pathNode->Attributes
+														->GetNamedItem("symbolNo")->NodeValue;
+							symbolInfo->Path->Append(pathSymbolInfo);
+						}
+
+						App::symbolVector->Append(symbolInfo);
+						MessageDialog ^msg = ref new MessageDialog(
+							"title = " + symbolInfo->Title
+							+ "\ndetail = " + symbolInfo->Detail
+							+ "\ncontent = " + symbolInfo->Content
+							+ "\ntype = " + symbolInfo->SymbolType
+							+ "\ncolumn = " + symbolInfo->ColumnIndex
+							+ "\nrow = " + symbolInfo->RowIndex
+							+ "\nno = " + symbolInfo->SymbolNo
+						);
+						msg->ShowAsync();
+					}
+				}
+			});
 		}
 		else 
 		{
