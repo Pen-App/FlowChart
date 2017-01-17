@@ -21,6 +21,7 @@ using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::ApplicationModel::DataTransfer;
 using namespace Platform::Collections;
 using namespace Windows::Foundation::Collections;
+using namespace Windows::UI::Popups;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -39,6 +40,66 @@ GridPage::GridPage()
 	makeGridArray(PageGrid, nowRowNum, nowColumnNum, rowHeight, columnWidth);
 
 	isLineDrawing = false;
+
+	//LoadOpenedFile();
+}
+
+void GridPage::LoadOpenedFile()
+{
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
+		makeImage(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
+		makeTextBlocks(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
+		makeSymbolRectangle(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
+
+		//showFocusedSymbolButtons(symbolInfo->SymbolNo);
+		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
+		if (curColumnIndex == 0)
+		{
+			appendLeftColumn();
+		}
+		if (curRowIndex == 0)
+		{
+			appendTopRow();
+		}
+		if (curColumnIndex + 1 == nowColumnNum)
+		{
+			appendColumn();
+		}
+		if (curRowIndex + 1 == nowRowNum)
+		{
+			appendRow();
+		}
+		else if (!isSymbolIn)
+		{ //symbol 이동 로직
+			moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+			moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+			moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+			moveConnectLine(focusedSymbolNo);
+
+			//심볼 놓는 위치에 따라 PageGrid를 늘려줌
+			if (curColumnIndex == 0)
+			{
+				appendLeftColumn();
+			}
+			if (curRowIndex == 0)
+			{
+				appendTopRow();
+			}
+			if (curColumnIndex + 1 == nowColumnNum)
+			{
+				appendColumn();
+			}
+			if (curRowIndex + 1 == nowRowNum)
+			{
+				appendRow();
+			}
+		}
+	}
+	PageGrid->UpdateLayout();
+	PageGridCanvas->UpdateLayout();
+	PageGridScrollViewer->UpdateLayout();
 }
 
 //행,열 하나하나 마다 rectangle을 채워넣는 함수 : 마우스 커서가 어떤 행,열 인덱스위에 올라가있는지 이벤트를 받기 위해서

@@ -152,11 +152,11 @@ void flowchart::MainPage::OpenFileContent(Windows::Storage::StorageFile^ file)
 {
 	if (file != nullptr)
 	{
-
 		// file->Name에 선택한 파일의 이름이 저장되어 있습니다.
 		create_task(XmlDocument::LoadFromFileAsync(file)).then([this](XmlDocument^ xmlDocument)
 		{
 			OpenFileContentXmlParser(xmlDocument);
+			//FileName->Text = (String^)file;
 			this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 		});
 	}
