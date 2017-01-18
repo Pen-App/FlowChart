@@ -47,7 +47,8 @@ GridPage::GridPage()
 void GridPage::LoadOpenedFile()
 {
 	testTextBox->Text = App::symbolVector->Size + " = hello";
-
+	MessageDialog^ msg = ref new MessageDialog("hello size = " + App::symbolVector->Size);
+	msg->ShowAsync();
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
 		SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
