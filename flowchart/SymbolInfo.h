@@ -24,6 +24,7 @@ private:
 	int rowIndex = -1, columnIndex = -1;	// Grid 내에서 index
 	// 1.process 2.decision 3.preparation 4.terminator 5.data 6. document
 	int symbolType = 0;	// symbol의 종류
+	bool decisionChecker = false;	// decision y or n
 	String^ title = nullptr;	// 제목
 	String^ content = nullptr;	// 내용
 	String^ detail = nullptr;	// 세부내용
@@ -53,6 +54,11 @@ public:
 	{
 		int get() { return symbolType; }
 		void set(int value) { symbolType = value; }
+	}
+	property bool DecisionChecker
+	{
+		bool get() { return decisionChecker; }
+		void set(bool value) { decisionChecker = value; }
 	}
 	property String^ Title
 	{

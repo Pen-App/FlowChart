@@ -7,6 +7,7 @@
 #include "MainPage.xaml.h"
 #include "SymbolInfo.h"
 #include "GridPage.xaml.h"
+
 using namespace flowchart;
 
 using namespace Platform;
@@ -156,9 +157,19 @@ void flowchart::MainPage::OpenFileContent(Windows::Storage::StorageFile^ file)
 		create_task(XmlDocument::LoadFromFileAsync(file)).then([this](XmlDocument^ xmlDocument)
 		{
 			OpenFileContentXmlParser(xmlDocument);
-			//FileName->Text = (String^)file;
-			this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 		});
+		String^ platformStr = file->Name;
+		std::wstring str(platformStr->Begin());
+		wstring from = L".xaml", to = L"";
+		size_t start_pos = 0; //string처음부터 검사
+		while ((start_pos = str.find(from, start_pos)) != std::string::npos)  //from을 찾을 수 없을 때까지
+		{
+			str.replace(start_pos, from.length(), to);
+			start_pos += to.length(); // 중복검사를 피하고 from.length() > to.length()인 경우를 위해서
+		}
+		String^ changeStr = ref new String(str.c_str());
+		FileName->Text = changeStr;
+		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 	}
 	else
 	{
@@ -240,6 +251,7 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 				pathSymbolInfo->SymbolNo = _wtof(((String^)pathSymbolNode->NodeValue)->Data());
 				symbolInfo->Path->Append(pathSymbolInfo);
 			}
+			App::symbolVector->Append(symbolInfo);
 		}
 	}
 }

@@ -41,11 +41,13 @@ GridPage::GridPage()
 
 	isLineDrawing = false;
 
-	//LoadOpenedFile();
+	LoadOpenedFile();
 }
 
 void GridPage::LoadOpenedFile()
 {
+	testTextBox->Text = App::symbolVector->Size + " = hello";
+
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
 		SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
@@ -53,49 +55,49 @@ void GridPage::LoadOpenedFile()
 		makeTextBlocks(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 		makeSymbolRectangle(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 
-		//showFocusedSymbolButtons(symbolInfo->SymbolNo);
-		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
-		if (curColumnIndex == 0)
-		{
-			appendLeftColumn();
-		}
-		if (curRowIndex == 0)
-		{
-			appendTopRow();
-		}
-		if (curColumnIndex + 1 == nowColumnNum)
-		{
-			appendColumn();
-		}
-		if (curRowIndex + 1 == nowRowNum)
-		{
-			appendRow();
-		}
-		else if (!isSymbolIn)
-		{ //symbol 이동 로직
-			moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
-			moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
-			moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
-			moveConnectLine(focusedSymbolNo);
+		////showFocusedSymbolButtons(symbolInfo->SymbolNo);
+		////심볼 놓는 위치에 따라 PageGrid를 늘려줌
+		//if (curColumnIndex == 0)
+		//{
+		//	appendLeftColumn();
+		//}
+		//if (curRowIndex == 0)
+		//{
+		//	appendTopRow();
+		//}
+		//if (curColumnIndex + 1 == nowColumnNum)
+		//{
+		//	appendColumn();
+		//}
+		//if (curRowIndex + 1 == nowRowNum)
+		//{
+		//	appendRow();
+		//}
+		//else if (!isSymbolIn)
+		//{ //symbol 이동 로직
+		//	moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+		//	moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+		//	moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+		//	moveConnectLine(focusedSymbolNo);
 
-			//심볼 놓는 위치에 따라 PageGrid를 늘려줌
-			if (curColumnIndex == 0)
-			{
-				appendLeftColumn();
-			}
-			if (curRowIndex == 0)
-			{
-				appendTopRow();
-			}
-			if (curColumnIndex + 1 == nowColumnNum)
-			{
-				appendColumn();
-			}
-			if (curRowIndex + 1 == nowRowNum)
-			{
-				appendRow();
-			}
-		}
+		//	//심볼 놓는 위치에 따라 PageGrid를 늘려줌
+		//	if (curColumnIndex == 0)
+		//	{
+		//		appendLeftColumn();
+		//	}
+		//	if (curRowIndex == 0)
+		//	{
+		//		appendTopRow();
+		//	}
+		//	if (curColumnIndex + 1 == nowColumnNum)
+		//	{
+		//		appendColumn();
+		//	}
+		//	if (curRowIndex + 1 == nowRowNum)
+		//	{
+		//		appendRow();
+		//	}
+		//}
 	}
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
@@ -156,8 +158,8 @@ void GridPage::makeImage(Grid^ parentGrid, UINT64 symbolNo, int symbolType, int 
 		return;
 
 	Image^ tempImage = ref new Image();
-	tempImage->SetValue(parentGrid->RowProperty, curRowIndex);
-	tempImage->SetValue(parentGrid->ColumnProperty, curColumnIndex);
+	tempImage->SetValue(parentGrid->RowProperty, rowIndex);
+	tempImage->SetValue(parentGrid->ColumnProperty, columnIndex);
 	tempImage->CanDrag = true;
 	tempImage->AllowDrop = true;
 	tempImage->PointerEntered += ref new Windows::UI::Xaml::Input::PointerEventHandler(this, &flowchart::GridPage::Image_PointerEntered);
@@ -1382,7 +1384,7 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	wchar_t connectLineNameWc[200];
 	swprintf_s(connectLineNameWc, L"connectLine %d to %d", from, to);
 	connectLine->Name = ref new String(connectLineNameWc);
-	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
+	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Black);
 	connectLine->StrokeThickness = 1;
 	PointCollection^ connectLinePoints = ref new PointCollection;
 	connectLinePoints->Append(*(ref new Point(fromXPos, fromYPos)));
