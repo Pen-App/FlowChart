@@ -129,7 +129,7 @@ void flowchart::MainPage::OpenFile_Click(Platform::Object^ sender, Windows::UI::
 void flowchart::MainPage::SaveFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	XmlDocument^ xmlDocument = ref new XmlDocument;	// xml 문서형식 사용
-	XmlElement^ rootElement = xmlDocument->CreateElement(FileName->Text);	// root 항목 설정
+	//XmlElement^ rootElement = xmlDocument->CreateElement(FileName->Text);	// root 항목 설정
 	xmlDocument->AppendChild(rootElement);	// 이항목이 xmlDocument의 root항목이 될수 있게 추가
 }
 
