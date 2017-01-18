@@ -313,6 +313,7 @@ void flowchart::MainPage::SaveFileContent(FileSavePicker^ savePicker)
 void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 {
 	Page^ varGridPage = (Page^)(GridContentFrame->Content);
+	Grid^ varPageGrid = safe_cast<Grid^>(varGridPage->FindName("PageGrid"));
 	Canvas^ varPageGridCanvas = safe_cast<Canvas^>(varGridPage->FindName("PageGridCanvas"));
 
 	//삭제된 심볼의 정보를 찾는다
@@ -359,6 +360,26 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 						}
 					}
 				}
+
+				//심볼타입이 2(decision)이라면 decisionText도 삭제해줘야 함
+				if (deleteSymbolInfo->SymbolType == 2)
+				{
+					String^ decisionTextNameStr = "decisionText " + deleteSymbolNo + " to " + connectSymbolInfo->SymbolNo;
+					UIElement^ childPageGrid = nullptr;
+					for (int k = 0; k < varPageGrid->Children->Size; k++)
+					{
+						childPageGrid = varPageGrid->Children->GetAt(k);
+						if (wcscmp(childPageGrid->ToString()->Data(), L"Windows.UI.Xaml.Controls.Border") == 0)
+						{
+							Border^ decisionText = safe_cast<Border^>(childPageGrid);
+							if (wcscmp(decisionText->Name->Data(), decisionTextNameStr->Data()) == 0)
+							{
+								varPageGrid->Children->RemoveAt(k);
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 		//다른 심볼에서 나온 삭제된 심볼과 연결된 선을 삭제한다
@@ -391,6 +412,27 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 							}
 						}
 					}
+
+					//심볼타입이 2(decision)이라면 decisionText도 삭제해줘야 함
+					if (tempSymbolInfo->SymbolType == 2)
+					{
+						String^ decisionTextNameStr = "decisionText " + tempSymbolInfo->SymbolNo + " to " + deleteSymbolNo;
+						UIElement^ childPageGrid = nullptr;
+						for (int k = 0; k < varPageGrid->Children->Size; k++)
+						{
+							childPageGrid = varPageGrid->Children->GetAt(k);
+							if (wcscmp(childPageGrid->ToString()->Data(), L"Windows.UI.Xaml.Controls.Border") == 0)
+							{
+								Border^ decisionText = safe_cast<Border^>(childPageGrid);
+								if (wcscmp(decisionText->Name->Data(), decisionTextNameStr->Data()) == 0)
+								{
+									varPageGrid->Children->RemoveAt(k);
+									break;
+								}
+							}
+						}
+					}
+
 					break;
 				}
 			}
