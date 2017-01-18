@@ -153,6 +153,7 @@ void flowchart::MainPage::OpenFileContent(Windows::Storage::StorageFile^ file)
 {
 	if (file != nullptr)
 	{
+		OpenFileInit();
 		// file->Name에 선택한 파일의 이름이 저장되어 있습니다.
 		create_task(XmlDocument::LoadFromFileAsync(file)).then([this](XmlDocument^ xmlDocument)
 		{
@@ -253,6 +254,8 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 			}
 			App::symbolVector->Append(symbolInfo);
 		}
+		MessageDialog^ msg = ref new MessageDialog("file open success!" + "\n vector size = " + App::symbolVector->Size);
+		msg->ShowAsync();
 	}
 }
 
