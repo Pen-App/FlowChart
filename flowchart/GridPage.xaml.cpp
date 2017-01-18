@@ -54,6 +54,7 @@ void GridPage::LoadOpenedFile()
 		makeImage(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 		makeTextBlocks(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 		makeSymbolRectangle(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
+		makeButtons(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 
 		////showFocusedSymbolButtons(symbolInfo->SymbolNo);
 		////심볼 놓는 위치에 따라 PageGrid를 늘려줌
