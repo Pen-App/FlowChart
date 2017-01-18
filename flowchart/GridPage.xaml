@@ -181,6 +181,22 @@
                     />
             </StackPanel>
         </Flyout>
+        
+        <!-- Yes Or No Flyout -->
+        <Flyout Placement="Top" x:Name="YES_OR_NO_FLYOUT" x:Key="YES_OR_NO_FLYOUT">
+            <StackPanel>
+                <Button Name="YesFlyoutButton"
+                        Width="Auto"
+                        Height="Auto"
+                        Content="Yes"
+                        Click="YesOrNoFlyoutButton_Click"/>
+                <Button Name="NoFlyoutButton"
+                        Width="Auto"
+                        Height="Auto"
+                        Content="No"
+                        Click="YesOrNoFlyoutButton_Click"/>
+            </StackPanel>
+        </Flyout>
     </Page.Resources>
     
     <ScrollViewer x:Name="PageGridScrollViewer" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"
