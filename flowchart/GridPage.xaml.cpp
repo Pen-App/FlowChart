@@ -33,8 +33,8 @@ GridPage::GridPage()
 
 	nowColumnNum = 10;
 	nowRowNum = 10;
-	columnWidth = 150;
-	rowHeight = 100;
+	columnWidth = safe_cast<int>(Resources->Lookup("gridWidth"));
+	rowHeight = safe_cast<int>(Resources->Lookup("gridHeight"));
 	mouseXPos = 0;
 	mouseYPos = 0;
 	makeGridArray(PageGrid, nowRowNum, nowColumnNum, rowHeight, columnWidth);
