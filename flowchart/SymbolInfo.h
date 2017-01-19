@@ -29,6 +29,7 @@ private:
 	String^ content = nullptr;	// 내용
 	String^ detail = nullptr;	// 세부내용
 	Vector<SymbolInfo^>^ path = ref new Vector<SymbolInfo^>();	// 경로 (인접행렬)
+	Vector<bool>^ decision = ref new Vector<bool>(); //yes or no
 public:
 	SymbolInfo();
 
@@ -85,5 +86,12 @@ public:
 		//{
 		//	path = static_cast<Vector>(value);
 		//}
+	}
+	property IVector<bool>^ Decision
+	{
+		IVector<bool>^ get()
+		{
+			return decision;
+		}
 	}
 };

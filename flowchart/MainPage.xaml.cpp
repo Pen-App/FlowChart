@@ -95,7 +95,42 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 
 		varPageGrid->UpdateLayout();
 
-		App::symbolVector->RemoveAt(App::focusedSymbolIndex);
+		//App::symbolVector->RemoveAt(App::focusedSymbolIndex);
+		for (int i = 0; i < App::symbolVector->Size; i++)
+		{
+			auto tempSymbolInfo = App::symbolVector->GetAt(i);
+			if (tempSymbolInfo->SymbolNo == App::draggingSymbolNo)
+			{
+				continue;
+			}
+
+			if (tempSymbolInfo->SymbolType == 2)
+			{
+				for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+				{
+					auto tempConnectSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+					if (tempConnectSymbolInfo->SymbolNo == App::draggingSymbolNo)
+					{
+						tempSymbolInfo->Path->RemoveAt(j);
+						tempSymbolInfo->Decision->RemoveAt(j); 
+						break;
+					}
+				}
+			}
+			else
+			{
+				for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+				{
+					auto tempConnectSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+					if (tempConnectSymbolInfo->SymbolNo == App::draggingSymbolNo)
+					{
+						tempSymbolInfo->Path->RemoveAt(j);
+						break;
+					}
+				}
+			}
+		}
+		App::symbolVector->RemoveAt(App::draggingSymbolNo);
 	}
 }
 
