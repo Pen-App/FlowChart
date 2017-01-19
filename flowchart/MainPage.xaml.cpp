@@ -274,7 +274,7 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 			{
 				SymbolInfo^ pathSymbolInfo = ref new SymbolInfo();
 
-				IXmlNode^ pathSymbolNode = pathNode->Attributes->GetNamedItem("noIndex" + j);
+				IXmlNode^ pathSymbolNode = pathNode->Attributes->GetNamedItem("no" + j);
 				if (pathSymbolNode == nullptr)	// path에 정보가 없다면 for문을 빠져나감
 					break;
 				pathSymbolInfo->SymbolNo = _wtof(((String^)pathSymbolNode->NodeValue)->Data());
@@ -368,9 +368,21 @@ void flowchart::MainPage::SaveFileContent(StorageFile^ file)
 
 			XmlElement^ pathElement = xmlDocument->CreateElement("path");
 			if (symbolInfo->Path->Size != 0) {
-				for (int j = 0; j < symbolInfo->Path->Size; j++)
+				switch (symbolInfo->SymbolType)
 				{
-					pathElement->SetAttribute("noIndex"+j, symbolInfo->Path->GetAt(j)->SymbolNo + "");
+				case 2:
+					for (int j = 0; j < symbolInfo->Path->Size; j++)
+					{
+						pathElement->SetAttribute("no" + j, symbolInfo->Path->GetAt(j)->SymbolNo + "");
+						pathElement->SetAttribute("decision" + j, symbolInfo->Decision->GetAt(j) + "");
+					}
+					break;
+				default:
+					for (int j = 0; j < symbolInfo->Path->Size; j++)
+					{
+						pathElement->SetAttribute("no" + j, symbolInfo->Path->GetAt(j)->SymbolNo + "");
+					}
+					break;
 				}
 			}
 		xmlElement->AppendChild(pathElement);
