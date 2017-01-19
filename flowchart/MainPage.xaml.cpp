@@ -158,6 +158,7 @@ void flowchart::MainPage::OpenFileContent(Windows::Storage::StorageFile^ file)
 		create_task(XmlDocument::LoadFromFileAsync(file)).then([this](XmlDocument^ xmlDocument)
 		{
 			OpenFileContentXmlParser(xmlDocument);
+			this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 		});
 		String^ platformStr = file->Name;
 		std::wstring str(platformStr->Begin());
@@ -170,7 +171,6 @@ void flowchart::MainPage::OpenFileContent(Windows::Storage::StorageFile^ file)
 		}
 		String^ changeStr = ref new String(str.c_str());
 		FileName->Text = changeStr;
-		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 	}
 	else
 	{
