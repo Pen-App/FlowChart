@@ -49,6 +49,8 @@ namespace flowchart
 		UINT64 connectorStartSymbolNo; //연결선
 		double mouseXPos, mouseYPos;
 
+		bool isSelectingYesOrNo; //yes or no를 선택하고 있는지
+
 		//=============================함수들=====================================
 		//0. gridArray 만들기
 		void makeGridArray(Grid^ parentGrid, int rowNum, int columnNum, int rowHeight, int columnWidth);
@@ -107,9 +109,11 @@ namespace flowchart
 		void PageGridScrollViewer_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
 
 		//. symbol 이동시켜주는 함수
+		void moveSymbolInfoInSymbolVector(UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex);
 		void moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex);
 		void moveSymbolRectangle(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex);
 		void moveTextBlocks(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex);
+		void moveYesOrNoTextBlock(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex);
 
 		// 선그리는 버튼 드래그 해서 선 그리는 함수
 		void ConnectorButtonPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
@@ -137,12 +141,17 @@ namespace flowchart
 		//연결 대상의 방향을 알려주는 함수
 		int getDirectionTartgetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo);
 
+		//간이 연결선 삭제하는 함수
+		void deleteTempConnectLine();
+
 		// Flyout에서 글을 작성할 때 실시간으로 내용을 받아오는 이벤트
 		void DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
 		void TitleText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
 		void ContentText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args);
-	
+
 		// 파일 열기로 연 파일을 그려주는 메소드
 		void LoadOpenedFile();
-};
+
+		void YesOrNoFlyoutButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+	};
 }

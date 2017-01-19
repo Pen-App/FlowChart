@@ -56,54 +56,11 @@ void GridPage::LoadOpenedFile()
 		makeTextBlocks(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 		makeSymbolRectangle(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 		makeButtons(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
-
-		////showFocusedSymbolButtons(symbolInfo->SymbolNo);
-		////심볼 놓는 위치에 따라 PageGrid를 늘려줌
-		//if (curColumnIndex == 0)
-		//{
-		//	appendLeftColumn();
-		//}
-		//if (curRowIndex == 0)
-		//{
-		//	appendTopRow();
-		//}
-		//if (curColumnIndex + 1 == nowColumnNum)
-		//{
-		//	appendColumn();
-		//}
-		//if (curRowIndex + 1 == nowRowNum)
-		//{
-		//	appendRow();
-		//}
-		//else if (!isSymbolIn)
-		//{ //symbol 이동 로직
-		//	moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
-		//	moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
-		//	moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
-		//	moveConnectLine(focusedSymbolNo);
-
-		//	//심볼 놓는 위치에 따라 PageGrid를 늘려줌
-		//	if (curColumnIndex == 0)
-		//	{
-		//		appendLeftColumn();
-		//	}
-		//	if (curRowIndex == 0)
-		//	{
-		//		appendTopRow();
-		//	}
-		//	if (curColumnIndex + 1 == nowColumnNum)
-		//	{
-		//		appendColumn();
-		//	}
-		//	if (curRowIndex + 1 == nowRowNum)
-		//	{
-		//		appendRow();
-		//	}
-		//}
 	}
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
+	isSelectingYesOrNo = false;
 }
 
 //행,열 하나하나 마다 rectangle을 채워넣는 함수 : 마우스 커서가 어떤 행,열 인덱스위에 올라가있는지 이벤트를 받기 위해서
@@ -460,22 +417,12 @@ void GridPage::appendTopRow()
 	//벡터 내용 수정
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
-		App::symbolVector->GetAt(i)->RowIndex++;
+		auto tempSymbolInfo = App::symbolVector->GetAt(i);
+		tempSymbolInfo->RowIndex++;
+		//연결선 움직임
+		moveConnectLine(tempSymbolInfo->SymbolNo);
 	}
 
-	//연결선 한 행의 길이씩 아래로 옴김
-	for (int i = 0; i < PageGridCanvas->Children->Size; i++)
-	{
-		UIElement^ pageGridCanvasChild = PageGridCanvas->Children->GetAt(i);
-		
-		swprintf_s(elementType, L"%s", pageGridCanvasChild->ToString()->Data());
-		if (wcscmp(elementType, L"Windows.UI.Xaml.Shapes.Line") == 0)
-		{
-			Line^ connectorLine = safe_cast<Line^>(pageGridCanvasChild);
-			connectorLine->Y1 += rowHeight;
-			connectorLine->Y2 += rowHeight;
-		}
-	}
 }
 
 void GridPage::appendLeftColumn()
@@ -514,21 +461,10 @@ void GridPage::appendLeftColumn()
 	//벡터 내용 수정
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
-		App::symbolVector->GetAt(i)->ColumnIndex++;
-	}
-
-	//연결선 한 열의 길이씩 오른쪽으로 옴김
-	for (int i = 0; i < PageGridCanvas->Children->Size; i++)
-	{
-		UIElement^ pageGridCanvasChild = PageGridCanvas->Children->GetAt(i);
-
-		swprintf_s(elementType, L"%s", pageGridCanvasChild->ToString()->Data());
-		if (wcscmp(elementType, L"Windows.UI.Xaml.Shapes.Line") == 0)
-		{
-			Line^ connectorLine = safe_cast<Line^>(pageGridCanvasChild);
-			connectorLine->X1 += columnWidth;
-			connectorLine->X2 += columnWidth;
-		}
+		auto tempSymbolInfo = App::symbolVector->GetAt(i);
+		tempSymbolInfo->ColumnIndex++;
+		//연결선 움직임
+		moveConnectLine(tempSymbolInfo->SymbolNo);
 	}
 }
 
@@ -603,9 +539,11 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		}
 	}
 	else if(!isSymbolIn){ //symbol 이동 로직
+		moveSymbolInfoInSymbolVector(focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
+		moveYesOrNoTextBlock(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveConnectLine(focusedSymbolNo);
 
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
@@ -948,6 +886,21 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 	}
 }
 
+void flowchart::GridPage::moveSymbolInfoInSymbolVector(UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
+{
+	SymbolInfo^ movedSymbolInfo = nullptr;
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		movedSymbolInfo = App::symbolVector->GetAt(i);
+		if (movedSymbolInfo->SymbolNo == focusedSymbolNo)
+		{
+			movedSymbolInfo->RowIndex = newRowIndex;
+			movedSymbolInfo->ColumnIndex = newColumnIndex;
+			break;
+		}
+	}
+}
+
 void flowchart::GridPage::moveSymbolRectangle(Grid ^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
 {
 	Rectangle^ tempRectangle = nullptr;
@@ -970,6 +923,144 @@ void flowchart::GridPage::moveTextBlocks(Grid ^ parentGrid, UINT64 focusedSymbol
 	tempTitleTextBlock->SetValue(parentGrid->ColumnProperty, newColumnIndex);
 	tempContentTextBlock->SetValue(parentGrid->RowProperty, newRowIndex);
 	tempContentTextBlock->SetValue(parentGrid->ColumnProperty, newColumnIndex);
+}
+
+void flowchart::GridPage::moveYesOrNoTextBlock(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
+{
+	//1. 심볼넘버로 move된 심볼을 찾는다.
+	SymbolInfo^ movedSymbolInfo = nullptr;
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		movedSymbolInfo = App::symbolVector->GetAt(i);
+		if (movedSymbolInfo->SymbolNo == focusedSymbolNo)
+		{
+			break;
+		}
+	}
+	//1-2. 심볼을 못찾으면 종료
+	if (movedSymbolInfo == nullptr)
+	{
+		return;
+	}
+
+	//decision 심볼일 때
+	if (movedSymbolInfo->SymbolType == 2)
+	{
+		//2. YesOrNo 텍스트블록을 감싸고 있는 보더를 움직인다.
+		Border^ tempYesOrNoBorder = nullptr;
+
+		for (int i = 0; i < movedSymbolInfo->Path->Size; i++)
+		{
+			//2-1. YesOrNo의 Grid위치를 바꾼다.
+			auto targetSymbolInfo = movedSymbolInfo->Path->GetAt(i);
+			tempYesOrNoBorder = safe_cast<Border^>(PageGrid->FindName("decisionText " + focusedSymbolNo + " to " + targetSymbolInfo->SymbolNo));
+			tempYesOrNoBorder->SetValue(Grid::RowProperty, newRowIndex);
+			tempYesOrNoBorder->SetValue(Grid::ColumnProperty, newColumnIndex);
+
+			//2-2. YesOrNo의 Grid안에서 위치를 바꾼다.
+			int direction = getDirectionTartgetSymbol(movedSymbolInfo, targetSymbolInfo);
+			switch (direction)
+			{
+			case 1:
+			case 2:
+			{
+				tempYesOrNoBorder->Margin = Thickness(0, 0, (columnWidth / 2.0), 0);
+				break;
+			}
+			case 3:
+			case 4:
+			{
+				tempYesOrNoBorder->Margin = Thickness(0, 0, 0, (rowHeight / 2.0));
+				break;
+			}
+			case 5:
+			case 6:
+			{
+				tempYesOrNoBorder->Margin = Thickness(0, (rowHeight / 2.0), 0, 0);
+				break;
+			}
+			case 7:
+			case 8:
+			{
+				tempYesOrNoBorder->Margin = Thickness((columnWidth / 2.0), 0, 0, 0);
+				break;
+			}
+			default:
+				tempYesOrNoBorder->HorizontalAlignment =
+					Windows::UI::Xaml::HorizontalAlignment::Center;
+				tempYesOrNoBorder->VerticalAlignment =
+					Windows::UI::Xaml::VerticalAlignment::Center;
+				break;
+			}
+		}
+	}
+	//아닐 때도 decision과 연결되있으면 방향을 바꿔야 할 수도 있음
+	else
+	{
+		//2. YesOrNo 텍스트블록을 감싸고 있는 보더를 움직인다.
+		Border^ tempYesOrNoBorder = nullptr;
+		
+		//2-1. 모든 심볼을 조사하면서
+		for (int i = 0; i < App::symbolVector->Size; i++)
+		{
+			auto tempSymbolInfo = App::symbolVector->GetAt(i);
+
+			//2-2. 심볼이 decision이면서
+			if (tempSymbolInfo->SymbolType != 2)
+			{
+				continue;
+			}
+
+			for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				auto targetSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+
+				//2-3. 연결된 심볼이 움직인 심볼이라면
+				if (targetSymbolInfo->SymbolNo == focusedSymbolNo)
+				{
+					//2-4. YesOrNo의 Grid안에서 위치를 바꾼다.
+					tempYesOrNoBorder = safe_cast<Border^>(PageGrid->FindName("decisionText " + tempSymbolInfo->SymbolNo + " to " + focusedSymbolNo));
+
+					int direction = getDirectionTartgetSymbol(tempSymbolInfo, targetSymbolInfo);
+					switch (direction)
+					{
+					case 1:
+					case 2:
+					{
+						tempYesOrNoBorder->Margin = Thickness(0, 0, (columnWidth / 2.0), 0);
+						break;
+					}
+					case 3:
+					case 4:
+					{
+						tempYesOrNoBorder->Margin = Thickness(0, 0, 0, (rowHeight / 2.0));
+						break;
+					}
+					case 5:
+					case 6:
+					{
+						tempYesOrNoBorder->Margin = Thickness(0, (rowHeight / 2.0), 0, 0);
+						break;
+					}
+					case 7:
+					case 8:
+					{
+						tempYesOrNoBorder->Margin = Thickness((columnWidth / 2.0), 0, 0, 0);
+						break;
+					}
+					default:
+						tempYesOrNoBorder->HorizontalAlignment =
+							Windows::UI::Xaml::HorizontalAlignment::Center;
+						tempYesOrNoBorder->VerticalAlignment =
+							Windows::UI::Xaml::VerticalAlignment::Center;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	parentGrid->UpdateLayout();
 }
 
 void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e)
@@ -1084,14 +1175,34 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		}
 
 		//3. startSymbolInfo의 path에 connectSymbolInfo넣기
-		startSymbolInfo->Path->Append(connectSymbolInfo);
-		
-		//4. 간이 연결선 삭제
-		PageGridCanvas->Children->RemoveAtEnd();
+		if (startSymbolInfo->SymbolType != 2)
+		{
+			startSymbolInfo->Path->Append(connectSymbolInfo);
+		}
 
-		//5. 실제 연결선 생성
-		makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
-		isLineDrawing = false;
+		if (startSymbolInfo->SymbolType == 2) 
+		{
+			Flyout^ yesOrNoFlyout = YES_OR_NO_FLYOUT;
+
+			String^ connectSymbolName = ref new String(L"i");
+			connectSymbolName += connectSymbolInfo->SymbolType;
+			connectSymbolName += L" ";
+			connectSymbolName += connectSymbolInfo->SymbolNo;
+			Image^ connectSymbolImage =
+				safe_cast<Image^>(PageGrid->FindName(connectSymbolName));
+
+			yesOrNoFlyout->ShowAt(connectSymbolImage);
+			isSelectingYesOrNo = true;
+		}
+		else
+		{
+			//4. 간이 연결선 삭제
+			deleteTempConnectLine();
+
+			//5. 실제 연결선 생성
+			makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
+			isLineDrawing = false;
+		}
 
 		//debugging
 		String^ tempStr = "startSymbol:" + connectorStartSymbolNo + " ";
@@ -1103,12 +1214,14 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		
 	}
 	OutputDebugString(L"canvas_press!!!\n");
-	if (isLineDrawing)
+	if (isLineDrawing && !isSelectingYesOrNo)
 	{
 		isLineDrawing = false;
-		PageGridCanvas->Children->RemoveAtEnd();
-		PageGridCanvas->UpdateLayout();
+		isSelectingYesOrNo = false;
+		deleteTempConnectLine();
 	}
+
+	isSelectingYesOrNo = false;
 }
 
 void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
@@ -1562,6 +1675,25 @@ int flowchart::GridPage::getDirectionTartgetSymbol(SymbolInfo^ fromInfo, SymbolI
 	return direction;
 }
 
+//간이 연결선 삭제해주는 함수
+void flowchart::GridPage::deleteTempConnectLine()
+{
+	for (int i = 0; i < PageGridCanvas->Children->Size; i++)
+	{
+		auto childOfPageGridCanvas = PageGridCanvas->Children->GetAt(i);
+		String^ childOfType = childOfPageGridCanvas->ToString();
+		if (childOfType == ref new String(L"Windows.UI.Xaml.Shapes.Line"))
+		{
+			Line^ lineOnCanvas = safe_cast<Line^>(childOfPageGridCanvas);
+			if (lineOnCanvas->Name == ref new String(L"tempLine"))
+			{
+				PageGridCanvas->Children->RemoveAt(i);
+				break;
+			}
+		}
+	}
+	PageGridCanvas->UpdateLayout();
+}
 
 // Detail Flyout에서 텍스트를 입력받는 중일 때
 void flowchart::GridPage::DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
@@ -1584,4 +1716,129 @@ void flowchart::GridPage::ContentText_TextChanging(Windows::UI::Xaml::Controls::
 	App::symbolVector->GetAt(App::focusedSymbolIndex)->Content = sender->Text;
 	TextBlock^ content = safe_cast<TextBlock^>(PageGrid->FindName("content " + focusedSymbolNo));
 	content->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Content;
+}
+
+
+void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	OutputDebugString(L"YesOrNoFlyoutButton_Click\n");
+	Button^ yesOrNoButton = safe_cast<Button^>(sender);
+
+	//1. 그래프에 추가시킨다.
+	SymbolInfo^ startSymbolInfo = nullptr;
+	SymbolInfo^ connectSymbolInfo = nullptr;
+	//1. 기준이 되는 symbolInfo 찾기, app::vector에서
+	for (UINT64 i = 0; i < App::symbolVector->Size; i++)
+	{
+		if (App::symbolVector->GetAt(i)->SymbolNo == connectorStartSymbolNo)
+		{
+			startSymbolInfo = App::symbolVector->GetAt(i);
+			break;
+		}
+	}
+
+	//2. 이어질 connecctSymbolInfo 찾기
+	for (UINT64 i = 0; i < App::symbolVector->Size; i++)
+	{
+		if (App::symbolVector->GetAt(i)->SymbolNo == focusedSymbolNo)
+		{
+			connectSymbolInfo = App::symbolVector->GetAt(i);
+			break;
+		}
+	}
+
+	//3. startSymbolInfo의 path에 connectSymbolInfo넣기
+	startSymbolInfo->Path->Append(connectSymbolInfo);
+
+	//4. 간이 연결선 삭제
+	deleteTempConnectLine();
+
+	//5. 실제 연결선 생성
+	makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
+	isLineDrawing = false;
+
+	//6. 누른 버튼에 따라서 yes텍스트나 no텍스트 생성
+	//6-1. yes or no를 표시할 테두리 설정
+	Border^ borderOfYesOrNoTextBlock = ref new Border;
+	String^ nameOfTextBlockBorder = ref new String(L"decisionText ");
+	nameOfTextBlockBorder += connectorStartSymbolNo;
+	nameOfTextBlockBorder += L" to ";
+	nameOfTextBlockBorder += connectSymbolInfo->SymbolNo;
+	borderOfYesOrNoTextBlock->Name = nameOfTextBlockBorder;
+	borderOfYesOrNoTextBlock->BorderBrush = ref new SolidColorBrush(Windows::UI::Colors::Gray);
+	borderOfYesOrNoTextBlock->BorderThickness = 1;
+	borderOfYesOrNoTextBlock->Width = 30;
+	borderOfYesOrNoTextBlock->Height = 20;
+	borderOfYesOrNoTextBlock->SetValue(Canvas::ZIndexProperty, 3);
+	borderOfYesOrNoTextBlock->SetValue(Grid::RowProperty, startSymbolInfo->RowIndex);
+	borderOfYesOrNoTextBlock->SetValue(Grid::ColumnProperty, startSymbolInfo->ColumnIndex);
+	int direction = getDirectionTartgetSymbol(startSymbolInfo, connectSymbolInfo);
+
+	//6-2. yes or no 위치 조정
+	switch (direction)
+	{
+	case 1:
+	case 2:
+	{
+		borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, (columnWidth/2.0), 0);
+		break;
+	}
+	case 3:
+	case 4:
+	{
+		borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, 0, (rowHeight/2.0));
+		break;
+	}
+	case 5:
+	case 6:
+	{
+		borderOfYesOrNoTextBlock->Margin = Thickness(0, (rowHeight/2.0), 0, 0);
+		break;
+	}
+	case 7:
+	case 8:
+	{
+		borderOfYesOrNoTextBlock->Margin = Thickness((columnWidth/2.0), 0, 0, 0);
+		break;
+	}
+	default:
+		borderOfYesOrNoTextBlock->HorizontalAlignment =
+			Windows::UI::Xaml::HorizontalAlignment::Center;
+		borderOfYesOrNoTextBlock->VerticalAlignment =
+			Windows::UI::Xaml::VerticalAlignment::Center;
+		break;
+	}
+
+	//6-3. yes or no 텍스트 생성
+	if (yesOrNoButton->Name == L"YesFlyoutButton")
+	{
+		TextBlock^ yesTextBlock = ref new TextBlock;
+		yesTextBlock->Text = L"Yes";
+		yesTextBlock->HorizontalAlignment = 
+			Windows::UI::Xaml::HorizontalAlignment::Center;
+		yesTextBlock->VerticalAlignment =
+			Windows::UI::Xaml::VerticalAlignment::Center;
+		borderOfYesOrNoTextBlock->Child = yesTextBlock;
+	}
+	else if (yesOrNoButton->Name == L"NoFlyoutButton")
+	{
+		TextBlock^ noTextBlock = ref new TextBlock;
+		noTextBlock->Text = L"no";
+		noTextBlock->HorizontalAlignment =
+			Windows::UI::Xaml::HorizontalAlignment::Center;
+		noTextBlock->VerticalAlignment =
+			Windows::UI::Xaml::VerticalAlignment::Center;
+		borderOfYesOrNoTextBlock->Child = noTextBlock;
+	}
+
+	//6-4. PageGrid에 넣음
+	PageGrid->Children->Append(borderOfYesOrNoTextBlock);
+	PageGrid->UpdateLayout();
+
+	//7. flyout 닫기
+	YES_OR_NO_FLYOUT->Hide();
+
+	//8. boolean false;
+	isLineDrawing = false;
+	isSelectingYesOrNo = false;
 }
