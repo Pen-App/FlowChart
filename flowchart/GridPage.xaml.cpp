@@ -1769,6 +1769,7 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 	borderOfYesOrNoTextBlock->BorderThickness = 1;
 	borderOfYesOrNoTextBlock->Width = 30;
 	borderOfYesOrNoTextBlock->Height = 20;
+	borderOfYesOrNoTextBlock->IsTapEnabled = false;
 	borderOfYesOrNoTextBlock->SetValue(Canvas::ZIndexProperty, 3);
 	borderOfYesOrNoTextBlock->SetValue(Grid::RowProperty, startSymbolInfo->RowIndex);
 	borderOfYesOrNoTextBlock->SetValue(Grid::ColumnProperty, startSymbolInfo->ColumnIndex);
@@ -1819,6 +1820,9 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 		yesTextBlock->VerticalAlignment =
 			Windows::UI::Xaml::VerticalAlignment::Center;
 		borderOfYesOrNoTextBlock->Child = yesTextBlock;
+
+		//6-4. decision 벡터에 넣음
+		startSymbolInfo->Decision->Append(true);
 	}
 	else if (yesOrNoButton->Name == L"NoFlyoutButton")
 	{
@@ -1829,9 +1833,12 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 		noTextBlock->VerticalAlignment =
 			Windows::UI::Xaml::VerticalAlignment::Center;
 		borderOfYesOrNoTextBlock->Child = noTextBlock;
+
+		//6-4. decision 벡터에 넣음
+		startSymbolInfo->Decision->Append(false);
 	}
 
-	//6-4. PageGrid에 넣음
+	//6-5. PageGrid에 넣음
 	PageGrid->Children->Append(borderOfYesOrNoTextBlock);
 	PageGrid->UpdateLayout();
 
