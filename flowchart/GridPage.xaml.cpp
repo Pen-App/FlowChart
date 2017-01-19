@@ -1724,27 +1724,11 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 	OutputDebugString(L"YesOrNoFlyoutButton_Click\n");
 	Button^ yesOrNoButton = safe_cast<Button^>(sender);
 
-	//1. 그래프에 추가시킨다.
-	SymbolInfo^ startSymbolInfo = nullptr;
-	SymbolInfo^ connectSymbolInfo = nullptr;
-	//1. 기준이 되는 symbolInfo 찾기, app::vector에서
-	for (UINT64 i = 0; i < App::symbolVector->Size; i++)
+	SymbolInfo^ startSymbolInfo = App::getSymbolInfoByNo(connectorStartSymbolNo);
+	SymbolInfo^ connectSymbolInfo = App::getSymbolInfoByNo(focusedSymbolNo);
+	if (startSymbolInfo == nullptr || connectSymbolInfo == nullptr)
 	{
-		if (App::symbolVector->GetAt(i)->SymbolNo == connectorStartSymbolNo)
-		{
-			startSymbolInfo = App::symbolVector->GetAt(i);
-			break;
-		}
-	}
-
-	//2. 이어질 connecctSymbolInfo 찾기
-	for (UINT64 i = 0; i < App::symbolVector->Size; i++)
-	{
-		if (App::symbolVector->GetAt(i)->SymbolNo == focusedSymbolNo)
-		{
-			connectSymbolInfo = App::symbolVector->GetAt(i);
-			break;
-		}
+		return;
 	}
 
 	//3. startSymbolInfo의 path에 connectSymbolInfo넣기
@@ -1757,7 +1741,7 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 	makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
 	isLineDrawing = false;
 
-	//6. 누른 버튼에 따라서 yes텍스트나 no텍스트 생성
+	/*//6. 누른 버튼에 따라서 yes텍스트나 no텍스트 생성
 	//6-1. yes or no를 표시할 테두리 설정
 	Border^ borderOfYesOrNoTextBlock = ref new Border;
 	String^ nameOfTextBlockBorder = ref new String(L"decisionText ");
@@ -1840,7 +1824,23 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 
 	//6-5. PageGrid에 넣음
 	PageGrid->Children->Append(borderOfYesOrNoTextBlock);
-	PageGrid->UpdateLayout();
+	PageGrid->UpdateLayout();*/
+
+	//6. 누른 버튼에 따라서 yes텍스트나 no텍스트 생성
+	if (yesOrNoButton->Name == L"YesFlyoutButton")
+	{
+		makeYesOrNoTextBlock(connectorStartSymbolNo, focusedSymbolNo, true);
+
+		//6-2. decision 벡터에 넣음
+		startSymbolInfo->Decision->Append(true);
+	}
+	else if (yesOrNoButton->Name == L"NoFlyoutButton")
+	{
+		makeYesOrNoTextBlock(connectorStartSymbolNo, focusedSymbolNo, false);
+
+		//6-2. decision 벡터에 넣음
+		startSymbolInfo->Decision->Append(false);
+	}
 
 	//7. flyout 닫기
 	YES_OR_NO_FLYOUT->Hide();
@@ -1848,4 +1848,93 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 	//8. boolean false;
 	isLineDrawing = false;
 	isSelectingYesOrNo = false;
+}
+
+//Yes Or No TextBlock을 만드는 함수
+void flowchart::GridPage::makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool decision)
+{
+	SymbolInfo^ fromInfo = App::getSymbolInfoByNo(from);
+	SymbolInfo^ toInfo = App::getSymbolInfoByNo(to);
+	if (fromInfo == nullptr || toInfo == nullptr)
+	{
+		return;
+	}
+
+	//6-1. yes or no를 표시할 테두리 설정
+	Border^ borderOfYesOrNoTextBlock = ref new Border;
+	String^ nameOfTextBlockBorder = ref new String(L"decisionText ");
+	nameOfTextBlockBorder += from;
+	nameOfTextBlockBorder += L" to ";
+	nameOfTextBlockBorder += to;
+	borderOfYesOrNoTextBlock->Name = nameOfTextBlockBorder;
+	borderOfYesOrNoTextBlock->BorderBrush = ref new SolidColorBrush(Windows::UI::Colors::Gray);
+	borderOfYesOrNoTextBlock->BorderThickness = 1;
+	borderOfYesOrNoTextBlock->Width = 30;
+	borderOfYesOrNoTextBlock->Height = 20;
+	borderOfYesOrNoTextBlock->IsTapEnabled = false;
+	borderOfYesOrNoTextBlock->SetValue(Canvas::ZIndexProperty, 3);
+	borderOfYesOrNoTextBlock->SetValue(Grid::RowProperty, fromInfo->RowIndex);
+	borderOfYesOrNoTextBlock->SetValue(Grid::ColumnProperty, fromInfo->ColumnIndex);
+
+	//6-2. yes or no 위치 조정
+	int direction = getDirectionTartgetSymbol(fromInfo, toInfo);
+	switch (direction)
+	{
+	case 1:
+	case 2:
+	{
+		borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, (columnWidth / 2.0), 0);
+		break;
+	}
+	case 3:
+	case 4:
+	{
+		borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, 0, (rowHeight / 2.0));
+		break;
+	}
+	case 5:
+	case 6:
+	{
+		borderOfYesOrNoTextBlock->Margin = Thickness(0, (rowHeight / 2.0), 0, 0);
+		break;
+	}
+	case 7:
+	case 8:
+	{
+		borderOfYesOrNoTextBlock->Margin = Thickness((columnWidth / 2.0), 0, 0, 0);
+		break;
+	}
+	default:
+		borderOfYesOrNoTextBlock->HorizontalAlignment =
+			Windows::UI::Xaml::HorizontalAlignment::Center;
+		borderOfYesOrNoTextBlock->VerticalAlignment =
+			Windows::UI::Xaml::VerticalAlignment::Center;
+		break;
+	}
+
+	//6-3. yes or no 텍스트 생성
+	if (decision)
+	{
+		TextBlock^ yesTextBlock = ref new TextBlock;
+		yesTextBlock->Text = L"Yes";
+		yesTextBlock->HorizontalAlignment =
+			Windows::UI::Xaml::HorizontalAlignment::Center;
+		yesTextBlock->VerticalAlignment =
+			Windows::UI::Xaml::VerticalAlignment::Center;
+		borderOfYesOrNoTextBlock->Child = yesTextBlock;
+	}
+	else
+	{
+		TextBlock^ noTextBlock = ref new TextBlock;
+		noTextBlock->Text = L"no";
+		noTextBlock->HorizontalAlignment =
+			Windows::UI::Xaml::HorizontalAlignment::Center;
+		noTextBlock->VerticalAlignment =
+			Windows::UI::Xaml::VerticalAlignment::Center;
+		borderOfYesOrNoTextBlock->Child = noTextBlock;
+	}
+
+	//6-4. PageGrid에 넣음
+	PageGrid->Children->Append(borderOfYesOrNoTextBlock);
+	PageGrid->UpdateLayout();
 }

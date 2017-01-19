@@ -33,6 +33,10 @@ namespace flowchart
 		static property int draggingSymbolType;
 		static property int focusedSymbolIndex;	// 선택된 symbolInfoVector의 index
 
+	public:
+		//SymbolNo로 App::SymbolVector에서 SymbolInfo를 반환하는 함수
+		static SymbolInfo^ getSymbolInfoByNo(UINT16 symbolNo);
+
 	private:
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);
 		void OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs ^e);

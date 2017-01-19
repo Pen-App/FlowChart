@@ -150,6 +150,10 @@ namespace flowchart
 		// 파일 열기로 연 파일을 그려주는 메소드
 		void LoadOpenedFile();
 
+		//Yes Or No를 선택하는 플라이아웃 버튼을 클릭했을 때 처리
 		void YesOrNoFlyoutButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+
+		//Yes Or No TextBlock을 만드는 함수
+		void makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool decision);
 	};
 }

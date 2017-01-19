@@ -106,6 +106,22 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
     }
 }
 
+//SymbolNo로 App::SymbolVector에서 SymbolInfo를 반환하는 함수
+SymbolInfo^ flowchart::App::getSymbolInfoByNo(UINT16 symbolNo)
+{
+	SymbolInfo^ targetSymbolInfo = nullptr;
+	for (int i = 0; i < symbolVector->Size; i++)
+	{
+		if (symbolVector->GetAt(i)->SymbolNo == symbolNo)
+		{
+			targetSymbolInfo = symbolVector->GetAt(i);
+			break;
+		}
+	}
+
+	return targetSymbolInfo;
+}
+
 /// <summary>
 /// 응용 프로그램 실행이 일시 중단된 경우 호출됩니다. 응용 프로그램이 종료될지
 /// 또는 메모리 콘텐츠를 변경하지 않고 다시 시작할지 여부를 결정하지 않은 채
