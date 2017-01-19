@@ -195,17 +195,6 @@ void flowchart::MainPage::OpenFileContent(Windows::Storage::StorageFile^ file)
 			OpenFileContentXmlParser(xmlDocument);
 			this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 		});
-		String^ platformStr = file->Name;
-		std::wstring str(platformStr->Begin());
-		wstring from = L".xaml", to = L"";
-		size_t start_pos = 0; //string처음부터 검사
-		while ((start_pos = str.find(from, start_pos)) != std::string::npos)  //from을 찾을 수 없을 때까지
-		{
-			str.replace(start_pos, from.length(), to);
-			start_pos += to.length(); // 중복검사를 피하고 from.length() > to.length()인 경우를 위해서
-		}
-		String^ changeStr = ref new String(str.c_str());
-		FileName->Text = changeStr;
 	}
 	else
 	{
@@ -234,6 +223,10 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 	{
 		// Root 노드를 얻는다
 		IXmlNode^ rootNode = items->GetAt(0);
+
+		// 파일명을 얻는다
+		FileName->Text = (String^)rootNode->Attributes->GetNamedItem("fileName")->NodeValue;
+
 		XmlNodeList^ symbolList = rootNode->ChildNodes;
 		for (int i = 0; i < symbolList->Size; i++)
 		{
@@ -353,7 +346,11 @@ void flowchart::MainPage::SaveFileContent(StorageFile^ file)
 	{
 		XmlDocument^ xmlDocument = ref new XmlDocument;	// xml 문서형식 사용
 		XmlElement^ rootElement = xmlDocument->CreateElement("file");	// root 항목 설정
-		rootElement->SetAttribute("fileName", FileName->Text);
+		std::wstring s(file->Name->Data());
+		std::wstring replacement(L"");
+		s = s.replace(s.size()-4, 4, replacement);
+		String^ tmpStr = ref new String(s.c_str());
+		rootElement->SetAttribute("fileName", tmpStr);
 		xmlDocument->AppendChild(rootElement);	// 이항목이 xmlDocument의 root항목이 될수 있게 추가
 
 		for (int i = 0; i < App::symbolVector->Size; i++)

@@ -33,8 +33,8 @@ GridPage::GridPage()
 
 	nowColumnNum = 10;
 	nowRowNum = 10;
-	columnWidth = 100;
-	rowHeight = 70;
+	columnWidth = safe_cast<int>(Resources->Lookup("gridWidth"));
+	rowHeight = safe_cast<int>(Resources->Lookup("gridHeight"));
 	mouseXPos = 0;
 	mouseYPos = 0;
 	makeGridArray(PageGrid, nowRowNum, nowColumnNum, rowHeight, columnWidth);
@@ -46,9 +46,9 @@ GridPage::GridPage()
 
 void GridPage::LoadOpenedFile()
 {
-	testTextBox->Text = App::symbolVector->Size + " = hello";
-	MessageDialog^ msg = ref new MessageDialog("hello size = " + App::symbolVector->Size);
-	msg->ShowAsync();
+	//testTextBox->Text = App::symbolVector->Size + " = hello";
+	//MessageDialog^ msg = ref new MessageDialog("hello size = " + App::symbolVector->Size);
+	//msg->ShowAsync();
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
 		SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
