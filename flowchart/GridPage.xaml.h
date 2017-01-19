@@ -29,10 +29,9 @@ namespace flowchart
 	{
 	public:
 		GridPage();
-
-
-
+					
 	private:
+	
 
 		int curRowIndex; //그리드의 행,열 인덱스
 		int curColumnIndex;
