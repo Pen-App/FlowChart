@@ -29,7 +29,7 @@ namespace flowchart
 	{
 	public:
 		GridPage();
-	
+
 	private:
 
 		int curRowIndex; //그리드의 행,열 인덱스
@@ -136,6 +136,9 @@ namespace flowchart
 		//연결선 이동하는 함수
 		void moveConnectLine(UINT16 movedSymbolNo);
 
+		//파일오픈용 연결선 함수
+		void LoadingConnectLine(SymbolInfo^ fromInfo);
+
 		//연결 대상의 방향을 알려주는 함수
 		int getDirectionTartgetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo);
 
@@ -158,5 +161,7 @@ namespace flowchart
 
 		// 파일 열기시 symbol을 새로 그려줄때 쓰는 메솓
 		void makeSymbol(SymbolInfo^ symbolInfo);
+
+		void LineDeleteConfirmButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }
