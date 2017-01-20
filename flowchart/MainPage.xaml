@@ -56,7 +56,7 @@
             <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>
 
-        <Frame Name="GridContentFrame" Grid.Row="1" Grid.ColumnSpan="2" AllowDrop="True">
+        <Frame Name="GridContentFrame" Grid.Row="1" Grid.ColumnSpan="2" AllowDrop="True" Padding="0,12,0,0">
             <!--그리드 컨텐츠 들어갈 자리-->
         </Frame>
 

@@ -55,6 +55,7 @@ void GridPage::LoadOpenedFile()
 	{
 		SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
 		makeSymbol(symbolInfo);
+		LoadingConnectLine(symbolInfo);
 	}
 	// symbol 추가시 사용할 번호 갱신
 	App::symbolIdCount = App::symbolVector->GetAt(App::symbolVector->Size - 1)->SymbolNo + 1;
@@ -1501,7 +1502,10 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	
 	Polyline^ connectLine = ref new Polyline;
 
-	connectLine->Name = ref new String("connectLine " + from + " to " + to);
+	//connectLine->Name = ref new String(L"connectLine " + from + L" to " + to);
+	wchar_t connectLineWC[256];
+	swprintf_s(connectLineWC, L"connectLine %d to %d", from, to);
+	connectLine->Name = ref new String(connectLineWC);
 	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Black);
 	connectLine->StrokeThickness = 1;
 	PointCollection^ connectLinePoints = ref new PointCollection;
@@ -1512,11 +1516,6 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	connectLinePoints->Append(*(ref new Point(toXPos, toYPos)));
 	connectLine->Points = connectLinePoints;
 	PageGridCanvas->Children->Append(connectLine);
-
-	Ellipse^ lineDeletor1 = ref new Ellipse;
-	lineDeletor1->Name = ref new String("lineDeletor1 " + from + " to " + to);
-
-	Ellipse^ lineDeletor2 = ref new Ellipse;
 }
 
 
