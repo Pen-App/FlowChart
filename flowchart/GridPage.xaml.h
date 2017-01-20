@@ -29,7 +29,7 @@ namespace flowchart
 	{
 	public:
 		GridPage();
-	
+
 	private:
 
 		int curRowIndex; //그리드의 행,열 인덱스
@@ -136,6 +136,9 @@ namespace flowchart
 		//연결선 이동하는 함수
 		void moveConnectLine(UINT16 movedSymbolNo);
 
+		//파일오픈용 연결선 함수
+		void LoadingConnectLine(SymbolInfo^ fromInfo);
+
 		//연결 대상의 방향을 알려주는 함수
 		int getDirectionTartgetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo);
 
@@ -155,5 +158,6 @@ namespace flowchart
 
 		//Yes Or No TextBlock을 만드는 함수
 		void makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool decision);
+		void LineDeleteConfirmButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

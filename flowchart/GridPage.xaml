@@ -195,7 +195,7 @@
         
         <!-- Yes Or No Flyout -->
         <Flyout Placement="Top" x:Name="YES_OR_NO_FLYOUT" x:Key="YES_OR_NO_FLYOUT">
-            <StackPanel>
+            <StackPanel Orientation="Vertical">
                 <Button Name="YesFlyoutButton"
                         Width="Auto"
                         Height="Auto"
@@ -207,6 +207,15 @@
                         Content="No"
                         Click="YesOrNoFlyoutButton_Click"/>
             </StackPanel>
+        </Flyout>
+        
+        <!-- lineDeletor Flyout -->
+        <Flyout Placement="Top" x:Name="LINEDELETOR_FLYOUT" x:Key="LINEDELETOR_FLYOUT">
+            <Button Name="LineDeleteConfirmButton" 
+                    Width="Auto" 
+                    Height="Auto" 
+                    Content="삭제" 
+                    Click="LineDeleteConfirmButton_Click"/>
         </Flyout>
     </Page.Resources>
     

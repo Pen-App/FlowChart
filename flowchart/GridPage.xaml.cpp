@@ -1491,9 +1491,7 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	
 	Polyline^ connectLine = ref new Polyline;
 
-	wchar_t connectLineNameWc[200];
-	swprintf_s(connectLineNameWc, L"connectLine %d to %d", from, to);
-	connectLine->Name = ref new String(connectLineNameWc);
+	connectLine->Name = ref new String("connectLine " + from + " to " + to);
 	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Black);
 	connectLine->StrokeThickness = 1;
 	PointCollection^ connectLinePoints = ref new PointCollection;
@@ -1504,6 +1502,11 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	connectLinePoints->Append(*(ref new Point(toXPos, toYPos)));
 	connectLine->Points = connectLinePoints;
 	PageGridCanvas->Children->Append(connectLine);
+
+	Ellipse^ lineDeletor1 = ref new Ellipse;
+	lineDeletor1->Name = ref new String("lineDeletor1 " + from + " to " + to);
+
+	Ellipse^ lineDeletor2 = ref new Ellipse;
 }
 
 
@@ -1590,6 +1593,28 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 					break;
 				}
 			}
+		}
+	}
+}
+
+//파일오픈용 연결선 함수
+void flowchart::GridPage::LoadingConnectLine(SymbolInfo^ fromInfo)
+{
+	if (fromInfo->SymbolType == 2)
+	{
+		for (int i = 0; i < fromInfo->Path->Size; i++)
+		{
+			auto toInfo = fromInfo->Path->GetAt(i);
+			makeConnectLine(fromInfo->SymbolNo, toInfo->SymbolNo);
+			makeYesOrNoTextBlock(fromInfo->SymbolNo, toInfo->SymbolNo, fromInfo->Decision->GetAt(i));
+		}
+	}
+	else
+	{
+		for (int i = 0; i < fromInfo->Path->Size; i++)
+		{
+			auto toInfo = fromInfo->Path->GetAt(i);
+			makeConnectLine(fromInfo->SymbolNo, toInfo->SymbolNo);
 		}
 	}
 }
@@ -1906,4 +1931,9 @@ void flowchart::GridPage::makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool deci
 	//6-4. PageGrid에 넣음
 	PageGrid->Children->Append(borderOfYesOrNoTextBlock);
 	PageGrid->UpdateLayout();
+}
+
+void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+
 }
