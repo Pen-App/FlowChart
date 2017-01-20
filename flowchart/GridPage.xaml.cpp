@@ -1968,11 +1968,11 @@ void flowchart::GridPage::LoadingPageGridSize()
 		maxColumn = (tempSymbolInfo->ColumnIndex > maxColumn) ? tempSymbolInfo->ColumnIndex : maxColumn;
 	}
 
-	while (maxRow > nowRowNum)
+	while (maxRow >= nowRowNum)
 	{
 		appendRow();
 	}
-	while (maxColumn > nowColumnNum)
+	while (maxColumn >= nowColumnNum)
 	{
 		appendColumn();
 	}
