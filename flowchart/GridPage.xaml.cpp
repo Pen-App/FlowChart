@@ -30,6 +30,7 @@ GridPage::GridPage()
 {
 	InitializeComponent();
 	isSymbolIn = false;
+	isSymbolRectIn = false;
 
 	nowColumnNum = 10;
 	nowRowNum = 10;
@@ -487,19 +488,19 @@ void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::U
 {
 	e->DragUIOverride->IsCaptionVisible = true;
 
-	if (App::selectedSymbolNumber != -1 && !isSymbolIn) 
+	if (App::selectedSymbolNumber != -1 && !isSymbolIn && !isSymbolRectIn) 
 	{
 		e->AcceptedOperation = DataPackageOperation::Copy;
 		e->DragUIOverride->Caption = "추가";
 		e->DragUIOverride->IsGlyphVisible = true;
 	}
-	else if(App::selectedSymbolNumber == -1 && !isSymbolIn)
+	else if(App::selectedSymbolNumber == -1 && !isSymbolIn && !isSymbolRectIn)
 	{
 		e->AcceptedOperation = DataPackageOperation::Move;
 		e->DragUIOverride->Caption = "이동";
 		e->DragUIOverride->IsGlyphVisible = true;
 	}
-	else if (isSymbolIn)
+	else if (isSymbolIn || isSymbolRectIn)
 	{
 		e->AcceptedOperation = DataPackageOperation::None;
 		e->DragUIOverride->IsCaptionVisible = false;
@@ -511,7 +512,7 @@ void flowchart::GridPage::PageGrid_DragOver(Platform::Object^ sender, Windows::U
 //드래그된 상태에서 마우스버튼을 놓았을때, 즉 drop했을 때 어떤 일이 일어나는가?
 void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
-	if (App::selectedSymbolNumber != -1 && !isSymbolIn) { //symbol 생성 로직
+	if (App::selectedSymbolNumber != -1 && !isSymbolIn && !isSymbolRectIn) { //symbol 생성 로직
 		//1. map에 새로운 symbolInfo 객체를 추가시킨다. 
 		UINT64 tempSymbolNo = App::symbolIdCount;	
 		App::symbolIdCount++;
@@ -549,7 +550,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 			appendRow();
 		}
 	}
-	else if(!isSymbolIn){ //symbol 이동 로직
+	else if(!isSymbolIn && !isSymbolRectIn){ //symbol 이동 로직
 		moveSymbolInfoInSymbolVector(focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
@@ -588,7 +589,7 @@ void flowchart::GridPage::Rectangle_PointerEntered(Platform::Object^ sender, Win
 	auto tempRectangleName = ((Rectangle^)sender)->Name;
 	if (tempRectangleName->Length() != 0)
 	{
-		isSymbolIn = true;
+		isSymbolRectIn = true;
 	}
 
 	auto columnIdx = ((Rectangle^)sender)->GetValue(PageGrid->ColumnProperty);
@@ -606,7 +607,7 @@ void flowchart::GridPage::Rectangle_DragEnter(Platform::Object^ sender, Windows:
 	auto tempRectangleName = ((Rectangle^)sender)->Name;
 	if (tempRectangleName->Length() != 0)
 	{
-		isSymbolIn = true;
+		isSymbolRectIn = true;
 	}
 
 	auto columnIdx = ((Rectangle^)sender)->GetValue(PageGrid->ColumnProperty);
@@ -622,11 +623,11 @@ void flowchart::GridPage::Rectangle_PointerPressed(Platform::Object^ sender, Win
 	auto tempRectangleName = ((Rectangle^)sender)->Name;
 	if (tempRectangleName->Length() != 0)
 	{
-		isSymbolIn = true;
+		isSymbolRectIn = true;
 	}
 
 
-	if (!isSymbolIn) {
+	if (!isSymbolIn || !isSymbolRectIn) {
 		hideAllButtons();
 	}
 }
@@ -1277,13 +1278,13 @@ void flowchart::GridPage::makeSymbolRectangle(Grid ^ parentGrid, UINT64 symbolNo
 
 void flowchart::GridPage::Rectangle_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
-	isSymbolIn = false;
+	isSymbolRectIn = false;
 }
 
 
 void flowchart::GridPage::Rectangle_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
-	isSymbolIn = false;
+	isSymbolRectIn = false;
 }
 
 

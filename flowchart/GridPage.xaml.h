@@ -38,7 +38,8 @@ namespace flowchart
 		int rowHeight, columnWidth;    //가로줄의 높이, 세로줄의 너비
 		int nowRowNum, nowColumnNum;  //현재 가로줄 수, 현재 세로줄 수
 
-		bool isSymbolIn; //커서가 있는 grid안에 symbol이 존재하는가?
+		bool isSymbolIn; //커서가 있는 이미지안에 symbol이 존재하는가?
+		bool isSymbolRectIn; //symbol이 존재하는 rectangle안에 커서가 있는가?
 		UINT64 focusedSymbolNo; //포커스된 symbolNo
 		int focusedSymbolType;
 		//int focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
