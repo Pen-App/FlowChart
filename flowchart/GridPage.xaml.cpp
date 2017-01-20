@@ -1488,12 +1488,7 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		toYPos = 0;
 	}
 	}
-
-	/*fromXPos = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
-	fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
-	toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
-	toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);*/
-
+	
 	Polyline^ connectLine = ref new Polyline;
 
 	wchar_t connectLineNameWc[200];
@@ -1509,19 +1504,6 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	connectLinePoints->Append(*(ref new Point(toXPos, toYPos)));
 	connectLine->Points = connectLinePoints;
 	PageGridCanvas->Children->Append(connectLine);
-
-	/*Line^ connectLine = ref new Line;
-
-	wchar_t connectLineNameWc[200];
-	swprintf_s(connectLineNameWc, L"connectLine %d to %d", from, to);
-	connectLine->Name = ref new String(connectLineNameWc);
-	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Red);
-	connectLine->StrokeThickness = 1;
-	connectLine->X1 = fromXPos;
-	connectLine->Y1 = fromYPos;
-	connectLine->X2 = toXPos;
-	connectLine->Y2 = toYPos;
-	PageGridCanvas->Children->Append(connectLine);*/
 }
 
 
@@ -1538,7 +1520,7 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 		}
 	}
 
-	//모든 심볼정보를 순회하며, move된 심볼과 연결된 심볼의 연결선을 알맞게 움직여준다
+	//모든 심볼정보를 순회하며, move된 심볼과 연결된 심볼의 연결선을 새로 생성해준다
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
 		SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
@@ -1549,8 +1531,9 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 			//연결된 심볼의 정보를 순회
 			for (int j = 0; j < movedSymbolInfo->Path->Size; j++)
 			{
-				//선이름 생성
 				SymbolInfo^ connectSymbolInfo = movedSymbolInfo->Path->GetAt(j);
+				
+				//선이름 생성
 				String^ connectLineNameStr = L"connectLine ";
 				connectLineNameStr += movedSymbolInfo->SymbolNo;
 				connectLineNameStr += L" to ";
@@ -1563,13 +1546,6 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 					childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
 					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
 					{
-						/*Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
-						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
-						{
-							connectLine->X1 = (tempSymbolInfo->ColumnIndex * columnWidth) + (columnWidth/2.0);
-							connectLine->Y1 = (tempSymbolInfo->RowIndex * rowHeight) + (rowHeight/2.0);
-							break;
-						}*/
 						Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
 						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 						{
@@ -1602,13 +1578,6 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 						childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
 						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
 						{
-							/*Line^ connectLine = safe_cast<Line^>(childPageGridCanvas);
-							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
-							{
-								connectLine->X2 = (movedSymbolInfo->ColumnIndex * columnWidth) + (columnWidth / 2.0);
-								connectLine->Y2 = (movedSymbolInfo->RowIndex * rowHeight) + (rowHeight / 2.0);
-								break;
-							}*/
 							Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
 							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 							{
