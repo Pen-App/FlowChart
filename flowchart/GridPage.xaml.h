@@ -159,9 +159,13 @@ namespace flowchart
 		//Yes Or No TextBlock을 만드는 함수
 		void makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool decision);
 
-		// 파일 열기시 symbol을 새로 그려줄때 쓰는 메솓
+		//파일 열기시 symbol을 새로 그려줄때 쓰는 메솓
 		void makeSymbol(SymbolInfo^ symbolInfo);
 
+		//연결선 삭제 확인 버튼을 눌렀을 때
 		void LineDeleteConfirmButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+
+		//파일오픈용 PageGrid 늘려주는 함수
+		void LoadingPageGridSize();
 	};
 }

@@ -1502,10 +1502,7 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	
 	Polyline^ connectLine = ref new Polyline;
 
-	//connectLine->Name = ref new String(L"connectLine " + from + L" to " + to);
-	wchar_t connectLineWC[256];
-	swprintf_s(connectLineWC, L"connectLine %d to %d", from, to);
-	connectLine->Name = ref new String(connectLineWC);
+	connectLine->Name = "connectLine " + from + " to " + to;
 	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Black);
 	connectLine->StrokeThickness = 1;
 	PointCollection^ connectLinePoints = ref new PointCollection;
@@ -1516,6 +1513,17 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	connectLinePoints->Append(*(ref new Point(toXPos, toYPos)));
 	connectLine->Points = connectLinePoints;
 	PageGridCanvas->Children->Append(connectLine);
+
+	Ellipse^ lineDeletor1 = ref new Ellipse;
+	lineDeletor1->Name = "lineDeletor1 " + from + " to " + to;
+	Color deletorColor;
+	deletorColor.R = 0;
+	deletorColor.G = 150;
+	deletorColor.B = 50;
+	deletorColor.A = 150;
+	lineDeletor1->Fill = ref new SolidColorBrush(deletorColor);
+
+	Ellipse^ lineDeletor2 = ref new Ellipse;
 }
 
 
@@ -1942,7 +1950,30 @@ void flowchart::GridPage::makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool deci
 	PageGrid->UpdateLayout();
 }
 
+//연결선 삭제 확인 버튼을 눌렀을 때
 void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 
+}
+
+//파일오픈용 PageGrid 늘려주는 함수
+void flowchart::GridPage::LoadingPageGridSize()
+{
+	int maxRow = nowRowNum;
+	int maxColumn = nowColumnNum;
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		auto tempSymbolInfo = App::symbolVector->GetAt(i);
+		maxRow = (tempSymbolInfo->RowIndex > maxRow) ? tempSymbolInfo->RowIndex : maxRow;
+		maxColumn = (tempSymbolInfo->ColumnIndex > maxColumn) ? tempSymbolInfo->ColumnIndex : maxColumn;
+	}
+
+	while (maxRow > nowRowNum)
+	{
+		appendRow();
+	}
+	while (maxColumn > nowColumnNum)
+	{
+		appendColumn();
+	}
 }
