@@ -49,13 +49,17 @@ void GridPage::LoadOpenedFile()
 {
 	//MessageDialog^ msg = ref new MessageDialog("hello size = " + App::symbolVector->GetAt(0)->SymbolNo);
 	//msg->ShowAsync();
+
+	// symbol 다시 그려주기
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
 		SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
 		makeSymbol(symbolInfo);
 	}
+	// symbol 추가시 사용할 번호 갱신
 	App::symbolIdCount = App::symbolVector->GetAt(App::symbolVector->Size - 1)->SymbolNo + 1;
 	isSelectingYesOrNo = false;
+
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
