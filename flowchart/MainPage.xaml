@@ -10,8 +10,7 @@
 
     <Page.TopAppBar>
         <CommandBar
-            VerticalAlignment="Top"
-            VerticalContentAlignment="Top"
+            Height="60"
             IsSticky="True"
             Background="#0B467B" 
             Foreground="White" 
@@ -19,17 +18,18 @@
             >
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Margin="20,0">
+                    <AppBarButton x:Name="NewFile" Icon="NewFolder" Label="NewFile" Click="NewFile_Click" Foreground="White" HorizontalAlignment="Center"/>
                     <AppBarButton x:Name="OpenFile" Icon="OpenFile" Label="OpenFile" Click="OpenFile_Click" Foreground="White"/>
                     <AppBarButton x:Name="SaveFile" Icon="Save" Label="SaveFile" Click="SaveFile_Click" Foreground="White"/>
                     <AppBarSeparator/>
-                    <StackPanel Orientation="Horizontal" Margin="20,0,0,0" Padding="13">
+                    <StackPanel Orientation="Horizontal" Margin="15,0,0,0" Padding="8">
                         <TextBlock Text="File Name" 
                                FontSize="18"
                                VerticalAlignment="Center"
                                Margin="0,0,20,0"
                                />
                         <TextBox Name="FileName" 
-                                 Width="400" 
+                                 Width="350" 
                                  VerticalAlignment="Center"
                                  HorizontalAlignment="Center"
                              />
@@ -56,7 +56,7 @@
             <ColumnDefinition Width="150"/>
         </Grid.ColumnDefinitions>
 
-        <Frame Name="GridContentFrame" Grid.Row="1" Grid.ColumnSpan="2" AllowDrop="True" Padding="0,12,0,0">
+        <Frame Name="GridContentFrame" Grid.Row="1" Grid.ColumnSpan="2" AllowDrop="True">
             <!--그리드 컨텐츠 들어갈 자리-->
         </Frame>
 
@@ -66,7 +66,7 @@
                  DragOver="ListBox_DragOver"
                  Drop="ListBox_Drop" 
                  Grid.Row="1" Grid.Column="2"
-                 Padding="20"
+                 Padding="0,25,0,0"
                  Background="#B5D6EC"
                  >
             <!--<Image DragStarting="Image_DragStarting" Drop="Image_Drop" DropCompleted="Image_DropCompleted"></Image>-->

@@ -37,5 +37,6 @@ namespace flowchart
 		void SaveFileContent(Windows::Storage::StorageFile^ file);
 
 		void deleteConnectLine(UINT16 deleteSymbolNo);
+		void NewFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }

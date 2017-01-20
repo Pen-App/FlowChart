@@ -212,6 +212,8 @@ void flowchart::MainPage::OpenFileInit()
 	App::draggingSymbolNo = -1;
 	App::draggingSymbolType = -1;
 	App::focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
+
+	FileName->Text = "";
 }
 
 // 열은 파일을 xml 파싱해 저장
@@ -395,6 +397,13 @@ void flowchart::MainPage::SaveFileInit()
 		symbolInfo->RowIndex = safe_cast<int>(tmpImg->GetValue(pageGrid->RowProperty));
 		symbolInfo->ColumnIndex = safe_cast<int>(tmpImg->GetValue(pageGrid->ColumnProperty));
 	}
+}
+
+// new File
+void flowchart::MainPage::NewFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	OpenFileInit();
+	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 }
 
 // xml 파싱해서 파일 저장
