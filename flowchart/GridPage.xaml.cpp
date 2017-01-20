@@ -41,13 +41,14 @@ GridPage::GridPage()
 
 	isLineDrawing = false;
 
-	LoadOpenedFile();
+	if(App::symbolVector->Size != 0)
+		LoadOpenedFile();
 }
 
 void GridPage::LoadOpenedFile()
 {
 	//testTextBox->Text = App::symbolVector->Size + " = hello";
-	//MessageDialog^ msg = ref new MessageDialog("hello size = " + App::symbolVector->Size);
+	//MessageDialog^ msg = ref new MessageDialog("hello size = " + App::symbolVector->GetAt(0)->SymbolNo);
 	//msg->ShowAsync();
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
@@ -57,6 +58,7 @@ void GridPage::LoadOpenedFile()
 		makeSymbolRectangle(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 		makeButtons(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 	}
+	App::symbolIdCount = App::symbolVector->GetAt(App::symbolVector->Size - 1)->SymbolNo + 1;
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
