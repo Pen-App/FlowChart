@@ -29,6 +29,7 @@ namespace flowchart
 		void OpenFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void OpenFileContent(Windows::Storage::StorageFile^ file);
 		void OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlDocument^ xmlDocument);
+		void SetPathList(Vector<SymbolInfo^>^ tmpPath);
 		
 		// 파일 저장부분
 		void SaveFileInit();

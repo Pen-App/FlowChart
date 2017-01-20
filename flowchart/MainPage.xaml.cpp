@@ -228,6 +228,9 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 		FileName->Text = (String^)rootNode->Attributes->GetNamedItem("fileName")->NodeValue;
 
 		XmlNodeList^ symbolList = rootNode->ChildNodes;
+		//Vector<int>^ tmpPathNo = nullptr;
+		//Vector<bool>^ tmpDecision = nullptr;
+		Vector<SymbolInfo^>^ tmpPath = ref new Vector<SymbolInfo^>();
 		for (int i = 0; i < symbolList->Size; i++)
 		{
 			SymbolInfo^ symbolInfo = ref new SymbolInfo();
@@ -270,20 +273,75 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 
 			// 'path'의 이름을 가진 아이템 노드를 반환 & vector에 저장
 			IXmlNode^ pathNode = symbolNode->ChildNodes->GetAt(0);
-			for (int j = 0; j < pathNode->Attributes->Size; j++)
+			SymbolInfo^ pathVector = ref new SymbolInfo();
+			switch (symbolInfo->SymbolType)
 			{
-				SymbolInfo^ pathSymbolInfo = ref new SymbolInfo();
-
-				IXmlNode^ pathSymbolNode = pathNode->Attributes->GetNamedItem("no" + j);
-				if (pathSymbolNode == nullptr)	// path에 정보가 없다면 for문을 빠져나감
-					break;
-				pathSymbolInfo->SymbolNo = _wtof(((String^)pathSymbolNode->NodeValue)->Data());
-				symbolInfo->Path->Append(pathSymbolInfo);
+			case 2:	// symbolType이 decision일때
+				for (int j = 0; j < pathNode->Attributes->Size; j++)
+				{
+					SymbolInfo^ pathNo = ref new SymbolInfo();	// path의 no만 들어갈 공간
+					IXmlNode^ pathSymbolNode = pathNode->Attributes->GetNamedItem("no" + j);
+					IXmlNode^ decisionNode = pathNode->Attributes->GetNamedItem("decision" + j);
+					if (pathSymbolNode == nullptr || decisionNode == nullptr)	// path에 정보가 없다면 for문을 빠져나감
+						break;
+					pathNo->SymbolNo = _wtof(((String^)pathSymbolNode->NodeValue)->Data());
+					pathVector->Path->Append(pathNo);
+					// path의 no들 저장
+					//pathNo->SymbolNo = _wtof(((String^)pathSymbolNode->NodeValue)->Data());
+					//pathSymbolInfo->Path->Append(pathNo);
+					// path의 decision들 저장
+					symbolInfo->Decision->Append(_wtof(((String^)decisionNode->NodeValue)->Data()));
+					//pathSymbolInfo->Decision->Append(_wtof(((String^)decisionNode->NodeValue)->Data());
+				}
+				break;
+			default:
+				for (int j = 0; j < pathNode->Attributes->Size; j++)
+				{
+					SymbolInfo^ pathNo = ref new SymbolInfo();	// path의 no만 들어갈 공간
+					IXmlNode^ pathSymbolNode = pathNode->Attributes->GetNamedItem("no" + j);
+					if (pathSymbolNode == nullptr)	// path에 정보가 없다면 for문을 빠져나감
+						break;
+					// path의 no들 저장
+					pathNo->SymbolNo = _wtof(((String^)pathSymbolNode->NodeValue)->Data());
+					pathVector->Path->Append(pathNo);
+					//tmpPathNo->Append(_wtof(((String^)pathSymbolNode->NodeValue)->Data()));
+					//pathSymbolInfo->SymbolNo = _wtof(((String^)pathSymbolNode->NodeValue)->Data());
+					//symbolInfo->Path->Append(pathSymbolInfo);
+				}
+				break;
 			}
+			tmpPath->Append(pathVector);
+			//tmpSymbol->Append(pathSymbolInfo);	// path정보
 			App::symbolVector->Append(symbolInfo);
 		}
+		// path 정리
+		SetPathList(tmpPath);
 		MessageDialog^ msg = ref new MessageDialog("file open success!" + "\n vector size = " + App::symbolVector->Size);
 		msg->ShowAsync();
+	}
+}
+void flowchart::MainPage::SetPathList(Vector<SymbolInfo^>^ tmpPath)
+{
+	//MessageDialog^ msg = ref new MessageDialog(App::symbolVector->Size + ", " + tmpPath->Size);
+	//msg->ShowAsync();
+	OutputDebugStringA("My output string.\n");
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		for (int j = 0; j < tmpPath->GetAt(i)->Path->Size; j++)
+		{
+			int cnt = 0;
+			int pathNo = tmpPath->GetAt(i)->Path->GetAt(j)->SymbolNo;
+			while (1)
+			{
+				SymbolInfo^ tmpSymbol = App::symbolVector->GetAt(cnt);
+				if (pathNo == tmpSymbol->SymbolNo)
+				{
+					App::symbolVector->GetAt(i)->Path->Append(tmpSymbol);
+					break;
+				}
+				cnt++;
+			}
+		}
 	}
 }
 
