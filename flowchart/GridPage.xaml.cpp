@@ -47,22 +47,26 @@ GridPage::GridPage()
 
 void GridPage::LoadOpenedFile()
 {
-	//testTextBox->Text = App::symbolVector->Size + " = hello";
 	//MessageDialog^ msg = ref new MessageDialog("hello size = " + App::symbolVector->GetAt(0)->SymbolNo);
 	//msg->ShowAsync();
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
 		SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
-		makeImage(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
-		makeTextBlocks(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
-		makeSymbolRectangle(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
-		makeButtons(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
+		makeSymbol(symbolInfo);
 	}
 	App::symbolIdCount = App::symbolVector->GetAt(App::symbolVector->Size - 1)->SymbolNo + 1;
+	isSelectingYesOrNo = false;
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
-	isSelectingYesOrNo = false;
+}
+
+void GridPage::makeSymbol(SymbolInfo^ symbolInfo)
+{
+	makeImage(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
+	makeTextBlocks(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
+	makeSymbolRectangle(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
+	makeButtons(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 }
 
 //행,열 하나하나 마다 rectangle을 채워넣는 함수 : 마우스 커서가 어떤 행,열 인덱스위에 올라가있는지 이벤트를 받기 위해서

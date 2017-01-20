@@ -155,5 +155,8 @@ namespace flowchart
 
 		//Yes Or No TextBlock을 만드는 함수
 		void makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool decision);
+
+		// 파일 열기시 symbol을 새로 그려줄때 쓰는 메솓
+		void makeSymbol(SymbolInfo^ symbolInfo);
 	};
 }
