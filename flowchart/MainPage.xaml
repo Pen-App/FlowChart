@@ -8,19 +8,20 @@
     mc:Ignorable="d"
     >
 
-    <Page.TopAppBar>
+    <!--<Page.TopAppBar>
         <CommandBar
+            x:Name="rootCommandBar"
             Height="60"
+            IsOpen="True"
             IsSticky="True"
             Background="#0B467B" 
             Foreground="White" 
-            IsOpen="True"
             >
             <CommandBar.Content>
                 <StackPanel Orientation="Horizontal" Margin="20,0">
-                    <AppBarButton x:Name="NewFile" Icon="NewFolder" Label="NewFile" Click="NewFile_Click" Foreground="White" HorizontalAlignment="Center"/>
-                    <AppBarButton x:Name="OpenFile" Icon="OpenFile" Label="OpenFile" Click="OpenFile_Click" Foreground="White"/>
-                    <AppBarButton x:Name="SaveFile" Icon="Save" Label="SaveFile" Click="SaveFile_Click" Foreground="White"/>
+                    <AppBarButton x:Name="NewFile" Icon="NewFolder" Label="NewFile" Click="NewFile_Click" Foreground="White" />
+                    <AppBarButton x:Name="OpenFile" Icon="OpenFile" Label="OpenFile" Click="OpenFile_Click" Foreground="White" />
+                    <AppBarButton x:Name="SaveFile" Icon="Save" Label="SaveFile" Click="SaveFile_Click" Foreground="White" />
                     <AppBarSeparator/>
                     <StackPanel Orientation="Horizontal" Margin="15,0,0,0" Padding="8">
                         <TextBlock Text="File Name" 
@@ -39,8 +40,56 @@
 
             <AppBarSeparator/>
             <AppBarButton Icon="ZoomIn" Label="ZoomIn" Click="ZoomInButtonClick" Foreground="White"/>
-            <AppBarButton Icon="ZoomOut" Label="ZoomOut" Click="ZoomOutButtonClick" Foreground="White"/>
+            <AppBarButton Icon="ZoomOut" Label="ZoomOut" Click="ZoomOutButtonClick" Foreground="White" />
         </CommandBar>
+    </Page.TopAppBar>-->
+    <Page.TopAppBar>
+        <AppBar IsSticky="True" IsOpen="True"
+                ClosedDisplayMode="Compact"
+                Background="#0B467B" 
+                Foreground="White"
+                Height="70"
+                >
+            <StackPanel Orientation="Horizontal" Margin="20,0">
+                <AppBarButton x:Name="NewFile" Icon="NewFolder" Label="NewFile" Click="NewFile_Click" Foreground="White">
+                    <AppBarButton.RenderTransform>
+                        <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
+                    </AppBarButton.RenderTransform>
+                </AppBarButton>
+                <AppBarButton x:Name="OpenFile" Icon="OpenFile" Label="OpenFile" Click="OpenFile_Click" Foreground="White" >
+                    <AppBarButton.RenderTransform>
+                        <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
+                    </AppBarButton.RenderTransform>
+                </AppBarButton>
+                <AppBarButton x:Name="SaveFile" Icon="Save" Label="SaveFile" Click="SaveFile_Click" Foreground="White" >
+                    <AppBarButton.RenderTransform>
+                        <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
+                    </AppBarButton.RenderTransform>
+                </AppBarButton>
+                <StackPanel Orientation="Horizontal" Margin="30,0,30,0">
+                    <TextBlock Text="File Name" 
+                               FontSize="19"
+                               VerticalAlignment="Center"
+                               Margin="0,0,20,0"
+                               />
+                    <TextBox Name="FileName" 
+                                 Width="400" Height="40"
+                                 VerticalAlignment="Center"
+                                 HorizontalAlignment="Center"
+                             />
+                </StackPanel>
+                <AppBarButton Icon="ZoomIn" Label="ZoomIn" Click="ZoomInButtonClick" Foreground="White">
+                    <AppBarButton.RenderTransform>
+                        <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
+                    </AppBarButton.RenderTransform>
+                </AppBarButton>
+                <AppBarButton Icon="ZoomOut" Label="ZoomOut" Click="ZoomOutButtonClick" Foreground="White">
+                    <AppBarButton.RenderTransform>
+                        <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
+                    </AppBarButton.RenderTransform>
+                </AppBarButton>
+            </StackPanel>
+        </AppBar>
     </Page.TopAppBar>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
