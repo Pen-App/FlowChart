@@ -157,6 +157,8 @@ void flowchart::MainPage::ZoomInButtonClick(Platform::Object^ sender, Windows::U
 	ScrollViewer^ varScrollViewer = (ScrollViewer^)(varGridPage->FindName("PageGridScrollViewer"));
 	varScrollViewer->ZoomToFactor((varScrollViewer->ZoomFactor + 0.1));
 	varScrollViewer->UpdateLayout();
+	//rootCommandBar->IsOpen = true;
+	//rootCommandBar->IsSticky = true;
 }
 
 void flowchart::MainPage::ZoomOutButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -165,6 +167,7 @@ void flowchart::MainPage::ZoomOutButtonClick(Platform::Object^ sender, Windows::
 	ScrollViewer^ varScrollViewer = (ScrollViewer^)(varGridPage->FindName("PageGridScrollViewer"));
 	varScrollViewer->ZoomToFactor((varScrollViewer->ZoomFactor - 0.1));
 	varScrollViewer->UpdateLayout();
+	//rootCommandBar->IsOpen = true;
 }
 
 // 파일 오픈
