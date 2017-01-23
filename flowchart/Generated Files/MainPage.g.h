@@ -35,6 +35,7 @@ namespace flowchart
     private:
         bool _contentLoaded;
     
+        private: ::Windows::UI::Xaml::Controls::AppBarButton^ NewFile;
         private: ::Windows::UI::Xaml::Controls::AppBarButton^ OpenFile;
         private: ::Windows::UI::Xaml::Controls::AppBarButton^ SaveFile;
         private: ::Windows::UI::Xaml::Controls::TextBox^ FileName;
