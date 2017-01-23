@@ -42,13 +42,14 @@ namespace flowchart
 		bool isSymbolRectIn; //symbol이 존재하는 rectangle안에 커서가 있는가?
 		UINT64 focusedSymbolNo; //포커스된 symbolNo
 		int focusedSymbolType;
-		//int focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
 
 		bool isLineDrawing; //연결선을 그리고 있는지
 		UINT64 connectorStartSymbolNo; //연결선
 		double mouseXPos, mouseYPos;
 
 		bool isSelectingYesOrNo; //yes or no를 선택하고 있는지
+
+		String^ tappedDeletorName; //탭 된 deletor 이름을 임시로 갖고 있음
 
 		//=============================함수들=====================================
 		//0. gridArray 만들기
@@ -168,5 +169,6 @@ namespace flowchart
 
 		//파일오픈용 PageGrid 늘려주는 함수
 		void LoadingPageGridSize();
-	};
+		void LineDeletor_Tapped(Platform::Object ^sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs ^e);
+};
 }

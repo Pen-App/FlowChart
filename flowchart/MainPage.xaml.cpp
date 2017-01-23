@@ -130,7 +130,15 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 				}
 			}
 		}
-		App::symbolVector->RemoveAt(App::draggingSymbolNo);
+		
+		for (int i = 0; i < App::symbolVector->Size; i++)
+		{
+			if (App::symbolVector->GetAt(i)->SymbolNo == App::draggingSymbolNo)
+			{
+				App::symbolVector->RemoveAt(i);
+				break;
+			}
+		}
 	}
 }
 
@@ -465,15 +473,8 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 	Canvas^ varPageGridCanvas = safe_cast<Canvas^>(varGridPage->FindName("PageGridCanvas"));
 
 	//삭제된 심볼의 정보를 찾는다
-	SymbolInfo^ deleteSymbolInfo = nullptr;
-	for (int i = 0; i < App::symbolVector->Size; i++)
-	{
-		if (App::symbolVector->GetAt(i)->SymbolNo == deleteSymbolNo)
-		{
-			deleteSymbolInfo = App::symbolVector->GetAt(i);
-			break;
-		}
-	}
+	SymbolInfo^ deleteSymbolInfo = App::getSymbolInfoByNo(deleteSymbolNo);
+	if (deleteSymbolInfo == nullptr) return;
 
 	//모든 심볼정보를 순회하며, 삭제된 심볼과 연결된 심볼의 연결선을 삭제한다.
 	for (int i = 0; i < App::symbolVector->Size; i++)
@@ -493,6 +494,16 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 				connectLineNameStr += L" to ";
 				connectLineNameStr += connectSymbolInfo->SymbolNo;
 
+				//deletor 이름 생성
+				String^ lineDeletor1NameStr = "lineDeletor1 " +
+											  deleteSymbolInfo->SymbolNo +
+											  " to " +
+											  connectSymbolInfo->SymbolNo;
+				String^ lineDeletor2NameStr = "lineDeletor2 " +
+											  deleteSymbolInfo->SymbolNo +
+											  " to " +
+											  connectSymbolInfo->SymbolNo;
+
 				//선이름으로 선을 찾아서 삭제
 				UIElement^ childPageGridCanvas = nullptr;
 				for (int k = 0; k < varPageGridCanvas->Children->Size; k++)
@@ -504,7 +515,16 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 						{
 							varPageGridCanvas->Children->RemoveAt(k);
-							break;
+							k--;
+						}
+					}
+					else if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Ellipse") == 0)
+					{
+						Ellipse^ lineDeletor = safe_cast<Ellipse^>(childPageGridCanvas);
+						if (lineDeletor->Name == lineDeletor1NameStr || lineDeletor->Name == lineDeletor2NameStr)
+						{
+							varPageGridCanvas->Children->RemoveAt(k);
+							k--;
 						}
 					}
 				}
@@ -545,6 +565,16 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 					connectLineNameStr += L" to ";
 					connectLineNameStr += deleteSymbolNo;
 
+					//deletor 이름 생성
+					String^ lineDeletor1NameStr = "lineDeletor1 " +
+												  tempSymbolInfo->SymbolNo +
+												  " to " +
+												  deleteSymbolNo;
+					String^ lineDeletor2NameStr = "lineDeletor2 " +
+												  tempSymbolInfo->SymbolNo +
+												  " to " +
+												  deleteSymbolNo;
+
 					//선이름으로 선을 찾아서 삭제함
 					UIElement^ childPageGridCanvas = nullptr;
 					for (int k = 0; k < varPageGridCanvas->Children->Size; k++)
@@ -556,7 +586,16 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
 							{
 								varPageGridCanvas->Children->RemoveAt(k);
-								break;
+								k--;
+							}
+						}
+						else if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Ellipse") == 0)
+						{
+							Ellipse^ lineDeletor = safe_cast<Ellipse^>(childPageGridCanvas);
+							if (lineDeletor->Name == lineDeletor1NameStr || lineDeletor->Name == lineDeletor2NameStr)
+							{
+								varPageGridCanvas->Children->RemoveAt(k);
+								k--;
 							}
 						}
 					}
@@ -586,4 +625,7 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 			}
 		}
 	}
+
+	varPageGrid->UpdateLayout();
+	varPageGridCanvas->UpdateLayout();
 }
