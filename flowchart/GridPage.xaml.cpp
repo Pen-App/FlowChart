@@ -52,6 +52,8 @@ void GridPage::LoadOpenedFile()
 	//MessageDialog^ msg = ref new MessageDialog("hello size = " + App::symbolVector->GetAt(0)->SymbolNo);
 	//msg->ShowAsync();
 
+	LoadingPageGridSize();
+
 	// symbol 다시 그려주기
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
@@ -1224,6 +1226,9 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		
 	}
 	OutputDebugString(L"canvas_press!!!\n");
+	wchar_t asdf[234];
+	swprintf_s(asdf, L"%d %d\n", nowColumnNum, nowRowNum);
+	OutputDebugString(asdf);
 	if (isLineDrawing && !isSelectingYesOrNo)
 	{
 		isLineDrawing = false;
@@ -2107,15 +2112,15 @@ void flowchart::GridPage::LoadingPageGridSize()
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
 		auto tempSymbolInfo = App::symbolVector->GetAt(i);
-		maxRow = (tempSymbolInfo->RowIndex > maxRow) ? tempSymbolInfo->RowIndex : maxRow;
-		maxColumn = (tempSymbolInfo->ColumnIndex > maxColumn) ? tempSymbolInfo->ColumnIndex : maxColumn;
+		maxRow = (tempSymbolInfo->RowIndex+2 > maxRow) ? tempSymbolInfo->RowIndex+2 : maxRow;
+		maxColumn = (tempSymbolInfo->ColumnIndex+2 > maxColumn) ? tempSymbolInfo->ColumnIndex+2 : maxColumn;
 	}
 
-	while (maxRow >= nowRowNum)
+	while (maxRow > nowRowNum)
 	{
 		appendRow();
 	}
-	while (maxColumn >= nowColumnNum)
+	while (maxColumn > nowColumnNum)
 	{
 		appendColumn();
 	}
