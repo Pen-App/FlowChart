@@ -334,30 +334,6 @@ void flowchart::GridPage::makeTextBlocks(Grid ^ parentGrid, UINT64 symbolNo, int
 	makeContentTextBlock(parentGrid, symbolNo, rowIndex, columnIndex);
 }
 
-
-//grid를 전체 새로 그려주는 함수 : 작동 이상으로 쓰이지 않음.-----------------
-void GridPage::refreshGridPage(Grid^ parentGrid)
-{
-	//parentGrid->Children->Clear();
-	for (int i = 0; i < parentGrid->Children->Size; i++) {
-		if (parentGrid->Children->GetAt(i)->GetType() == Image::typeid) {
-			parentGrid->Children->RemoveAt(i);
-			parentGrid->UpdateLayout();
-		}
-	}
-
-	//parentGrid->UpdateLayout();
-	//makeGridArray(PageGrid, 10, 10, 70, 100);
-
-	//1. map 순회
-	for (int i = 0; i < App::symbolVector->Size; i++)
-	{
-		//makeImage(parentGrid, App::symbolVector->GetAt(i)->SymbolType, App::symbolVector->GetAt(i)->RowIndex, App::symbolVector->GetAt(i)->ColumnIndex);
-		//makeButtons(parentGrid, App::symbolVector->GetAt(i)->RowIndex, App::symbolVector->GetAt(i)->ColumnIndex);
-	}
-
-}
-
 void GridPage::appendRow()
 {
 	//행을 한줄 그려줌
@@ -901,17 +877,10 @@ void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymb
 
 void flowchart::GridPage::moveSymbolInfoInSymbolVector(UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
 {
-	SymbolInfo^ movedSymbolInfo = nullptr;
-	for (int i = 0; i < App::symbolVector->Size; i++)
-	{
-		movedSymbolInfo = App::symbolVector->GetAt(i);
-		if (movedSymbolInfo->SymbolNo == focusedSymbolNo)
-		{
-			movedSymbolInfo->RowIndex = newRowIndex;
-			movedSymbolInfo->ColumnIndex = newColumnIndex;
-			break;
-		}
-	}
+	SymbolInfo^ movedSymbolInfo = App::getSymbolInfoByNo(focusedSymbolNo);
+	if (movedSymbolInfo == nullptr) return;
+	movedSymbolInfo->RowIndex = newRowIndex;
+	movedSymbolInfo->ColumnIndex = newColumnIndex;
 }
 
 void flowchart::GridPage::moveSymbolRectangle(Grid ^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
@@ -941,20 +910,8 @@ void flowchart::GridPage::moveTextBlocks(Grid ^ parentGrid, UINT64 focusedSymbol
 void flowchart::GridPage::moveYesOrNoTextBlock(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
 {
 	//1. 심볼넘버로 move된 심볼을 찾는다.
-	SymbolInfo^ movedSymbolInfo = nullptr;
-	for (int i = 0; i < App::symbolVector->Size; i++)
-	{
-		movedSymbolInfo = App::symbolVector->GetAt(i);
-		if (movedSymbolInfo->SymbolNo == focusedSymbolNo)
-		{
-			break;
-		}
-	}
-	//1-2. 심볼을 못찾으면 종료
-	if (movedSymbolInfo == nullptr)
-	{
-		return;
-	}
+	SymbolInfo^ movedSymbolInfo = App::getSymbolInfoByNo(focusedSymbolNo);
+	if (movedSymbolInfo == nullptr) return;
 
 	//decision 심볼일 때
 	if (movedSymbolInfo->SymbolType == 2)
@@ -1347,22 +1304,9 @@ void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sen
 
 void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 {
-	SymbolInfo^ fromInfo = nullptr;
-	SymbolInfo^ toInfo = nullptr;
-
-	for (int i = 0; i < App::symbolVector->Size; i++)
-	{
-		SymbolInfo^ tempInfo = App::symbolVector->GetAt(i);
-
-		if (tempInfo->SymbolNo == from)
-		{
-			fromInfo = tempInfo;
-		}
-		else if (tempInfo->SymbolNo == to)
-		{
-			toInfo = tempInfo;
-		}
-	}
+	SymbolInfo^ fromInfo = App::getSymbolInfoByNo(from);
+	SymbolInfo^ toInfo = App::getSymbolInfoByNo(to);
+	if (fromInfo == nullptr || toInfo == nullptr) return;
 
 	int direction;
 	double fromXPos, fromYPos;

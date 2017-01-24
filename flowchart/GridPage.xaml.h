@@ -70,9 +70,6 @@ namespace flowchart
 		void makeContentTextBlock(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex);
 		void makeTextBlocks(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex);
 
-		//4. 화면 전체를 다시 그려주는 함수
-		void refreshGridPage(Grid^ parentGrid);
-
 		//5. grid늘리기
 		void appendRow();
 		void appendColumn();
