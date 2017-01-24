@@ -534,7 +534,6 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		moveSymbolRectangle(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
-		moveYesOrNoTextBlock(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveConnectLine(focusedSymbolNo);
 
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
@@ -1122,8 +1121,7 @@ void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sen
 	PageGridScrollViewer->UpdateLayout();
 }
 
-void flowchart::GridPage::ConnectorButtonPress(
-	Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+void flowchart::GridPage::ConnectorButtonPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	if (isLineDrawing)
 	{
@@ -1346,7 +1344,7 @@ void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sen
 	}
 }
 
-
+//연결선, 델레터, 방향표시 만드는 함수
 void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 {
 	SymbolInfo^ fromInfo = App::getSymbolInfoByNo(from);
@@ -1535,7 +1533,7 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	PageGridCanvas->UpdateLayout();
 }
 
-
+//연결선과 그에 관련된 것(델레터, YesOrNo, 방향표시)을 이동하는 함수
 void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 {
 	//move된 심볼의 정보를 찾는다
@@ -1555,52 +1553,19 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 			{
 				SymbolInfo^ connectSymbolInfo = movedSymbolInfo->Path->GetAt(j);
 				
-				//선이름 생성
-				String^ connectLineNameStr = L"connectLine ";
-				connectLineNameStr += movedSymbolInfo->SymbolNo;
-				connectLineNameStr += L" to ";
-				connectLineNameStr += connectSymbolInfo->SymbolNo;
-
-				//deletor 이름 생성
-				String^ lineDeletor1NameStr = "lineDeletor1 " + 
-											  movedSymbolInfo->SymbolNo + 
-											  " to " + 
-											  connectSymbolInfo->SymbolNo;
-				String^ lineDeletor2NameStr = "lineDeletor2 " +
-											  movedSymbolInfo->SymbolNo +
-											  " to " +
-											  connectSymbolInfo->SymbolNo;
-
-				//선이름으로 선을 찾아서 삭제
-				UIElement^ childPageGridCanvas = nullptr;
-				for (int k = 0; k < PageGridCanvas->Children->Size; k++)
-				{
-					childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
-
-					//선 삭제
-					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
-					{
-						Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
-						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
-						{
-							PageGridCanvas->Children->RemoveAt(k);
-							k--;
-						}
-					}
-					//lineDeletor 삭제
-					else if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Ellipse") == 0)
-					{
-						Ellipse^ lineDeletor = safe_cast<Ellipse^>(childPageGridCanvas);
-						if (lineDeletor->Name == lineDeletor1NameStr || lineDeletor->Name == lineDeletor2NameStr)
-						{
-							PageGridCanvas->Children->RemoveAt(k);
-							k--;
-						}
-					}
-				}
+				//선 삭제
+				deleteLine(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo);
 
 				//선 새로 다시 그려줌
-				makeConnectLine(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo);
+				if (movedSymbolInfo->SymbolType == 2)
+				{
+					makeConnectLine(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo);
+					makeYesOrNoTextBlock(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo, movedSymbolInfo->Decision->GetAt(j));
+				}
+				else
+				{
+					makeConnectLine(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo);
+				}
 			}
 		}
 		//다른 심볼에서 나온 움직인 심볼과 연결된 선을 움직인다
@@ -1612,52 +1577,19 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 				//움직인 심볼과 연결됨
 				if (tempSymbolInfo->Path->GetAt(j) == movedSymbolInfo)
 				{
-					//선이름 생성
-					String^ connectLineNameStr = L"connectLine ";
-					connectLineNameStr += tempSymbolInfo->SymbolNo;
-					connectLineNameStr += L" to ";
-					connectLineNameStr += movedSymbolNo;
-
-					//deletor 이름 생성
-					String^ lineDeletor1NameStr = "lineDeletor1 " +
-												  tempSymbolInfo->SymbolNo +
-												  " to " +
-												  movedSymbolNo;
-					String^ lineDeletor2NameStr = "lineDeletor2 " +
-												  tempSymbolInfo->SymbolNo +
-												  " to " +
-												  movedSymbolNo;
-
-					//선이름으로 선을 찾아서 움직여줌
-					UIElement^ childPageGridCanvas = nullptr;
-					for (int k = 0; k < PageGridCanvas->Children->Size; k++)
-					{
-						childPageGridCanvas = PageGridCanvas->Children->GetAt(k);
-
-						//선 삭제
-						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
-						{
-							Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
-							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
-							{
-								PageGridCanvas->Children->RemoveAt(k);
-								k--;
-							}
-						}
-						//lineDeletor 삭제
-						else if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Ellipse") == 0)
-						{
-							Ellipse^ lineDeletor = safe_cast<Ellipse^>(childPageGridCanvas);
-							if (lineDeletor->Name == lineDeletor1NameStr || lineDeletor->Name == lineDeletor2NameStr)
-							{
-								PageGridCanvas->Children->RemoveAt(k);
-								k--;
-							}
-						}
-					}
+					//선 삭제
+					deleteLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
 
 					//선 새로 다시 그려줌
-					makeConnectLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
+					if (movedSymbolInfo->SymbolType == 2)
+					{
+						makeConnectLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
+						makeYesOrNoTextBlock(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo, tempSymbolInfo->Decision->GetAt(j));
+					}
+					else
+					{
+						makeConnectLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
+					}
 					break;
 				}
 			}
@@ -1803,91 +1735,6 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 	makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
 	isLineDrawing = false;
 
-	/*//6. 누른 버튼에 따라서 yes텍스트나 no텍스트 생성
-	//6-1. yes or no를 표시할 테두리 설정
-	Border^ borderOfYesOrNoTextBlock = ref new Border;
-	String^ nameOfTextBlockBorder = ref new String(L"decisionText ");
-	nameOfTextBlockBorder += connectorStartSymbolNo;
-	nameOfTextBlockBorder += L" to ";
-	nameOfTextBlockBorder += connectSymbolInfo->SymbolNo;
-	borderOfYesOrNoTextBlock->Name = nameOfTextBlockBorder;
-	borderOfYesOrNoTextBlock->BorderBrush = ref new SolidColorBrush(Windows::UI::Colors::Gray);
-	borderOfYesOrNoTextBlock->BorderThickness = 1;
-	borderOfYesOrNoTextBlock->Width = 30;
-	borderOfYesOrNoTextBlock->Height = 20;
-	borderOfYesOrNoTextBlock->IsTapEnabled = false;
-	borderOfYesOrNoTextBlock->SetValue(Canvas::ZIndexProperty, 3);
-	borderOfYesOrNoTextBlock->SetValue(Grid::RowProperty, startSymbolInfo->RowIndex);
-	borderOfYesOrNoTextBlock->SetValue(Grid::ColumnProperty, startSymbolInfo->ColumnIndex);
-	int direction = getDirectionTartgetSymbol(startSymbolInfo, connectSymbolInfo);
-
-	//6-2. yes or no 위치 조정
-	switch (direction)
-	{
-	case 1:
-	case 2:
-	{
-		borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, (columnWidth/2.0), 0);
-		break;
-	}
-	case 3:
-	case 4:
-	{
-		borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, 0, (rowHeight/2.0));
-		break;
-	}
-	case 5:
-	case 6:
-	{
-		borderOfYesOrNoTextBlock->Margin = Thickness(0, (rowHeight/2.0), 0, 0);
-		break;
-	}
-	case 7:
-	case 8:
-	{
-		borderOfYesOrNoTextBlock->Margin = Thickness((columnWidth/2.0), 0, 0, 0);
-		break;
-	}
-	default:
-		borderOfYesOrNoTextBlock->HorizontalAlignment =
-			Windows::UI::Xaml::HorizontalAlignment::Center;
-		borderOfYesOrNoTextBlock->VerticalAlignment =
-			Windows::UI::Xaml::VerticalAlignment::Center;
-		break;
-	}
-
-	//6-3. yes or no 텍스트 생성
-	if (yesOrNoButton->Name == L"YesFlyoutButton")
-	{
-		TextBlock^ yesTextBlock = ref new TextBlock;
-		yesTextBlock->Text = L"Yes";
-		yesTextBlock->HorizontalAlignment = 
-			Windows::UI::Xaml::HorizontalAlignment::Center;
-		yesTextBlock->VerticalAlignment =
-			Windows::UI::Xaml::VerticalAlignment::Center;
-		borderOfYesOrNoTextBlock->Child = yesTextBlock;
-
-		//6-4. decision 벡터에 넣음
-		startSymbolInfo->Decision->Append(true);
-	}
-	else if (yesOrNoButton->Name == L"NoFlyoutButton")
-	{
-		TextBlock^ noTextBlock = ref new TextBlock;
-		noTextBlock->Text = L"no";
-		noTextBlock->HorizontalAlignment =
-			Windows::UI::Xaml::HorizontalAlignment::Center;
-		noTextBlock->VerticalAlignment =
-			Windows::UI::Xaml::VerticalAlignment::Center;
-		borderOfYesOrNoTextBlock->Child = noTextBlock;
-
-		//6-4. decision 벡터에 넣음
-		startSymbolInfo->Decision->Append(false);
-	}
-
-	//6-5. PageGrid에 넣음
-	PageGrid->Children->Append(borderOfYesOrNoTextBlock);
-	PageGrid->UpdateLayout();*/
-
 	//6. 누른 버튼에 따라서 yes텍스트나 no텍스트 생성
 	if (yesOrNoButton->Name == L"YesFlyoutButton")
 	{
@@ -2005,7 +1852,7 @@ void flowchart::GridPage::makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool deci
 void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	//델레터 네임 파싱
-	UINT16 from, to;
+	UINT64 from, to;
 	SymbolInfo^ fromInfo = nullptr;
 	wchar_t *tappedDeletorNameWc = new wchar_t[tappedDeletorName->Length() + 1];
 	wcscpy_s(tappedDeletorNameWc, tappedDeletorName->Length() + 1, tappedDeletorName->Data());
@@ -2015,15 +1862,67 @@ void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender
 	tokenedBuf = wcstok_s(tappedDeletorNameWc, L" ", &tempBuf); //lineDeletor1 or 2
 
 	tokenedBuf = wcstok_s(tempBuf, L" ", &tempBuf); // fromInfo->SymbolNo
-	from = wcstol(tokenedBuf, NULL, 10);
+	from = wcstoull(tokenedBuf, NULL, 10);
 
 	tokenedBuf = wcstok_s(tempBuf, L" ", &tempBuf); // to
 
 	tokenedBuf = wcstok_s(tempBuf, L" ", &tempBuf); // toInfo->SymbolNo
-	to = wcstol(tokenedBuf, NULL, 10);
+	to = wcstoull(tokenedBuf, NULL, 10);
 
+	//라인 삭제
+	deleteLine(from, to);
+
+	//path와 decision 삭제
+	deletePathAndDecision(from, to);
+
+	//LINEDELETOR_FLYOUT 닫음
+	LINEDELETOR_FLYOUT->Hide();
+
+	//메모리 회수
+	delete[]tappedDeletorNameWc;
+}
+
+//파일오픈용 PageGrid 늘려주는 함수
+void flowchart::GridPage::LoadingPageGridSize()
+{
+	int maxRow = nowRowNum;
+	int maxColumn = nowColumnNum;
+	for (int i = 0; i < App::symbolVector->Size; i++)
+	{
+		auto tempSymbolInfo = App::symbolVector->GetAt(i);
+		maxRow = (tempSymbolInfo->RowIndex+2 > maxRow) ? tempSymbolInfo->RowIndex+2 : maxRow;
+		maxColumn = (tempSymbolInfo->ColumnIndex+2 > maxColumn) ? tempSymbolInfo->ColumnIndex+2 : maxColumn;
+	}
+
+	while (maxRow > nowRowNum)
+	{
+		appendRow();
+	}
+	while (maxColumn > nowColumnNum)
+	{
+		appendColumn();
+	}
+}
+
+//델레터를 클릭했을 때
+void flowchart::GridPage::LineDeletor_Tapped(Platform::Object ^sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs ^e)
+{
+	auto deletor = safe_cast<Ellipse^>(sender);
+	//델레터 지정
+	tappedDeletorName = deletor->Name;
+	String^ deletorNameDebug = deletor->Name;
+	deletorNameDebug += "\n";
+	OutputDebugString(deletorNameDebug->Data());
+
+	//open LINEDELETOR_FLYOUT
+	LINEDELETOR_FLYOUT->ShowAt(deletor);
+}
+
+//연결선, 델레터, YesOrNo, 방향표시 삭제해주는 함수
+void flowchart::GridPage::deleteLine(UINT64 from, UINT64 to)
+{
 	//선 삭제될 인포를 찾음
-	fromInfo = App::getSymbolInfoByNo(from);
+	auto fromInfo = App::getSymbolInfoByNo(from);
 	//삭제될 선과 델레터 이름 생성
 	String^ connectLineName = "connectLine " + from + " to " + to;
 	String^ lineDeletor1Name = "lineDeletor1 " + from + " to " + to;
@@ -2071,6 +1970,14 @@ void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender
 	}
 
 	PageGridCanvas->UpdateLayout();
+}
+
+//SymbolInfo에서 path와 decision 삭제해주는 함수
+void flowchart::GridPage::deletePathAndDecision(UINT64 from, UINT64 to)
+{
+	auto fromInfo = App::getSymbolInfoByNo(from);
+	auto toInfo = App::getSymbolInfoByNo(to);
+	if (fromInfo == nullptr || toInfo == nullptr) return;
 
 	//info->path에서 삭제
 	if (fromInfo->SymbolType == 2)
@@ -2096,45 +2003,4 @@ void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender
 			}
 		}
 	}
-
-	//LINEDELETOR_FLYOUT 닫음
-	LINEDELETOR_FLYOUT->Hide();
-
-	//메모리 회수
-	delete[]tappedDeletorNameWc;
-}
-
-//파일오픈용 PageGrid 늘려주는 함수
-void flowchart::GridPage::LoadingPageGridSize()
-{
-	int maxRow = nowRowNum;
-	int maxColumn = nowColumnNum;
-	for (int i = 0; i < App::symbolVector->Size; i++)
-	{
-		auto tempSymbolInfo = App::symbolVector->GetAt(i);
-		maxRow = (tempSymbolInfo->RowIndex+2 > maxRow) ? tempSymbolInfo->RowIndex+2 : maxRow;
-		maxColumn = (tempSymbolInfo->ColumnIndex+2 > maxColumn) ? tempSymbolInfo->ColumnIndex+2 : maxColumn;
-	}
-
-	while (maxRow > nowRowNum)
-	{
-		appendRow();
-	}
-	while (maxColumn > nowColumnNum)
-	{
-		appendColumn();
-	}
-}
-
-void flowchart::GridPage::LineDeletor_Tapped(Platform::Object ^sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs ^e)
-{
-	auto deletor = safe_cast<Ellipse^>(sender);
-	//델레터 지정
-	tappedDeletorName = deletor->Name;
-	String^ deletorNameDebug = deletor->Name;
-	deletorNameDebug += "\n";
-	OutputDebugString(deletorNameDebug->Data());
-
-	//open LINEDELETOR_FLYOUT
-	LINEDELETOR_FLYOUT->ShowAt(deletor);
 }

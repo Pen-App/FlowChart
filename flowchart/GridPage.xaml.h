@@ -132,7 +132,7 @@ namespace flowchart
 		//연결선 만들어주는 함수
 		void makeConnectLine(UINT16 from, UINT16 to);
 
-		//연결선 이동하는 함수
+		//연결선과 그에 관련된 것(델레터, YesOrNo, 방향표시)을 이동하는 함수
 		void moveConnectLine(UINT16 movedSymbolNo);
 
 		//파일오픈용 연결선 함수
@@ -166,6 +166,14 @@ namespace flowchart
 
 		//파일오픈용 PageGrid 늘려주는 함수
 		void LoadingPageGridSize();
+
+		//델레터를 클릭했을 때
 		void LineDeletor_Tapped(Platform::Object ^sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs ^e);
+
+		//연결선, 델레터, YesOrNo, 방향표시 삭제해주는 함수
+		void deleteLine(UINT64 from, UINT64 to);
+
+		//SymbolInfo에서 path와 decision 삭제해주는 함수
+		void deletePathAndDecision(UINT64 from, UINT64 to);
 };
 }
