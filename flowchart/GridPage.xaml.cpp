@@ -721,13 +721,18 @@ void flowchart::GridPage::showFocusedSymbolButtons(UINT64 focusedSymbolNo)
 	Button^ tempButton2;
 	Button^ tempButton3;
 	Button^ tempButton4;
+	Ellipse^ lineDeletor1;
+	Ellipse^ lineDeletor2;
 
 	for (UINT64 i = 0; i < App::symbolVector->Size; i++) {
-		tempSymbolNo = App::symbolVector->GetAt(i)->SymbolNo;
+		SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
+		tempSymbolNo = tempSymbolInfo->SymbolNo;
 		tempButton1 = nullptr;
 		tempButton2 = nullptr;
 		tempButton3 = nullptr;
 		tempButton4 = nullptr;
+		lineDeletor1 = nullptr;
+		lineDeletor2 = nullptr;
 
 		tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + tempSymbolNo));
 		tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + tempSymbolNo));
@@ -739,12 +744,32 @@ void flowchart::GridPage::showFocusedSymbolButtons(UINT64 focusedSymbolNo)
 			tempButton2->SetValue(VisibilityProperty, 0);
 			tempButton3->SetValue(VisibilityProperty, 0);
 			tempButton4->SetValue(VisibilityProperty, 0);
+
+			for (UINT64 j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				SymbolInfo^ targetSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+				lineDeletor1 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor1 " + tempSymbolInfo->SymbolNo + " to " + targetSymbolInfo->SymbolNo));
+				lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + tempSymbolInfo->SymbolNo + " to " + targetSymbolInfo->SymbolNo));
+				
+				lineDeletor1->SetValue(VisibilityProperty, Windows::UI::Xaml::Visibility::Visible);
+				lineDeletor2->SetValue(VisibilityProperty, Windows::UI::Xaml::Visibility::Visible);
+			}
 		}
 		else {
 			tempButton1->SetValue(VisibilityProperty, 1);
 			tempButton2->SetValue(VisibilityProperty, 1);
 			tempButton3->SetValue(VisibilityProperty, 1);
 			tempButton4->SetValue(VisibilityProperty, 1);
+
+			for (UINT64 j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				SymbolInfo^ targetSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+				lineDeletor1 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor1 " + tempSymbolInfo->SymbolNo + " to " + targetSymbolInfo->SymbolNo));
+				lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + tempSymbolInfo->SymbolNo + " to " + targetSymbolInfo->SymbolNo));
+
+				lineDeletor1->SetValue(VisibilityProperty, Windows::UI::Xaml::Visibility::Collapsed);
+				lineDeletor2->SetValue(VisibilityProperty, Windows::UI::Xaml::Visibility::Collapsed);
+			}
 		}
 	}
 }
@@ -756,13 +781,18 @@ void flowchart::GridPage::hideAllButtons()
 	Button^ tempButton2;
 	Button^ tempButton3;
 	Button^ tempButton4;
+	Ellipse^ lineDeletor1;
+	Ellipse^ lineDeletor2;
 
 	for (UINT64 i = 0; i < App::symbolVector->Size; i++) {
-		tempSymbolNo = App::symbolVector->GetAt(i)->SymbolNo;
+		SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
+		tempSymbolNo = tempSymbolInfo->SymbolNo;
 		tempButton1 = nullptr;
 		tempButton2 = nullptr;
 		tempButton3 = nullptr;
 		tempButton4 = nullptr;
+		lineDeletor1 = nullptr;
+		lineDeletor2 = nullptr;
 
 		tempButton1 = safe_cast<Button^>(PageGrid->FindName("b1 " + tempSymbolNo));
 		tempButton2 = safe_cast<Button^>(PageGrid->FindName("b2 " + tempSymbolNo));
@@ -773,6 +803,16 @@ void flowchart::GridPage::hideAllButtons()
 		tempButton2->SetValue(VisibilityProperty, 1);
 		tempButton3->SetValue(VisibilityProperty, 1);
 		tempButton4->SetValue(VisibilityProperty, 1);
+
+		for (UINT64 j = 0; j < tempSymbolInfo->Path->Size; j++)
+		{
+			SymbolInfo^ targetSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+			lineDeletor1 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor1 " + tempSymbolInfo->SymbolNo + " to " + targetSymbolInfo->SymbolNo));
+			lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + tempSymbolInfo->SymbolNo + " to " + targetSymbolInfo->SymbolNo));
+
+			lineDeletor1->SetValue(VisibilityProperty, Windows::UI::Xaml::Visibility::Collapsed);
+			lineDeletor2->SetValue(VisibilityProperty, Windows::UI::Xaml::Visibility::Collapsed);
+		}
 	}
 	PageGrid->UpdateLayout();
 }
