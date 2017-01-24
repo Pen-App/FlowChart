@@ -1357,6 +1357,8 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	double turn2X, turn2Y;
 	double turn3X, turn3Y;
 	double toXPos, toYPos;
+	double indicatorPoint1X, indicatorPoint1Y;
+	double indicatorPoint2X, indicatorPoint2Y;
 
 	direction = getDirectionTartgetSymbol(fromInfo, toInfo);
 
@@ -1374,6 +1376,10 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 		toYPos = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
+		indicatorPoint1X = toXPos - 3;
+		indicatorPoint1Y = toYPos - 3;
+		indicatorPoint2X = toXPos + 3;
+		indicatorPoint2Y = toYPos - 3;
 		break;
 	}
 	case 2:
@@ -1388,6 +1394,10 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0);
 		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		indicatorPoint1X = toXPos - 3;
+		indicatorPoint1Y = toYPos - 3;
+		indicatorPoint2X = toXPos - 3;
+		indicatorPoint2Y = toYPos + 3;
 		break;
 	}
 	case 3:
@@ -1402,6 +1412,10 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0);
 		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		indicatorPoint1X = toXPos + 3;
+		indicatorPoint1Y = toYPos - 3;
+		indicatorPoint2X = toXPos + 3;
+		indicatorPoint2Y = toYPos + 3;
 		break;
 	}
 	case 4:
@@ -1416,6 +1430,10 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 		toYPos = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
+		indicatorPoint1X = toXPos - 3;
+		indicatorPoint1Y = toYPos - 3;
+		indicatorPoint2X = toXPos + 3;
+		indicatorPoint2Y = toYPos - 3;
 		break;
 	}
 	case 5:
@@ -1430,6 +1448,10 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 		toYPos = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0);
+		indicatorPoint1X = toXPos - 3;
+		indicatorPoint1Y = toYPos + 3;
+		indicatorPoint2X = toXPos + 3;
+		indicatorPoint2Y = toYPos + 3;
 		break;
 	}
 	case 6:
@@ -1444,6 +1466,10 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0);
 		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		indicatorPoint1X = toXPos - 3;
+		indicatorPoint1Y = toYPos - 3;
+		indicatorPoint2X = toXPos - 3;
+		indicatorPoint2Y = toYPos + 3;
 		break;
 	}
 	case 7:
@@ -1458,6 +1484,10 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0);
 		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		indicatorPoint1X = toXPos + 3;
+		indicatorPoint1Y = toYPos - 3;
+		indicatorPoint2X = toXPos + 3;
+		indicatorPoint2Y = toYPos + 3;
 		break;
 	}
 	case 8:
@@ -1472,6 +1502,10 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 		toYPos = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0);
+		indicatorPoint1X = toXPos - 3;
+		indicatorPoint1Y = toYPos + 3;
+		indicatorPoint2X = toXPos + 3;
+		indicatorPoint2Y = toYPos + 3;
 		break;
 	}
 	default:
@@ -1486,11 +1520,14 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		turn3Y = 0;
 		toXPos = 0;
 		toYPos = 0;
+		indicatorPoint1X = 0;
+		indicatorPoint1Y = 0;
+		indicatorPoint2X = 0;
+		indicatorPoint2Y = 0;
 	}
 	}
 	
 	Polyline^ connectLine = ref new Polyline;
-
 	connectLine->Name = "connectLine " + from + " to " + to;
 	connectLine->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Black);
 	connectLine->StrokeThickness = 1;
@@ -1502,6 +1539,17 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	connectLinePoints->Append(*(ref new Point(toXPos, toYPos)));
 	connectLine->Points = connectLinePoints;
 	PageGridCanvas->Children->Append(connectLine);
+
+	Polyline^ indicator = ref new Polyline;
+	indicator->Name = "indicator " + from + " to " + to;
+	indicator->Stroke = ref new SolidColorBrush(Windows::UI::Colors::Black);
+	indicator->StrokeThickness = 1;
+	PointCollection^ indicatorPoints = ref new PointCollection;
+	indicatorPoints->Append(*(ref new Point(indicatorPoint1X, indicatorPoint1Y)));
+	indicatorPoints->Append(*(ref new Point(toXPos, toYPos)));
+	indicatorPoints->Append(*(ref new Point(indicatorPoint2X, indicatorPoint2Y)));
+	indicator->Points = indicatorPoints;
+	PageGridCanvas->Children->Append(indicator);
 
 	Ellipse^ lineDeletor1 = ref new Ellipse;
 	lineDeletor1->Name = "lineDeletor1 " + from + " to " + to;
@@ -1923,10 +1971,12 @@ void flowchart::GridPage::deleteLine(UINT64 from, UINT64 to)
 {
 	//선 삭제될 인포를 찾음
 	auto fromInfo = App::getSymbolInfoByNo(from);
-	//삭제될 선과 델레터 이름 생성
+	//삭제될 선과 델레터, 방향표시 이름 생성
 	String^ connectLineName = "connectLine " + from + " to " + to;
 	String^ lineDeletor1Name = "lineDeletor1 " + from + " to " + to;
 	String^ lineDeletor2Name = "lineDeletor2 " + from + " to " + to;
+	String^ indicatorNameStr = "indicator " + from + " to " + to;
+
 	//이름으로 찾아서 삭제
 	for (int i = 0; i < PageGridCanvas->Children->Size; i++)
 	{
@@ -1934,7 +1984,7 @@ void flowchart::GridPage::deleteLine(UINT64 from, UINT64 to)
 		if (pageGridCanvasChild->ToString() == L"Windows.UI.Xaml.Shapes.Polyline")
 		{
 			Polyline^ connectLine = safe_cast<Polyline^>(pageGridCanvasChild);
-			if (connectLine->Name == connectLineName)
+			if (connectLine->Name == connectLineName || connectLine->Name == indicatorNameStr)
 			{
 				PageGridCanvas->Children->RemoveAt(i);
 				i--;
