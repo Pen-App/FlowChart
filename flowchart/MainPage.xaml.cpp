@@ -95,7 +95,6 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 
 		varPageGrid->UpdateLayout();
 
-		//App::symbolVector->RemoveAt(App::focusedSymbolIndex);
 		for (int i = 0; i < App::symbolVector->Size; i++)
 		{
 			auto tempSymbolInfo = App::symbolVector->GetAt(i);
@@ -507,6 +506,12 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 											  " to " +
 											  connectSymbolInfo->SymbolNo;
 
+				//방향표시 이름 생성
+				String^ indicatorNameStr = "indicator " + 
+										   deleteSymbolInfo->SymbolNo + 
+										   " to " + 
+										   connectSymbolInfo->SymbolNo;
+
 				//선이름으로 선을 찾아서 삭제
 				UIElement^ childPageGridCanvas = nullptr;
 				for (int k = 0; k < varPageGridCanvas->Children->Size; k++)
@@ -515,7 +520,7 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 					if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
 					{
 						Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
-						if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+						if (connectLine->Name == connectLineNameStr || connectLine->Name == indicatorNameStr)
 						{
 							varPageGridCanvas->Children->RemoveAt(k);
 							k--;
@@ -578,6 +583,12 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 												  " to " +
 												  deleteSymbolNo;
 
+					//방향표시 이름 생성
+					String^ indicatorNameStr = "indicator " +
+											   tempSymbolInfo->SymbolNo + 
+											   " to " + 
+											   deleteSymbolNo;
+
 					//선이름으로 선을 찾아서 삭제함
 					UIElement^ childPageGridCanvas = nullptr;
 					for (int k = 0; k < varPageGridCanvas->Children->Size; k++)
@@ -586,7 +597,7 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 						if (wcscmp(childPageGridCanvas->ToString()->Data(), L"Windows.UI.Xaml.Shapes.Polyline") == 0)
 						{
 							Polyline^ connectLine = safe_cast<Polyline^>(childPageGridCanvas);
-							if (wcscmp(connectLine->Name->Data(), connectLineNameStr->Data()) == 0)
+							if (connectLine->Name == connectLineNameStr || connectLine->Name == indicatorNameStr)
 							{
 								varPageGridCanvas->Children->RemoveAt(k);
 								k--;
