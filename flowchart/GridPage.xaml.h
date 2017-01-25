@@ -175,5 +175,8 @@ namespace flowchart
 
 		//SymbolInfo에서 path와 decision 삭제해주는 함수
 		void deletePathAndDecision(UINT64 from, UINT64 to);
+
+		//선 간격 조절(심볼로 들어오고 나가고 하는 선 전부 정렬)
+		void alignmentLine(UINT64 symbolNo);
 };
 }
