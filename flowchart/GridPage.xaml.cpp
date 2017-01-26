@@ -1388,9 +1388,9 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
 		turn1Y = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
-		turn2X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
-		turn2Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
-		turn3X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
+		turn2X = turn1X;
+		turn2Y = turn1Y;
+		turn3X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0) - 10;
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth - 70) / 2.0);
 		toYPos = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
@@ -1424,8 +1424,8 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		fromYPos = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0);
 		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 		turn1Y = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
-		turn2X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
-		turn2Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
+		turn2X = turn1X;
+		turn2Y = turn1Y;
 		turn3X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight - 40) / 2.0) - 10;
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
@@ -1442,8 +1442,8 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		fromYPos = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0);
 		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 		turn1Y = ((fromInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
-		turn2X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
-		turn2Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
+		turn2X = turn1X;
+		turn2Y = turn1Y;
 		turn3X = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + ((rowHeight + 40) / 2.0) + 10;
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + (columnWidth / 2.0);
@@ -1478,8 +1478,8 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 		fromYPos = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		turn1X = ((fromInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
 		turn1Y = ((fromInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
-		turn2X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
-		turn2Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
+		turn2X = turn1X;
+		turn2Y = turn1Y;
 		turn3X = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0) + 10;
 		turn3Y = ((toInfo->RowIndex)*rowHeight) + (rowHeight / 2.0);
 		toXPos = ((toInfo->ColumnIndex)*columnWidth) + ((columnWidth + 70) / 2.0);
@@ -1819,10 +1819,7 @@ void flowchart::GridPage::makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool deci
 
 	//6-1. yes or no를 표시할 테두리 설정
 	Border^ borderOfYesOrNoTextBlock = ref new Border;
-	String^ nameOfTextBlockBorder = ref new String(L"decisionText ");
-	nameOfTextBlockBorder += from;
-	nameOfTextBlockBorder += L" to ";
-	nameOfTextBlockBorder += to;
+	String^ nameOfTextBlockBorder = "decisionText " + from + " to " + to;
 	borderOfYesOrNoTextBlock->Name = nameOfTextBlockBorder;
 	borderOfYesOrNoTextBlock->BorderBrush = ref new SolidColorBrush(Windows::UI::Colors::Gray);
 	borderOfYesOrNoTextBlock->BorderThickness = 1;
@@ -2055,8 +2052,200 @@ void flowchart::GridPage::deletePathAndDecision(UINT64 from, UINT64 to)
 	}
 }
 
-//선 간격 조절(심볼로 들어오고 나가고 하는 선 전부 정렬)
-void flowchart::GridPage::alignmentLine(UINT64 symbolNo)
+//연결선 관련 간격 조절(선, 델레터, YesOrNo, 방향표시 전부 정렬)
+void flowchart::GridPage::alignmentLine()
 {
+	for (int q = 0; q < App::symbolVector->Size; q++)
+	{
+		auto symbolInfo = App::symbolVector->GetAt(q);
 
+		//나가는 선
+		Vector<SymbolInfo^>^ outLeft = ref new Vector <SymbolInfo^>();
+		Vector<SymbolInfo^>^ outTop = ref new Vector <SymbolInfo^>();
+		Vector<SymbolInfo^>^ outRight = ref new Vector <SymbolInfo^>();
+		Vector<SymbolInfo^>^ outBottom = ref new Vector <SymbolInfo^>();
+
+		//들어오는 선
+		Vector<SymbolInfo^>^ inLeft = ref new Vector <SymbolInfo^>();
+		Vector<SymbolInfo^>^ inTop = ref new Vector <SymbolInfo^>();
+		Vector<SymbolInfo^>^ inRight = ref new Vector <SymbolInfo^>();
+		Vector<SymbolInfo^>^ inBottom = ref new Vector <SymbolInfo^>();
+
+		//나가는 선 방향대로 분류
+		for (int i = 0; i < symbolInfo->Path->Size; i++)
+		{
+			auto targetInfo = symbolInfo->Path->GetAt(i);
+			int direction = getDirectionTartgetSymbol(symbolInfo, targetInfo);
+			switch (direction)
+			{
+			case 1:
+			case 2:
+				outLeft->Append(targetInfo);
+				break;
+			case 3:
+			case 4:
+				outTop->Append(targetInfo);
+				break;
+			case 5:
+			case 6:
+				outBottom->Append(targetInfo);
+				break;
+			case 7:
+			case 8:
+				outRight->Append(targetInfo);
+				break;
+			default:
+				break;
+			}
+		}
+
+		//들어오는 선 방향대로 분류
+		for (int i = 0; i < App::symbolVector->Size; i++)
+		{
+			auto tempSymbolInfo = App::symbolVector->GetAt(i);
+			for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				auto tempConnectSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+				if (tempConnectSymbolInfo->SymbolNo == symbolInfo->SymbolNo)
+				{
+					int direction = getDirectionTartgetSymbol(tempSymbolInfo, tempConnectSymbolInfo);
+					switch (direction)
+					{
+					case 2:
+					case 6:
+						inLeft->Append(tempSymbolInfo);
+						break;
+					case 1:
+					case 4:
+						inTop->Append(tempSymbolInfo);
+						break;
+					case 3:
+					case 7:
+						inRight->Append(tempSymbolInfo);
+						break;
+					case 5:
+					case 8:
+						inBottom->Append(tempSymbolInfo);
+						break;
+					default:
+						break;
+					}
+					break;
+				}
+			}
+		}
+
+		//왼쪽으로 나가고 들어오는 선 정렬
+		double leftLineNum = outLeft->Size + inLeft->Size;
+		//나가는 선 정렬
+		for (int i = 0; i < outLeft->Size; i++)
+		{
+			auto tempSymbolInfo = outLeft->GetAt(i);
+
+			Polyline^ connectLine = safe_cast<Polyline^>(PageGridCanvas->FindName("connectLine " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Polyline^ indicator = safe_cast<Polyline^>(PageGridCanvas->FindName("indicator " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Ellipse^ lineDeletor1 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor1 " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Ellipse^ lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Border^ borderOfYesOrNoTextBlock = nullptr;
+			if (symbolInfo->SymbolType == 2)
+			{
+				borderOfYesOrNoTextBlock = safe_cast<Border^>(PageGrid->FindName("decisionText " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			}
+			PointCollection^ connectLinePoints = ref new PointCollection;
+			PointCollection^ indicatorPoints = ref new PointCollection;
+			Point fromPos, point1, point2, point3, toPos;
+			Point indicatorPoint1, indicatorPoint2;
+
+			//방향이 2(북쪽)일 때
+			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 2)
+			{
+				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) +
+					((columnWidth - 70) / 2.0);
+				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) +
+					((rowHeight - 20) / leftLineNum) + 10; //(symbolInfo->RowIndex)*columnWidth는 심볼 위쪽 벽까지 위치, 위쪽 벽에 닿지 않게 +10, 아래도 남긴 거리(rowHeight-20)에 선 그릴만큼 /leftLineNum
+				point1.X = fromPos.X -
+					((((columnWidth - 70) / 2.0) - 5) / leftLineNum); //((columnWidth - 70)/2.0)은 심볼 왼쪽에 남은 거리(70은 심볼width지만 style을 알아야되서.), -5은 심볼 왼쪽 벽에 선이 닿으면 안되기 때문, 선 끼리의 간격 차이를 위해 /leftLineNum
+				point1.Y = fromPos.Y;
+				point2.X = point1.X;
+				point2.Y = point1.Y;
+				point3.X = point1.X;
+				point3.Y = connectLine->Points->GetAt(3).Y; //p3.y는 연결하는 쪽에서 관리하지 않음
+				toPos = connectLine->Points->GetAt(4); //to는 연결하는 쪽에서 관리하지 않음
+				indicatorPoint1.X = toPos.X - 3;
+				indicatorPoint1.Y = toPos.Y - 3;
+				indicatorPoint2.X = toPos.X - 3;
+				indicatorPoint2.Y = toPos.Y + 3;
+			}
+			//방향이 1(북서쪽)일 때
+			else
+			{
+				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) +
+					((columnWidth - 70) / 2.0);
+				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) +
+					((rowHeight - 20) / leftLineNum) + 10;
+				point1.X = fromPos.X -
+					((((columnWidth - 70) / 2.0) - 5) / leftLineNum);
+				point1.Y = fromPos.Y;
+				point2.X = point1.X;
+				point2.Y = connectLine->Points->GetAt(2).Y; //p2.y는 연결하는 쪽에서 관리하지 않음
+				point3 = connectLine->Points->GetAt(3); //p3은 연결하는 쪽에서 관리하지 않음
+				toPos = connectLine->Points->GetAt(4); //to는 연결하는 쪽에서 관리하지 않음
+				indicatorPoint1.X = toPos.X - 3;
+				indicatorPoint1.Y = toPos.Y - 3;
+				indicatorPoint2.X = toPos.X + 3;
+				indicatorPoint2.Y = toPos.Y - 3;
+			}
+
+			connectLinePoints->SetAt(0, fromPos);
+			connectLinePoints->SetAt(1, point1);
+			connectLinePoints->SetAt(2, point2);
+			connectLinePoints->SetAt(3, point3);
+			connectLinePoints->SetAt(4, toPos);
+			connectLine->Points = connectLinePoints;
+
+			indicatorPoints->SetAt(0, indicatorPoint1);
+			indicatorPoints->SetAt(1, toPos);
+			indicatorPoints->SetAt(2, indicatorPoint2);
+			indicator->Points = indicatorPoints;
+
+			lineDeletor1->SetValue(Canvas::TopProperty, (fromPos.Y - 4));
+			lineDeletor1->SetValue(Canvas::LeftProperty, (fromPos.X - 4));
+			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
+			lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
+
+			if (borderOfYesOrNoTextBlock != nullptr)
+			{
+				double topMargin = ((rowHeight - 20) / leftLineNum) - (rowHeight / 2.0);
+				if (topMargin < 0)
+				{
+					topMargin = abs(topMargin);
+					borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, (columnWidth / 2.0), topMargin);
+				}else
+				{
+					borderOfYesOrNoTextBlock->Margin = Thickness(0, topMargin, (columnWidth / 2.0), 0);
+				}
+			}
+
+			leftLineNum--;
+		}
+		//들어오는 선 정렬
+		for (int i = 0; i < inLeft->Size; i++)
+		{
+			auto tempSymbolInfo = inLeft->GetAt(i);
+			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 2)
+			{
+
+			}
+			else
+			{
+
+			}
+		}
+		//위쪽으로 나가고 들어오는 선 정렬
+		//오른쪽으로 나가고 들어오는 선 정렬
+		//아래쪽으로 나가고 들어오는 선 정렬
+	}
+
+	PageGrid->UpdateLayout();
+	PageGridCanvas->UpdateLayout();
 }
