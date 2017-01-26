@@ -107,7 +107,7 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 }
 
 //SymbolNo로 App::SymbolVector에서 SymbolInfo를 반환하는 함수
-SymbolInfo^ flowchart::App::getSymbolInfoByNo(UINT16 symbolNo)
+SymbolInfo^ flowchart::App::getSymbolInfoByNo(UINT64 symbolNo)
 {
 	SymbolInfo^ targetSymbolInfo = nullptr;
 	for (int i = 0; i < symbolVector->Size; i++)

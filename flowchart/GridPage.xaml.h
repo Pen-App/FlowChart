@@ -130,10 +130,10 @@ namespace flowchart
 		void PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e);
 
 		//연결선 만들어주는 함수
-		void makeConnectLine(UINT16 from, UINT16 to);
+		void makeConnectLine(UINT64 from, UINT64 to);
 
 		//연결선과 그에 관련된 것(델레터, YesOrNo, 방향표시)을 이동하는 함수
-		void moveConnectLine(UINT16 movedSymbolNo);
+		void moveConnectLine(UINT64 movedSymbolNo);
 
 		//파일오픈용 연결선 함수
 		void LoadingConnectLine(SymbolInfo^ fromInfo);
@@ -156,7 +156,7 @@ namespace flowchart
 		void YesOrNoFlyoutButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 
 		//Yes Or No TextBlock을 만드는 함수
-		void makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool decision);
+		void makeYesOrNoTextBlock(UINT64 from, UINT64 to, bool decision);
 
 		//파일 열기시 symbol을 새로 그려줄때 쓰는 메솓
 		void makeSymbol(SymbolInfo^ symbolInfo);

@@ -1345,7 +1345,7 @@ void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sen
 }
 
 //연결선, 델레터, 방향표시 만드는 함수
-void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
+void flowchart::GridPage::makeConnectLine(UINT64 from, UINT64 to)
 {
 	SymbolInfo^ fromInfo = App::getSymbolInfoByNo(from);
 	SymbolInfo^ toInfo = App::getSymbolInfoByNo(to);
@@ -1582,7 +1582,7 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 }
 
 //연결선과 그에 관련된 것(델레터, YesOrNo, 방향표시)을 이동하는 함수
-void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
+void flowchart::GridPage::moveConnectLine(UINT64 movedSymbolNo)
 {
 	//move된 심볼의 정보를 찾는다
 	SymbolInfo^ movedSymbolInfo = App::getSymbolInfoByNo(movedSymbolNo);
@@ -1808,7 +1808,7 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 }
 
 //Yes Or No TextBlock을 만드는 함수
-void flowchart::GridPage::makeYesOrNoTextBlock(UINT16 from, UINT16 to, bool decision)
+void flowchart::GridPage::makeYesOrNoTextBlock(UINT64 from, UINT64 to, bool decision)
 {
 	SymbolInfo^ fromInfo = App::getSymbolInfoByNo(from);
 	SymbolInfo^ toInfo = App::getSymbolInfoByNo(to);
