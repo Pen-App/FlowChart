@@ -1579,6 +1579,8 @@ void flowchart::GridPage::makeConnectLine(UINT16 from, UINT16 to)
 	PageGridCanvas->Children->Append(lineDeletor2);
 
 	PageGridCanvas->UpdateLayout();
+
+	alignmentLine();
 }
 
 //연결선과 그에 관련된 것(델레터, YesOrNo, 방향표시)을 이동하는 함수
@@ -2017,6 +2019,8 @@ void flowchart::GridPage::deleteLine(UINT64 from, UINT64 to)
 	}
 
 	PageGridCanvas->UpdateLayout();
+
+	alignmentLine();
 }
 
 //SymbolInfo에서 path와 decision 삭제해주는 함수
@@ -2055,6 +2059,9 @@ void flowchart::GridPage::deletePathAndDecision(UINT64 from, UINT64 to)
 //연결선 관련 간격 조절(선, 델레터, YesOrNo, 방향표시 전부 정렬)
 void flowchart::GridPage::alignmentLine()
 {
+	double symbolWidth = safe_cast<double>(Resources->Lookup("imageWidth"));
+	double symbolHeight = safe_cast<double>(Resources->Lookup("imageHeight"));
+
 	for (int q = 0; q < App::symbolVector->Size; q++)
 	{
 		auto symbolInfo = App::symbolVector->GetAt(q);
@@ -2083,10 +2090,10 @@ void flowchart::GridPage::alignmentLine()
 				outLeft->Append(targetInfo);
 				break;
 			case 3:
-			case 4:
+			case 5:
 				outTop->Append(targetInfo);
 				break;
-			case 5:
+			case 4:
 			case 6:
 				outBottom->Append(targetInfo);
 				break;
@@ -2116,14 +2123,14 @@ void flowchart::GridPage::alignmentLine()
 						inLeft->Append(tempSymbolInfo);
 						break;
 					case 1:
-					case 4:
+					case 5:
 						inTop->Append(tempSymbolInfo);
 						break;
 					case 3:
 					case 7:
 						inRight->Append(tempSymbolInfo);
 						break;
-					case 5:
+					case 4:
 					case 8:
 						inBottom->Append(tempSymbolInfo);
 						break;
@@ -2143,53 +2150,237 @@ void flowchart::GridPage::alignmentLine()
 			auto tempSymbolInfo = outLeft->GetAt(i);
 
 			Polyline^ connectLine = safe_cast<Polyline^>(PageGridCanvas->FindName("connectLine " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
-			Polyline^ indicator = safe_cast<Polyline^>(PageGridCanvas->FindName("indicator " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
 			Ellipse^ lineDeletor1 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor1 " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
-			Ellipse^ lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
 			Border^ borderOfYesOrNoTextBlock = nullptr;
 			if (symbolInfo->SymbolType == 2)
 			{
 				borderOfYesOrNoTextBlock = safe_cast<Border^>(PageGrid->FindName("decisionText " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
 			}
 			PointCollection^ connectLinePoints = ref new PointCollection;
-			PointCollection^ indicatorPoints = ref new PointCollection;
 			Point fromPos, point1, point2, point3, toPos;
-			Point indicatorPoint1, indicatorPoint2;
 
 			//방향이 2(북쪽)일 때
 			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 2)
 			{
 				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) +
-					((columnWidth - 70) / 2.0);
+					((columnWidth - symbolWidth) / 2.0);
 				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) +
 					((rowHeight - 20) / leftLineNum) + 10; //(symbolInfo->RowIndex)*columnWidth는 심볼 위쪽 벽까지 위치, 위쪽 벽에 닿지 않게 +10, 아래도 남긴 거리(rowHeight-20)에 선 그릴만큼 /leftLineNum
 				point1.X = fromPos.X -
-					((((columnWidth - 70) / 2.0) - 5) / leftLineNum); //((columnWidth - 70)/2.0)은 심볼 왼쪽에 남은 거리(70은 심볼width지만 style을 알아야되서.), -5은 심볼 왼쪽 벽에 선이 닿으면 안되기 때문, 선 끼리의 간격 차이를 위해 /leftLineNum
+					((((columnWidth - symbolWidth) / 2.0) - 5) / leftLineNum); //((columnWidth - symbolWidth)/2.0)은 심볼 왼쪽에 남은 거리, -5은 심볼 왼쪽 벽에 선이 닿으면 안되기 때문, 선 끼리의 간격 차이를 위해 /leftLineNum
 				point1.Y = fromPos.Y;
 				point2.X = point1.X;
 				point2.Y = point1.Y;
 				point3.X = point1.X;
 				point3.Y = connectLine->Points->GetAt(3).Y; //p3.y는 연결하는 쪽에서 관리하지 않음
 				toPos = connectLine->Points->GetAt(4); //to는 연결하는 쪽에서 관리하지 않음
-				indicatorPoint1.X = toPos.X - 3;
-				indicatorPoint1.Y = toPos.Y - 3;
-				indicatorPoint2.X = toPos.X - 3;
-				indicatorPoint2.Y = toPos.Y + 3;
 			}
 			//방향이 1(북서쪽)일 때
 			else
 			{
 				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) +
-					((columnWidth - 70) / 2.0);
+					((columnWidth - symbolWidth) / 2.0);
 				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) +
 					((rowHeight - 20) / leftLineNum) + 10;
 				point1.X = fromPos.X -
-					((((columnWidth - 70) / 2.0) - 5) / leftLineNum);
+					((((columnWidth - symbolWidth) / 2.0) - 5) / leftLineNum);
 				point1.Y = fromPos.Y;
 				point2.X = point1.X;
 				point2.Y = connectLine->Points->GetAt(2).Y; //p2.y는 연결하는 쪽에서 관리하지 않음
 				point3 = connectLine->Points->GetAt(3); //p3은 연결하는 쪽에서 관리하지 않음
 				toPos = connectLine->Points->GetAt(4); //to는 연결하는 쪽에서 관리하지 않음
+			}
+
+			connectLinePoints->SetAt(0, fromPos);
+			connectLinePoints->SetAt(1, point1);
+			connectLinePoints->SetAt(2, point2);
+			connectLinePoints->SetAt(3, point3);
+			connectLinePoints->SetAt(4, toPos);
+			connectLine->Points = connectLinePoints;
+
+			lineDeletor1->SetValue(Canvas::TopProperty, (fromPos.Y - 4));
+			lineDeletor1->SetValue(Canvas::LeftProperty, (fromPos.X - 4));
+
+			if (borderOfYesOrNoTextBlock != nullptr)
+			{
+				double topMargin = ((rowHeight - 20) / leftLineNum) - (rowHeight / 2.0);
+				if (topMargin < 0)
+				{
+					topMargin = abs(topMargin);
+					borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, (symbolWidth / 2.0), topMargin);
+				}
+				else
+				{
+					borderOfYesOrNoTextBlock->Margin = Thickness(0, topMargin, (symbolWidth / 2.0), 0);
+				}
+			}
+
+			leftLineNum--;
+		}
+		//들어오는 선 정렬
+		for (int i = 0; i < inLeft->Size; i++)
+		{
+			auto tempSymbolInfo = inLeft->GetAt(i);
+
+			Polyline^ connectLine = safe_cast<Polyline^>(PageGridCanvas->FindName("connectLine " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			Polyline^ indicator = safe_cast<Polyline^>(PageGridCanvas->FindName("indicator " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			Ellipse^ lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			PointCollection^ connectLinePoints = ref new PointCollection;
+			PointCollection^ indicatorPoints = ref new PointCollection;
+			Point fromPos, point1, point2, point3, toPos;
+			Point indicatorPoint1, indicatorPoint2;
+
+			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 2)
+			{
+				fromPos = connectLine->Points->GetAt(0); //fromPos는 연결당하는 쪽에서 관리하지 않음
+				point1 = connectLine->Points->GetAt(1); //point1는 연결당하는 쪽에서 관리하지 않음
+				point2 = connectLine->Points->GetAt(2); //point2는 연결당하는 쪽에서 관리하지 않음
+				point3.X = connectLine->Points->GetAt(3).X; //point3.x는 연결당하는 쪽에서 관리하지 않음
+				point3.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - 20) / leftLineNum) + 10;
+				toPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0);
+				toPos.Y = point3.Y;
+				indicatorPoint1.X = toPos.X - 3;
+				indicatorPoint1.Y = toPos.Y - 3;
+				indicatorPoint2.X = toPos.X - 3;
+				indicatorPoint2.Y = toPos.Y + 3;
+			}
+			else //direction == 6
+			{
+				fromPos = connectLine->Points->GetAt(0);
+				point1 = connectLine->Points->GetAt(1);
+				point2.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0) - ((((columnWidth - symbolWidth) / 2.0) - 5) / leftLineNum);
+				point2.Y = connectLine->Points->GetAt(2).Y;
+				point3.X = point2.X;
+				point3.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - 20) / leftLineNum) + 10;
+				toPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0);
+				toPos.Y = point3.Y;
+				indicatorPoint1.X = toPos.X - 3;
+				indicatorPoint1.Y = toPos.Y - 3;
+				indicatorPoint2.X = toPos.X - 3;
+				indicatorPoint2.Y = toPos.Y + 3;
+			}
+
+			connectLinePoints->SetAt(0, fromPos);
+			connectLinePoints->SetAt(1, point1);
+			connectLinePoints->SetAt(2, point2);
+			connectLinePoints->SetAt(3, point3);
+			connectLinePoints->SetAt(4, toPos);
+			connectLine->Points = connectLinePoints;
+
+			indicatorPoints->SetAt(0, indicatorPoint1);
+			indicatorPoints->SetAt(1, toPos);
+			indicatorPoints->SetAt(2, indicatorPoint2);
+			indicator->Points = indicatorPoints;
+
+			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
+			lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
+
+			leftLineNum--;
+		}
+
+		//위쪽으로 나가고 들어오는 선 정렬
+		double topLineNum = outTop->Size + inTop->Size;
+		//나가는 선 정렬
+		for (int i = 0; i < outTop->Size; i++)
+		{
+			auto tempSymbolInfo = outTop->GetAt(i);
+
+			Polyline^ connectLine = safe_cast<Polyline^>(PageGridCanvas->FindName("connectLine " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Ellipse^ lineDeletor1 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor1 " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Border^ borderOfYesOrNoTextBlock = nullptr;
+			if (symbolInfo->SymbolType == 2)
+			{
+				borderOfYesOrNoTextBlock = safe_cast<Border^>(PageGrid->FindName("decisionText " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			}
+			PointCollection^ connectLinePoints = ref new PointCollection;
+			Point fromPos, point1, point2, point3, toPos;
+
+			//방향이 5(동쪽)일 때
+			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 5)
+			{
+				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) / topLineNum) - 10;
+				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
+				point1.X = fromPos.X;
+				point1.Y = fromPos.Y - ((((rowHeight - symbolHeight) / 2.0) - 5) / topLineNum);
+				point2 = point1;
+				point3.X = connectLine->Points->GetAt(3).X;
+				point3.Y = point2.Y;
+				toPos = connectLine->Points->GetAt(4);
+			}
+			else //direction == 3
+			{
+				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) / topLineNum) - 10;
+				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
+				point1.X = fromPos.X;
+				point1.Y = fromPos.Y - ((((rowHeight - symbolHeight) / 2.0) - 5) / topLineNum);
+				point2.X = connectLine->Points->GetAt(2).X;
+				point2.Y = point1.Y;
+				point3 = connectLine->Points->GetAt(3);
+				toPos = connectLine->Points->GetAt(4);
+			}
+
+			connectLinePoints->SetAt(0, fromPos);
+			connectLinePoints->SetAt(1, point1);
+			connectLinePoints->SetAt(2, point2);
+			connectLinePoints->SetAt(3, point3);
+			connectLinePoints->SetAt(4, toPos);
+			connectLine->Points = connectLinePoints;
+
+			lineDeletor1->SetValue(Canvas::TopProperty, (fromPos.Y - 4));
+			lineDeletor1->SetValue(Canvas::LeftProperty, (fromPos.X - 4));
+
+			if (borderOfYesOrNoTextBlock != nullptr)
+			{
+				double leftMargin = ((columnWidth-20)/ topLineNum) + 10 - ((columnWidth)/2.0);
+				if (leftMargin < 0)
+				{
+					leftMargin = abs(leftMargin);
+					borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, leftMargin, (symbolHeight / 2.0));
+				}
+				else
+				{
+					borderOfYesOrNoTextBlock->Margin = Thickness(leftMargin, 0, 0, (symbolHeight / 2.0));
+				}
+			}
+			topLineNum--;
+		}
+		//들어오는 선 정렬
+		for (int i = 0; i < inTop->Size; i++)
+		{
+			auto tempSymbolInfo = inTop->GetAt(i);
+
+			Polyline^ connectLine = safe_cast<Polyline^>(PageGridCanvas->FindName("connectLine " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			Polyline^ indicator = safe_cast<Polyline^>(PageGridCanvas->FindName("indicator " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			Ellipse^ lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			PointCollection^ connectLinePoints = ref new PointCollection;
+			PointCollection^ indicatorPoints = ref new PointCollection;
+			Point fromPos, point1, point2, point3, toPos;
+			Point indicatorPoint1, indicatorPoint2;
+
+			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 5)
+			{
+				fromPos = connectLine->Points->GetAt(0); //fromPos는 연결당하는 쪽에서 관리하지 않음
+				point1 = connectLine->Points->GetAt(1); //point1는 연결당하는 쪽에서 관리하지 않음
+				point2 = connectLine->Points->GetAt(2); //point2는 연결당하는 쪽에서 관리하지 않음
+				point3.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) / topLineNum) - 10;
+				point3.Y = connectLine->Points->GetAt(3).Y;
+				toPos.X = point3.X;
+				toPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
+				indicatorPoint1.X = toPos.X - 3;
+				indicatorPoint1.Y = toPos.Y - 3;
+				indicatorPoint2.X = toPos.X + 3;
+				indicatorPoint2.Y = toPos.Y - 3;
+			}
+			else //direction == 1
+			{
+				fromPos = connectLine->Points->GetAt(0);
+				point1 = connectLine->Points->GetAt(1);
+				toPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) / topLineNum) - 10;
+				toPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
+				point2.X = connectLine->Points->GetAt(2).X;
+				point2.Y = toPos.Y - ((((rowHeight - symbolHeight) / 2.0) - 5) / topLineNum);
+				point3.X = toPos.X;
+				point3.Y = point2.Y;
 				indicatorPoint1.X = toPos.X - 3;
 				indicatorPoint1.Y = toPos.Y - 3;
 				indicatorPoint2.X = toPos.X + 3;
@@ -2208,42 +2399,152 @@ void flowchart::GridPage::alignmentLine()
 			indicatorPoints->SetAt(2, indicatorPoint2);
 			indicator->Points = indicatorPoints;
 
-			lineDeletor1->SetValue(Canvas::TopProperty, (fromPos.Y - 4));
-			lineDeletor1->SetValue(Canvas::LeftProperty, (fromPos.X - 4));
 			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
 			lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
 
+			topLineNum--;
+		}
+
+		//오른쪽으로 나가고 들어오는 선 정렬
+		double rightLineNum = outRight->Size + inRight->Size;
+		//나가는 선 정렬
+		for (int i = 0; i < outRight->Size; i++)
+		{
+			auto tempSymbolInfo = outRight->GetAt(i);
+
+			Polyline^ connectLine = safe_cast<Polyline^>(PageGridCanvas->FindName("connectLine " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Ellipse^ lineDeletor1 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor1 " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Border^ borderOfYesOrNoTextBlock = nullptr;
+			if (symbolInfo->SymbolType == 2)
+			{
+				borderOfYesOrNoTextBlock = safe_cast<Border^>(PageGrid->FindName("decisionText " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			}
+			PointCollection^ connectLinePoints = ref new PointCollection;
+			Point fromPos, point1, point2, point3, toPos;
+
+			//direction == 7(남쪽)
+			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 7)
+			{
+				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - symbolWidth) / 2.0);
+				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) / rightLineNum) - 10;
+				point1.X = fromPos.X + ((((columnWidth - symbolWidth) / 2.0) - 5) / rightLineNum);
+				point1.Y = fromPos.Y;
+				point2 = point1;
+				point3.X = point1.X;
+				point3.Y = connectLine->Points->GetAt(3).Y;
+				toPos = connectLine->Points->GetAt(4);
+			}
+			else //direction == 8
+			{
+				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - symbolWidth) / 2.0);
+				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) / rightLineNum) - 10;
+				point1.X = fromPos.X + ((((columnWidth - symbolWidth) / 2.0) - 5) / rightLineNum);
+				point1.Y = fromPos.Y;
+				point2.X = point1.X;
+				point2.Y = connectLine->Points->GetAt(2).Y;
+				point3 = connectLine->Points->GetAt(3);
+				toPos = connectLine->Points->GetAt(4);
+			}
+
+			connectLinePoints->SetAt(0, fromPos);
+			connectLinePoints->SetAt(1, point1);
+			connectLinePoints->SetAt(2, point2);
+			connectLinePoints->SetAt(3, point3);
+			connectLinePoints->SetAt(4, toPos);
+			connectLine->Points = connectLinePoints;
+
+			lineDeletor1->SetValue(Canvas::TopProperty, (fromPos.Y - 4));
+			lineDeletor1->SetValue(Canvas::LeftProperty, (fromPos.X - 4));
+
 			if (borderOfYesOrNoTextBlock != nullptr)
 			{
-				double topMargin = ((rowHeight - 20) / leftLineNum) - (rowHeight / 2.0);
-				if (topMargin < 0)
+				double bottomMargin = ((rowHeight - 20) / rightLineNum) + 10 - (rowHeight / 2.0);
+				if (bottomMargin < 0)
 				{
-					topMargin = abs(topMargin);
-					borderOfYesOrNoTextBlock->Margin = Thickness(0, 0, (columnWidth / 2.0), topMargin);
-				}else
+					bottomMargin = abs(bottomMargin);
+					borderOfYesOrNoTextBlock->Margin = Thickness((symbolWidth / 2.0), bottomMargin, 0, 0);
+				}
+				else
 				{
-					borderOfYesOrNoTextBlock->Margin = Thickness(0, topMargin, (columnWidth / 2.0), 0);
+					borderOfYesOrNoTextBlock->Margin = Thickness((symbolWidth / 2.0), 0, 0, bottomMargin);
 				}
 			}
 
-			leftLineNum--;
+			rightLineNum--;
 		}
 		//들어오는 선 정렬
-		for (int i = 0; i < inLeft->Size; i++)
+		for (int i = 0; i < inRight->Size; i++)
 		{
-			auto tempSymbolInfo = inLeft->GetAt(i);
-			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 2)
-			{
+			auto tempSymbolInfo = inRight->GetAt(i);
 
-			}
-			else
-			{
+			Polyline^ connectLine = safe_cast<Polyline^>(PageGridCanvas->FindName("connectLine " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			Polyline^ indicator = safe_cast<Polyline^>(PageGridCanvas->FindName("indicator " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			Ellipse^ lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			PointCollection^ connectLinePoints = ref new PointCollection;
+			PointCollection^ indicatorPoints = ref new PointCollection;
+			Point fromPos, point1, point2, point3, toPos;
+			Point indicatorPoint1, indicatorPoint2;
 
+			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 7)
+			{
+				fromPos = connectLine->Points->GetAt(0);
+				point1 = connectLine->Points->GetAt(1);
+				point2 = connectLine->Points->GetAt(2);
+				point3.X = connectLine->Points->GetAt(3).X;
+				point3.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) / rightLineNum) - 10;
+				toPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - symbolWidth) / 2.0);
+				toPos.Y = point3.Y;
+				indicatorPoint1.X = toPos.X + 3;
+				indicatorPoint1.Y = toPos.Y - 3;
+				indicatorPoint2.X = toPos.X + 3;
+				indicatorPoint2.Y = toPos.Y + 3;
 			}
+			else //direction == 3
+			{
+				fromPos = connectLine->Points->GetAt(0);
+				point1 = connectLine->Points->GetAt(1);
+				toPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - symbolWidth) / 2.0);
+				toPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) / rightLineNum) - 10;
+				point3.X = toPos.X + ((((columnWidth - symbolWidth) / 2.0) - 5) / rightLineNum);
+				point3.Y = toPos.Y;
+				point2.X = point3.X;
+				point2.Y = connectLine->Points->GetAt(2).Y;
+				indicatorPoint1.X = toPos.X + 3;
+				indicatorPoint1.Y = toPos.Y - 3;
+				indicatorPoint2.X = toPos.X + 3;
+				indicatorPoint2.Y = toPos.Y + 3;
+			}
+
+			connectLinePoints->SetAt(0, fromPos);
+			connectLinePoints->SetAt(1, point1);
+			connectLinePoints->SetAt(2, point2);
+			connectLinePoints->SetAt(3, point3);
+			connectLinePoints->SetAt(4, toPos);
+			connectLine->Points = connectLinePoints;
+
+			indicatorPoints->SetAt(0, indicatorPoint1);
+			indicatorPoints->SetAt(1, toPos);
+			indicatorPoints->SetAt(2, indicatorPoint2);
+			indicator->Points = indicatorPoints;
+
+			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
+			lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
+
+			rightLineNum--;
 		}
-		//위쪽으로 나가고 들어오는 선 정렬
-		//오른쪽으로 나가고 들어오는 선 정렬
+
 		//아래쪽으로 나가고 들어오는 선 정렬
+		double bottomLineNum = outBottom->Size + inBottom->Size;
+		//나가는 선 정렬
+		for (int i = 0; i < outBottom->Size; i++)
+		{
+
+		}
+		//들어오는 선 정렬
+		for (int i = 0; i < inBottom->Size; i++)
+		{
+
+		}
 	}
 
 	PageGrid->UpdateLayout();
