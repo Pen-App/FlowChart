@@ -2143,7 +2143,8 @@ void flowchart::GridPage::alignmentLine()
 		}
 
 		//왼쪽으로 나가고 들어오는 선 정렬
-		double leftLineNum = outLeft->Size + inLeft->Size;
+		double leftLineNum = outLeft->Size + inLeft->Size+1;
+		double tempLeftLineNum = 1;
 		//나가는 선 정렬
 		for (int i = 0; i < outLeft->Size; i++)
 		{
@@ -2162,12 +2163,9 @@ void flowchart::GridPage::alignmentLine()
 			//방향이 2(북쪽)일 때
 			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 2)
 			{
-				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) +
-					((columnWidth - symbolWidth) / 2.0);
-				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) +
-					((rowHeight - 20) / leftLineNum) + 10; //(symbolInfo->RowIndex)*columnWidth는 심볼 위쪽 벽까지 위치, 위쪽 벽에 닿지 않게 +10, 아래도 남긴 거리(rowHeight-20)에 선 그릴만큼 /leftLineNum
-				point1.X = fromPos.X -
-					((((columnWidth - symbolWidth) / 2.0) - 5) / leftLineNum); //((columnWidth - symbolWidth)/2.0)은 심볼 왼쪽에 남은 거리, -5은 심볼 왼쪽 벽에 선이 닿으면 안되기 때문, 선 끼리의 간격 차이를 위해 /leftLineNum
+				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0);
+				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - 20) * (tempLeftLineNum / leftLineNum)) + 10;
+				point1.X = fromPos.X - ((((columnWidth - symbolWidth) / 2.0) - 5) * (tempLeftLineNum / leftLineNum));
 				point1.Y = fromPos.Y;
 				point2.X = point1.X;
 				point2.Y = point1.Y;
@@ -2178,12 +2176,9 @@ void flowchart::GridPage::alignmentLine()
 			//방향이 1(북서쪽)일 때
 			else
 			{
-				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) +
-					((columnWidth - symbolWidth) / 2.0);
-				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) +
-					((rowHeight - 20) / leftLineNum) + 10;
-				point1.X = fromPos.X -
-					((((columnWidth - symbolWidth) / 2.0) - 5) / leftLineNum);
+				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0);
+				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - 20) * (tempLeftLineNum / leftLineNum)) + 10;
+				point1.X = fromPos.X - ((((columnWidth - symbolWidth) / 2.0) - 5) * (tempLeftLineNum / leftLineNum));
 				point1.Y = fromPos.Y;
 				point2.X = point1.X;
 				point2.Y = connectLine->Points->GetAt(2).Y; //p2.y는 연결하는 쪽에서 관리하지 않음
@@ -2203,7 +2198,7 @@ void flowchart::GridPage::alignmentLine()
 
 			if (borderOfYesOrNoTextBlock != nullptr)
 			{
-				double topMargin = ((rowHeight - 20) / leftLineNum) - (rowHeight / 2.0);
+				double topMargin = ((rowHeight - 20) * (tempLeftLineNum / leftLineNum)) - (rowHeight / 2.0);
 				if (topMargin < 0)
 				{
 					topMargin = abs(topMargin);
@@ -2215,7 +2210,7 @@ void flowchart::GridPage::alignmentLine()
 				}
 			}
 
-			leftLineNum--;
+			tempLeftLineNum++;
 		}
 		//들어오는 선 정렬
 		for (int i = 0; i < inLeft->Size; i++)
@@ -2236,7 +2231,7 @@ void flowchart::GridPage::alignmentLine()
 				point1 = connectLine->Points->GetAt(1); //point1는 연결당하는 쪽에서 관리하지 않음
 				point2 = connectLine->Points->GetAt(2); //point2는 연결당하는 쪽에서 관리하지 않음
 				point3.X = connectLine->Points->GetAt(3).X; //point3.x는 연결당하는 쪽에서 관리하지 않음
-				point3.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - 20) / leftLineNum) + 10;
+				point3.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - 20) * (tempLeftLineNum / leftLineNum)) + 10;
 				toPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0);
 				toPos.Y = point3.Y;
 				indicatorPoint1.X = toPos.X - 3;
@@ -2248,10 +2243,10 @@ void flowchart::GridPage::alignmentLine()
 			{
 				fromPos = connectLine->Points->GetAt(0);
 				point1 = connectLine->Points->GetAt(1);
-				point2.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0) - ((((columnWidth - symbolWidth) / 2.0) - 5) / leftLineNum);
+				point2.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0) - ((((columnWidth - symbolWidth) / 2.0) - 5) * (tempLeftLineNum / leftLineNum));
 				point2.Y = connectLine->Points->GetAt(2).Y;
 				point3.X = point2.X;
-				point3.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - 20) / leftLineNum) + 10;
+				point3.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - 20) * (tempLeftLineNum / leftLineNum)) + 10;
 				toPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0);
 				toPos.Y = point3.Y;
 				indicatorPoint1.X = toPos.X - 3;
@@ -2275,11 +2270,12 @@ void flowchart::GridPage::alignmentLine()
 			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
 			lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
 
-			leftLineNum--;
+			tempLeftLineNum++;
 		}
 
 		//위쪽으로 나가고 들어오는 선 정렬
-		double topLineNum = outTop->Size + inTop->Size;
+		double topLineNum = outTop->Size + inTop->Size + 1;
+		double tempTopLineNum = 1;
 		//나가는 선 정렬
 		for (int i = 0; i < outTop->Size; i++)
 		{
@@ -2298,10 +2294,10 @@ void flowchart::GridPage::alignmentLine()
 			//방향이 5(동쪽)일 때
 			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 5)
 			{
-				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) / topLineNum) - 10;
+				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) * (tempTopLineNum / topLineNum)) - 10;
 				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
 				point1.X = fromPos.X;
-				point1.Y = fromPos.Y - ((((rowHeight - symbolHeight) / 2.0) - 5) / topLineNum);
+				point1.Y = fromPos.Y - ((((rowHeight - symbolHeight) / 2.0) - 5) * (tempTopLineNum / topLineNum));
 				point2 = point1;
 				point3.X = connectLine->Points->GetAt(3).X;
 				point3.Y = point2.Y;
@@ -2309,10 +2305,10 @@ void flowchart::GridPage::alignmentLine()
 			}
 			else //direction == 3
 			{
-				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) / topLineNum) - 10;
+				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) * (tempTopLineNum / topLineNum)) - 10;
 				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
 				point1.X = fromPos.X;
-				point1.Y = fromPos.Y - ((((rowHeight - symbolHeight) / 2.0) - 5) / topLineNum);
+				point1.Y = fromPos.Y - ((((rowHeight - symbolHeight) / 2.0) - 5) * (tempTopLineNum / topLineNum));
 				point2.X = connectLine->Points->GetAt(2).X;
 				point2.Y = point1.Y;
 				point3 = connectLine->Points->GetAt(3);
@@ -2331,7 +2327,7 @@ void flowchart::GridPage::alignmentLine()
 
 			if (borderOfYesOrNoTextBlock != nullptr)
 			{
-				double leftMargin = ((columnWidth-20)/ topLineNum) + 10 - ((columnWidth)/2.0);
+				double leftMargin = ((columnWidth - 20)* (tempTopLineNum / topLineNum)) + 10 - ((columnWidth) / 2.0);
 				if (leftMargin < 0)
 				{
 					leftMargin = abs(leftMargin);
@@ -2342,7 +2338,7 @@ void flowchart::GridPage::alignmentLine()
 					borderOfYesOrNoTextBlock->Margin = Thickness(leftMargin, 0, 0, (symbolHeight / 2.0));
 				}
 			}
-			topLineNum--;
+			tempTopLineNum++;
 		}
 		//들어오는 선 정렬
 		for (int i = 0; i < inTop->Size; i++)
@@ -2362,7 +2358,7 @@ void flowchart::GridPage::alignmentLine()
 				fromPos = connectLine->Points->GetAt(0); //fromPos는 연결당하는 쪽에서 관리하지 않음
 				point1 = connectLine->Points->GetAt(1); //point1는 연결당하는 쪽에서 관리하지 않음
 				point2 = connectLine->Points->GetAt(2); //point2는 연결당하는 쪽에서 관리하지 않음
-				point3.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) / topLineNum) - 10;
+				point3.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) * (tempTopLineNum / topLineNum)) - 10;
 				point3.Y = connectLine->Points->GetAt(3).Y;
 				toPos.X = point3.X;
 				toPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
@@ -2375,10 +2371,10 @@ void flowchart::GridPage::alignmentLine()
 			{
 				fromPos = connectLine->Points->GetAt(0);
 				point1 = connectLine->Points->GetAt(1);
-				toPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) / topLineNum) - 10;
+				toPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) * (tempTopLineNum / topLineNum)) - 10;
 				toPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
 				point2.X = connectLine->Points->GetAt(2).X;
-				point2.Y = toPos.Y - ((((rowHeight - symbolHeight) / 2.0) - 5) / topLineNum);
+				point2.Y = toPos.Y - ((((rowHeight - symbolHeight) / 2.0) - 5) * (tempTopLineNum / topLineNum));
 				point3.X = toPos.X;
 				point3.Y = point2.Y;
 				indicatorPoint1.X = toPos.X - 3;
@@ -2402,11 +2398,12 @@ void flowchart::GridPage::alignmentLine()
 			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
 			lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
 
-			topLineNum--;
+			tempTopLineNum++;
 		}
 
 		//오른쪽으로 나가고 들어오는 선 정렬
-		double rightLineNum = outRight->Size + inRight->Size;
+		double rightLineNum = outRight->Size + inRight->Size + 1;
+		double tempRightLineNum = 1;
 		//나가는 선 정렬
 		for (int i = 0; i < outRight->Size; i++)
 		{
@@ -2426,8 +2423,8 @@ void flowchart::GridPage::alignmentLine()
 			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 7)
 			{
 				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - symbolWidth) / 2.0);
-				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) / rightLineNum) - 10;
-				point1.X = fromPos.X + ((((columnWidth - symbolWidth) / 2.0) - 5) / rightLineNum);
+				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) * (tempRightLineNum / rightLineNum)) - 10;
+				point1.X = fromPos.X + ((((columnWidth - symbolWidth) / 2.0) - 5) * (tempRightLineNum / rightLineNum));
 				point1.Y = fromPos.Y;
 				point2 = point1;
 				point3.X = point1.X;
@@ -2437,8 +2434,8 @@ void flowchart::GridPage::alignmentLine()
 			else //direction == 8
 			{
 				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - symbolWidth) / 2.0);
-				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) / rightLineNum) - 10;
-				point1.X = fromPos.X + ((((columnWidth - symbolWidth) / 2.0) - 5) / rightLineNum);
+				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) * (tempRightLineNum / rightLineNum)) - 10;
+				point1.X = fromPos.X + ((((columnWidth - symbolWidth) / 2.0) - 5) * (tempRightLineNum / rightLineNum));
 				point1.Y = fromPos.Y;
 				point2.X = point1.X;
 				point2.Y = connectLine->Points->GetAt(2).Y;
@@ -2458,7 +2455,7 @@ void flowchart::GridPage::alignmentLine()
 
 			if (borderOfYesOrNoTextBlock != nullptr)
 			{
-				double bottomMargin = ((rowHeight - 20) / rightLineNum) + 10 - (rowHeight / 2.0);
+				double bottomMargin = ((rowHeight - 20) * (tempRightLineNum / rightLineNum)) + 10 - (rowHeight / 2.0);
 				if (bottomMargin < 0)
 				{
 					bottomMargin = abs(bottomMargin);
@@ -2470,7 +2467,7 @@ void flowchart::GridPage::alignmentLine()
 				}
 			}
 
-			rightLineNum--;
+			tempRightLineNum++;
 		}
 		//들어오는 선 정렬
 		for (int i = 0; i < inRight->Size; i++)
@@ -2491,7 +2488,7 @@ void flowchart::GridPage::alignmentLine()
 				point1 = connectLine->Points->GetAt(1);
 				point2 = connectLine->Points->GetAt(2);
 				point3.X = connectLine->Points->GetAt(3).X;
-				point3.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) / rightLineNum) - 10;
+				point3.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) * (tempRightLineNum / rightLineNum)) - 10;
 				toPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - symbolWidth) / 2.0);
 				toPos.Y = point3.Y;
 				indicatorPoint1.X = toPos.X + 3;
@@ -2504,8 +2501,8 @@ void flowchart::GridPage::alignmentLine()
 				fromPos = connectLine->Points->GetAt(0);
 				point1 = connectLine->Points->GetAt(1);
 				toPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - symbolWidth) / 2.0);
-				toPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) / rightLineNum) - 10;
-				point3.X = toPos.X + ((((columnWidth - symbolWidth) / 2.0) - 5) / rightLineNum);
+				toPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) * (tempRightLineNum / rightLineNum)) - 10;
+				point3.X = toPos.X + ((((columnWidth - symbolWidth) / 2.0) - 5) * (tempRightLineNum / rightLineNum));
 				point3.Y = toPos.Y;
 				point2.X = point3.X;
 				point2.Y = connectLine->Points->GetAt(2).Y;
@@ -2530,11 +2527,12 @@ void flowchart::GridPage::alignmentLine()
 			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
 			lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
 
-			rightLineNum--;
+			tempRightLineNum++;
 		}
 
 		//아래쪽으로 나가고 들어오는 선 정렬
-		double bottomLineNum = outBottom->Size + inBottom->Size;
+		double bottomLineNum = outBottom->Size + inBottom->Size + 1;
+		double tempBottomLineNum = 1;
 		//나가는 선 정렬
 		for (int i = 0; i < outBottom->Size; i++)
 		{
@@ -2552,10 +2550,10 @@ void flowchart::GridPage::alignmentLine()
 
 			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 4)
 			{
-				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) / bottomLineNum) + 10;
+				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) * (tempBottomLineNum / bottomLineNum)) + 10;
 				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - symbolHeight) / 2.0);
 				point1.X = fromPos.X;
-				point1.Y = fromPos.Y + ((((rowHeight - symbolHeight) / 2.0) - 5) / bottomLineNum);
+				point1.Y = fromPos.Y + ((((rowHeight - symbolHeight) / 2.0) - 5) * (tempBottomLineNum / bottomLineNum));
 				point2 = point1;
 				point3.X = connectLine->Points->GetAt(3).X;
 				point3.Y = point2.Y;
@@ -2563,10 +2561,10 @@ void flowchart::GridPage::alignmentLine()
 			}
 			else //direction == 6
 			{
-				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) / bottomLineNum) + 10;
+				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) * (tempBottomLineNum / bottomLineNum)) + 10;
 				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - symbolHeight) / 2.0);
 				point1.X = fromPos.X;
-				point1.Y = fromPos.Y + ((((rowHeight - symbolHeight) / 2.0) - 5) / bottomLineNum);
+				point1.Y = fromPos.Y + ((((rowHeight - symbolHeight) / 2.0) - 5) * (tempBottomLineNum / bottomLineNum));
 				point2.X = connectLine->Points->GetAt(2).X;
 				point2.Y = point1.Y;
 				point3 = connectLine->Points->GetAt(3);
@@ -2585,7 +2583,7 @@ void flowchart::GridPage::alignmentLine()
 
 			if (borderOfYesOrNoTextBlock != nullptr)
 			{
-				double leftMargin = ((columnWidth - 20) / bottomLineNum) + 10 - (columnWidth / 2.0);
+				double leftMargin = ((columnWidth - 20) * (tempBottomLineNum / bottomLineNum)) + 10 - (columnWidth / 2.0);
 				if (leftMargin < 0)
 				{
 					leftMargin = abs(leftMargin);
@@ -2596,7 +2594,7 @@ void flowchart::GridPage::alignmentLine()
 					borderOfYesOrNoTextBlock->Margin = Thickness(leftMargin, (symbolHeight / 2.0), 0, 0);
 				}
 			}
-			bottomLineNum--;
+			tempBottomLineNum++;
 		}
 		//들어오는 선 정렬
 		for (int i = 0; i < inBottom->Size; i++)
@@ -2616,7 +2614,7 @@ void flowchart::GridPage::alignmentLine()
 				fromPos = connectLine->Points->GetAt(0);
 				point1 = connectLine->Points->GetAt(1);
 				point2 = connectLine->Points->GetAt(2);
-				point3.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) / bottomLineNum) + 10;
+				point3.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) * (tempBottomLineNum / bottomLineNum)) + 10;
 				point3.Y = connectLine->Points->GetAt(3).Y;
 				toPos.X = point3.X;
 				toPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - symbolHeight) / 2.0);
@@ -2629,10 +2627,10 @@ void flowchart::GridPage::alignmentLine()
 			{
 				fromPos = connectLine->Points->GetAt(0);
 				point1 = connectLine->Points->GetAt(1);
-				toPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) / bottomLineNum) + 10;
+				toPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) * (tempBottomLineNum / bottomLineNum)) + 10;
 				toPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - symbolHeight) / 2.0);
 				point3.X = toPos.X;
-				point3.Y = toPos.Y + ((((rowHeight - symbolHeight) / 2.0) - 5) / bottomLineNum);
+				point3.Y = toPos.Y + ((((rowHeight - symbolHeight) / 2.0) - 5) * (tempBottomLineNum / bottomLineNum));
 				point2.X = connectLine->Points->GetAt(2).X;
 				point2.Y = point3.Y;
 				indicatorPoint1.X = toPos.X - 3;
@@ -2656,7 +2654,7 @@ void flowchart::GridPage::alignmentLine()
 			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
 			lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
 
-			bottomLineNum--;
+			tempBottomLineNum++;
 		}
 	}
 
