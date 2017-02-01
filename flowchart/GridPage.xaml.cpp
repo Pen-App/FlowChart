@@ -45,6 +45,8 @@ GridPage::GridPage()
 
 	if(App::symbolVector->Size != 0)
 		LoadOpenedFile();
+
+
 }
 
 void GridPage::LoadOpenedFile()
@@ -76,6 +78,8 @@ void GridPage::makeSymbol(SymbolInfo^ symbolInfo)
 	makeTextBlocks(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 	makeSymbolRectangle(PageGrid, symbolInfo->SymbolNo, symbolInfo->SymbolType, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
 	makeButtons(PageGrid, symbolInfo->SymbolNo, symbolInfo->RowIndex, symbolInfo->ColumnIndex);
+	
+	
 }
 
 //행,열 하나하나 마다 rectangle을 채워넣는 함수 : 마우스 커서가 어떤 행,열 인덱스위에 올라가있는지 이벤트를 받기 위해서
@@ -511,6 +515,10 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		
 
 		showFocusedSymbolButtons(tempSymbolNo);
+
+		App::tempSaver->tempSave();
+		testTextBox->Text = App::tempSaver->getSize() + "";
+
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
 		if (curColumnIndex == 0)
 		{
@@ -631,7 +639,7 @@ void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows
 	wcsncpy_s(tempImageType, tempImageName->Data(), 2);
 	focusedSymbolType = _wtoi(tempImageType + 1);
 
-	testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
+	//testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 
 	OutputDebugString(L"Image_PointerEntered!!!\n");
 }
@@ -676,7 +684,7 @@ void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows
 
 		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
 		showFocusedSymbolButtons(focusedSymbolNo);
-		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
+		//testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 	}
 	
 	OutputDebugString(L"Image_clicked!!!\n");
@@ -698,7 +706,7 @@ void flowchart::GridPage::Image_DragStarting(Windows::UI::Xaml::UIElement^ sende
 		
 		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
 		showFocusedSymbolButtons(focusedSymbolNo);
-		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
+		//testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 
 		//App.xaml.h.DraggingSymbolNo 설정
 		App::draggingSymbolNo = focusedSymbolNo;
@@ -1220,7 +1228,7 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		{
 			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
 		}
-		pathBox->Text = tempStr;
+		//pathBox->Text = tempStr;
 		
 	}
 	OutputDebugString(L"canvas_press!!!\n");

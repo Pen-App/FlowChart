@@ -233,8 +233,8 @@
                   AllowDrop="true" DragOver="PageGrid_DragOver" Drop="PageGrid_Drop" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
                 <TextBox Name="testTextBox" Width="150" Height="100"></TextBox>
                 <TextBox Name="pathBox" Grid.Column="1" Grid.Row ="0" Grid.ColumnSpan="3"/>
-                <!--<Rectangle PointerExited="Rectangle_PointerExited" DragLeave="Rectangle_DragLeave"></Rectangle>-->
-                <Button PointerEntered="Button_PointerEntered" PointerExited="Button_PointerExited" DragEnter="Button_DragEnter" DragLeave="Button_DragLeave"></Button>
+                <Rectangle PointerExited="Rectangle_PointerExited" DragLeave="Rectangle_DragLeave"></Rectangle>
+                <Button Grid.Column="1" Grid.Row ="5" PointerEntered="Button_PointerEntered" PointerExited="Button_PointerExited" DragEnter="Button_DragEnter" DragLeave="Button_DragLeave"></Button>
             </Grid>
         </Canvas>
     </ScrollViewer>

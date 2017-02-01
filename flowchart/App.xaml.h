@@ -6,6 +6,7 @@
 #pragma once
 
 #include "App.g.h"
+#include "tempSaver.h"
 #include "SymbolInfo.h"
 #include <collection.h>
 
@@ -32,6 +33,7 @@ namespace flowchart
 		static property UINT64 draggingSymbolNo;
 		static property int draggingSymbolType;
 		static property int focusedSymbolIndex;	// 선택된 symbolInfoVector의 index
+		static property TempSaver^ tempSaver;
 
 	public:
 		//SymbolNo로 App::SymbolVector에서 SymbolInfo를 반환하는 함수

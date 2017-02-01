@@ -38,6 +38,7 @@ App::App()
 	draggingSymbolNo = -1;
 	draggingSymbolType = -1;
 	focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
+	tempSaver = ref new TempSaver();
 }
 
 /// <summary>

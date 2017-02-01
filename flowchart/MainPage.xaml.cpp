@@ -158,6 +158,10 @@ void flowchart::MainPage::ZoomInButtonClick(Platform::Object^ sender, Windows::U
 	varScrollViewer->UpdateLayout();
 	//rootCommandBar->IsOpen = true;
 	//rootCommandBar->IsSticky = true;
+	
+	App::tempSaver->reDo();
+	App::symbolVector = safe_cast<Vector<SymbolInfo^> ^ >(App::tempSaver->getCurSymbolInfoVector());
+	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 }
 
 void flowchart::MainPage::ZoomOutButtonClick(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -166,7 +170,17 @@ void flowchart::MainPage::ZoomOutButtonClick(Platform::Object^ sender, Windows::
 	ScrollViewer^ varScrollViewer = (ScrollViewer^)(varGridPage->FindName("PageGridScrollViewer"));
 	varScrollViewer->ZoomToFactor((varScrollViewer->ZoomFactor - 0.1));
 	varScrollViewer->UpdateLayout();
-	//rootCommandBar->IsOpen = true;
+	////rootCommandBar->IsOpen = true;
+	
+	
+	
+	App::symbolVector = safe_cast<Vector<SymbolInfo^> ^ >(App::tempSaver->getCurSymbolInfoVector());
+	App::tempSaver->unDo();
+	
+	
+	
+	
+	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 }
 
 // 파일 오픈

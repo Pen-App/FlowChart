@@ -4,7 +4,7 @@
 //
 
 #pragma once
-
+#include "tempSaver.h"
 #include "GridPage.g.h"
 using namespace Platform;
 using namespace Windows::Foundation;
@@ -51,6 +51,7 @@ namespace flowchart
 
 		String^ tappedDeletorName; //탭 된 deletor 이름을 임시로 갖고 있음
 
+		
 		//=============================함수들=====================================
 		//0. gridArray 만들기
 		void makeGridArray(Grid^ parentGrid, int rowNum, int columnNum, int rowHeight, int columnWidth);
