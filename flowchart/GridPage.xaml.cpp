@@ -1609,8 +1609,8 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 				//선 새로 다시 그려줌
 				if (movedSymbolInfo->SymbolType == 2)
 				{
-					makeConnectLine(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo);
 					makeYesOrNoTextBlock(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo, movedSymbolInfo->Decision->GetAt(j));
+					makeConnectLine(movedSymbolInfo->SymbolNo, connectSymbolInfo->SymbolNo);
 				}
 				else
 				{
@@ -1633,8 +1633,8 @@ void flowchart::GridPage::moveConnectLine(UINT16 movedSymbolNo)
 					//선 새로 다시 그려줌
 					if (movedSymbolInfo->SymbolType == 2)
 					{
-						makeConnectLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
 						makeYesOrNoTextBlock(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo, tempSymbolInfo->Decision->GetAt(j));
+						makeConnectLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
 					}
 					else
 					{
@@ -1927,6 +1927,8 @@ void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender
 
 	//메모리 회수
 	delete[]tappedDeletorNameWc;
+
+	alignmentLine();
 }
 
 //파일오픈용 PageGrid 늘려주는 함수
@@ -2019,8 +2021,6 @@ void flowchart::GridPage::deleteLine(UINT64 from, UINT64 to)
 	}
 
 	PageGridCanvas->UpdateLayout();
-
-	alignmentLine();
 }
 
 //SymbolInfo에서 path와 decision 삭제해주는 함수
@@ -2059,8 +2059,8 @@ void flowchart::GridPage::deletePathAndDecision(UINT64 from, UINT64 to)
 //연결선 관련 간격 조절(선, 델레터, YesOrNo, 방향표시 전부 정렬)
 void flowchart::GridPage::alignmentLine()
 {
-	double symbolWidth = safe_cast<double>(Resources->Lookup("imageWidth"));
-	double symbolHeight = safe_cast<double>(Resources->Lookup("imageHeight"));
+	double symbolWidth = safe_cast<int>(Resources->Lookup("imageWidth"));
+	double symbolHeight = safe_cast<int>(Resources->Lookup("imageHeight"));
 
 	for (int q = 0; q < App::symbolVector->Size; q++)
 	{
@@ -2191,11 +2191,11 @@ void flowchart::GridPage::alignmentLine()
 				toPos = connectLine->Points->GetAt(4); //to는 연결하는 쪽에서 관리하지 않음
 			}
 
-			connectLinePoints->SetAt(0, fromPos);
-			connectLinePoints->SetAt(1, point1);
-			connectLinePoints->SetAt(2, point2);
-			connectLinePoints->SetAt(3, point3);
-			connectLinePoints->SetAt(4, toPos);
+			connectLinePoints->Append(fromPos);
+			connectLinePoints->Append(point1);
+			connectLinePoints->Append(point2);
+			connectLinePoints->Append(point3);
+			connectLinePoints->Append(toPos);
 			connectLine->Points = connectLinePoints;
 
 			lineDeletor1->SetValue(Canvas::TopProperty, (fromPos.Y - 4));
@@ -2260,16 +2260,16 @@ void flowchart::GridPage::alignmentLine()
 				indicatorPoint2.Y = toPos.Y + 3;
 			}
 
-			connectLinePoints->SetAt(0, fromPos);
-			connectLinePoints->SetAt(1, point1);
-			connectLinePoints->SetAt(2, point2);
-			connectLinePoints->SetAt(3, point3);
-			connectLinePoints->SetAt(4, toPos);
+			connectLinePoints->Append(fromPos);
+			connectLinePoints->Append(point1);
+			connectLinePoints->Append(point2);
+			connectLinePoints->Append(point3);
+			connectLinePoints->Append(toPos);
 			connectLine->Points = connectLinePoints;
 
-			indicatorPoints->SetAt(0, indicatorPoint1);
-			indicatorPoints->SetAt(1, toPos);
-			indicatorPoints->SetAt(2, indicatorPoint2);
+			indicatorPoints->Append(indicatorPoint1);
+			indicatorPoints->Append(toPos);
+			indicatorPoints->Append(indicatorPoint2);
 			indicator->Points = indicatorPoints;
 
 			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
@@ -2319,11 +2319,11 @@ void flowchart::GridPage::alignmentLine()
 				toPos = connectLine->Points->GetAt(4);
 			}
 
-			connectLinePoints->SetAt(0, fromPos);
-			connectLinePoints->SetAt(1, point1);
-			connectLinePoints->SetAt(2, point2);
-			connectLinePoints->SetAt(3, point3);
-			connectLinePoints->SetAt(4, toPos);
+			connectLinePoints->Append(fromPos);
+			connectLinePoints->Append(point1);
+			connectLinePoints->Append(point2);
+			connectLinePoints->Append(point3);
+			connectLinePoints->Append(toPos);
 			connectLine->Points = connectLinePoints;
 
 			lineDeletor1->SetValue(Canvas::TopProperty, (fromPos.Y - 4));
@@ -2387,16 +2387,16 @@ void flowchart::GridPage::alignmentLine()
 				indicatorPoint2.Y = toPos.Y - 3;
 			}
 
-			connectLinePoints->SetAt(0, fromPos);
-			connectLinePoints->SetAt(1, point1);
-			connectLinePoints->SetAt(2, point2);
-			connectLinePoints->SetAt(3, point3);
-			connectLinePoints->SetAt(4, toPos);
+			connectLinePoints->Append(fromPos);
+			connectLinePoints->Append(point1);
+			connectLinePoints->Append(point2);
+			connectLinePoints->Append(point3);
+			connectLinePoints->Append(toPos);
 			connectLine->Points = connectLinePoints;
 
-			indicatorPoints->SetAt(0, indicatorPoint1);
-			indicatorPoints->SetAt(1, toPos);
-			indicatorPoints->SetAt(2, indicatorPoint2);
+			indicatorPoints->Append(indicatorPoint1);
+			indicatorPoints->Append(toPos);
+			indicatorPoints->Append(indicatorPoint2);
 			indicator->Points = indicatorPoints;
 
 			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
@@ -2446,11 +2446,11 @@ void flowchart::GridPage::alignmentLine()
 				toPos = connectLine->Points->GetAt(4);
 			}
 
-			connectLinePoints->SetAt(0, fromPos);
-			connectLinePoints->SetAt(1, point1);
-			connectLinePoints->SetAt(2, point2);
-			connectLinePoints->SetAt(3, point3);
-			connectLinePoints->SetAt(4, toPos);
+			connectLinePoints->Append(fromPos);
+			connectLinePoints->Append(point1);
+			connectLinePoints->Append(point2);
+			connectLinePoints->Append(point3);
+			connectLinePoints->Append(toPos);
 			connectLine->Points = connectLinePoints;
 
 			lineDeletor1->SetValue(Canvas::TopProperty, (fromPos.Y - 4));
@@ -2515,16 +2515,16 @@ void flowchart::GridPage::alignmentLine()
 				indicatorPoint2.Y = toPos.Y + 3;
 			}
 
-			connectLinePoints->SetAt(0, fromPos);
-			connectLinePoints->SetAt(1, point1);
-			connectLinePoints->SetAt(2, point2);
-			connectLinePoints->SetAt(3, point3);
-			connectLinePoints->SetAt(4, toPos);
+			connectLinePoints->Append(fromPos);
+			connectLinePoints->Append(point1);
+			connectLinePoints->Append(point2);
+			connectLinePoints->Append(point3);
+			connectLinePoints->Append(toPos);
 			connectLine->Points = connectLinePoints;
 
-			indicatorPoints->SetAt(0, indicatorPoint1);
-			indicatorPoints->SetAt(1, toPos);
-			indicatorPoints->SetAt(2, indicatorPoint2);
+			indicatorPoints->Append(indicatorPoint1);
+			indicatorPoints->Append(toPos);
+			indicatorPoints->Append(indicatorPoint2);
 			indicator->Points = indicatorPoints;
 
 			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
@@ -2538,12 +2538,125 @@ void flowchart::GridPage::alignmentLine()
 		//나가는 선 정렬
 		for (int i = 0; i < outBottom->Size; i++)
 		{
+			auto tempSymbolInfo = outBottom->GetAt(i);
 
+			Polyline^ connectLine = safe_cast<Polyline^>(PageGridCanvas->FindName("connectLine " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Ellipse^ lineDeletor1 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor1 " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			Border^ borderOfYesOrNoTextBlock = nullptr;
+			if (symbolInfo->SymbolType == 2)
+			{
+				borderOfYesOrNoTextBlock = safe_cast<Border^>(PageGrid->FindName("decisionText " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+			}
+			PointCollection^ connectLinePoints = ref new PointCollection;
+			Point fromPos, point1, point2, point3, toPos;
+
+			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 4)
+			{
+				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) / bottomLineNum) + 10;
+				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - symbolHeight) / 2.0);
+				point1.X = fromPos.X;
+				point1.Y = fromPos.Y + ((((rowHeight - symbolHeight) / 2.0) - 5) / bottomLineNum);
+				point2 = point1;
+				point3.X = connectLine->Points->GetAt(3).X;
+				point3.Y = point2.Y;
+				toPos = connectLine->Points->GetAt(4);
+			}
+			else //direction == 6
+			{
+				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) / bottomLineNum) + 10;
+				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - symbolHeight) / 2.0);
+				point1.X = fromPos.X;
+				point1.Y = fromPos.Y + ((((rowHeight - symbolHeight) / 2.0) - 5) / bottomLineNum);
+				point2.X = connectLine->Points->GetAt(2).X;
+				point2.Y = point1.Y;
+				point3 = connectLine->Points->GetAt(3);
+				toPos = connectLine->Points->GetAt(4);
+			}
+
+			connectLinePoints->Append(fromPos);
+			connectLinePoints->Append(point1);
+			connectLinePoints->Append(point2);
+			connectLinePoints->Append(point3);
+			connectLinePoints->Append(toPos);
+			connectLine->Points = connectLinePoints;
+
+			lineDeletor1->SetValue(Canvas::TopProperty, (fromPos.Y - 4));
+			lineDeletor1->SetValue(Canvas::LeftProperty, (fromPos.X - 4));
+
+			if (borderOfYesOrNoTextBlock != nullptr)
+			{
+				double leftMargin = ((columnWidth - 20) / bottomLineNum) + 10 - (columnWidth / 2.0);
+				if (leftMargin < 0)
+				{
+					leftMargin = abs(leftMargin);
+					borderOfYesOrNoTextBlock->Margin = Thickness(0, (symbolHeight / 2.0), leftMargin, 0);
+				}
+				else
+				{
+					borderOfYesOrNoTextBlock->Margin = Thickness(leftMargin, (symbolHeight / 2.0), 0, 0);
+				}
+			}
+			bottomLineNum--;
 		}
 		//들어오는 선 정렬
 		for (int i = 0; i < inBottom->Size; i++)
 		{
+			auto tempSymbolInfo = inBottom->GetAt(i);
 
+			Polyline^ connectLine = safe_cast<Polyline^>(PageGridCanvas->FindName("connectLine " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			Polyline^ indicator = safe_cast<Polyline^>(PageGridCanvas->FindName("indicator " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			Ellipse^ lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + tempSymbolInfo->SymbolNo + " to " + symbolInfo->SymbolNo));
+			PointCollection^ connectLinePoints = ref new PointCollection;
+			PointCollection^ indicatorPoints = ref new PointCollection;
+			Point fromPos, point1, point2, point3, toPos;
+			Point indicatorPoint1, indicatorPoint2;
+
+			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 4)
+			{
+				fromPos = connectLine->Points->GetAt(0);
+				point1 = connectLine->Points->GetAt(1);
+				point2 = connectLine->Points->GetAt(2);
+				point3.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) / bottomLineNum) + 10;
+				point3.Y = connectLine->Points->GetAt(3).Y;
+				toPos.X = point3.X;
+				toPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - symbolHeight) / 2.0);
+				indicatorPoint1.X = toPos.X - 3;
+				indicatorPoint1.Y = toPos.Y + 3;
+				indicatorPoint2.X = toPos.X + 3;
+				indicatorPoint2.Y = toPos.Y + 3;
+			}
+			else //direction == 8
+			{
+				fromPos = connectLine->Points->GetAt(0);
+				point1 = connectLine->Points->GetAt(1);
+				toPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) / bottomLineNum) + 10;
+				toPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - symbolHeight) / 2.0);
+				point3.X = toPos.X;
+				point3.Y = toPos.Y + ((((rowHeight - symbolHeight) / 2.0) - 5) / bottomLineNum);
+				point2.X = connectLine->Points->GetAt(2).X;
+				point2.Y = point3.Y;
+				indicatorPoint1.X = toPos.X - 3;
+				indicatorPoint1.Y = toPos.Y + 3;
+				indicatorPoint2.X = toPos.X + 3;
+				indicatorPoint2.Y = toPos.Y + 3;
+			}
+
+			connectLinePoints->Append(fromPos);
+			connectLinePoints->Append(point1);
+			connectLinePoints->Append(point2);
+			connectLinePoints->Append(point3);
+			connectLinePoints->Append(toPos);
+			connectLine->Points = connectLinePoints;
+
+			indicatorPoints->Append(indicatorPoint1);
+			indicatorPoints->Append(toPos);
+			indicatorPoints->Append(indicatorPoint2);
+			indicator->Points = indicatorPoints;
+
+			lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
+			lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
+
+			bottomLineNum--;
 		}
 	}
 
