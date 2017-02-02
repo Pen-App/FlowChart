@@ -35,7 +35,7 @@ namespace flowchart
 
 	public:
 		//SymbolNo로 App::SymbolVector에서 SymbolInfo를 반환하는 함수
-		static SymbolInfo^ getSymbolInfoByNo(UINT16 symbolNo);
+		static SymbolInfo^ getSymbolInfoByNo(UINT64 symbolNo);
 
 	private:
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);
