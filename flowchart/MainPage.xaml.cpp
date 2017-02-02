@@ -52,17 +52,16 @@ void flowchart::MainPage::Image_DropCompleted(Windows::UI::Xaml::UIElement^ send
 	App::selectedSymbolNumber = -1;
 }
 
+//심볼 리스트박스에 그리드에 들어있던 심볼을 드래그&드롭해서 삭제
 void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
-	OutputDebugString(L"ListBox_Drop\n");
-
 	wchar_t asdf[234];
 	swprintf_s(asdf, L"draggingSymbolNo : %d\n", App::draggingSymbolNo);
 	OutputDebugString(asdf);
 
 	if (App::draggingSymbolNo != -1)
 	{
-		Button^ tempButton1 = nullptr;
+		/*Button^ tempButton1 = nullptr;
 		Button^ tempButton2 = nullptr;
 		Button^ tempButton3 = nullptr;
 		Image^ tempImage = nullptr;
@@ -93,7 +92,7 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 
 		deleteConnectLine(App::draggingSymbolNo);
 
-		varPageGrid->UpdateLayout();
+		varPageGrid->UpdateLayout();*/
 
 		for (int i = 0; i < App::symbolVector->Size; i++)
 		{
@@ -138,6 +137,8 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 				break;
 			}
 		}
+
+		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 	}
 }
 
