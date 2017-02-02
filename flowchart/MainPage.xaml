@@ -88,6 +88,17 @@
                         <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
                     </AppBarButton.RenderTransform>
                 </AppBarButton>
+
+                <AppBarButton Icon="Undo" Label="Undo" Click="UndoButton_Click" Foreground="White">
+                    <AppBarButton.RenderTransform>
+                        <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
+                    </AppBarButton.RenderTransform>
+                </AppBarButton>
+                <AppBarButton Icon="Redo" Label="Redo" Click="RedoButton_Click" Foreground="White">
+                    <AppBarButton.RenderTransform>
+                        <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
+                    </AppBarButton.RenderTransform>
+                </AppBarButton>
             </StackPanel>
         </AppBar>
     </Page.TopAppBar>
