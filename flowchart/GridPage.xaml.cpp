@@ -1221,12 +1221,8 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
 		}
 		pathBox->Text = tempStr;
-		
 	}
-	OutputDebugString(L"canvas_press!!!\n");
-	wchar_t asdf[234];
-	swprintf_s(asdf, L"%d %d\n", nowColumnNum, nowRowNum);
-	OutputDebugString(asdf);
+
 	if (isLineDrawing && !isSelectingYesOrNo)
 	{
 		isLineDrawing = false;
@@ -2660,4 +2656,55 @@ void flowchart::GridPage::alignmentLine()
 
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
+}
+
+//심볼 사이에 다른 심볼이 가로막고 있는지 판별
+//5,7번 방향만 탐색, 나머지는 무조건 장애물이 있다고(true) 리턴
+bool flowchart::GridPage::isBlockedBetweenSymbols(SymbolInfo^ startSymbol, SymbolInfo^ endSymbol)
+{
+	bool result = false;
+
+	int direction = getDirectionTartgetSymbol(startSymbol, endSymbol);
+	switch (direction)
+	{
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 6:
+	case 8:
+		result = true;
+		break;
+	case 5:
+	{
+		for (int i = 0; i < App::symbolVector->Size; i++)
+		{
+			SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
+			if (tempSymbolInfo->RowIndex == startSymbol->RowIndex && (tempSymbolInfo->ColumnIndex > startSymbol->ColumnIndex && tempSymbolInfo->ColumnIndex < endSymbol->ColumnIndex))
+			{
+				result = true;
+				break;
+			}
+		}
+		break;
+	}
+	case 7:
+	{
+		for (int i = 0; i < App::symbolVector->Size; i++)
+		{
+			SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
+			if (tempSymbolInfo->ColumnIndex == startSymbol->ColumnIndex && (tempSymbolInfo->RowIndex > startSymbol->RowIndex && tempSymbolInfo->RowIndex < endSymbol->RowIndex))
+			{
+				result = true;
+				break;
+			}
+		}
+		break;
+	}
+	default:
+		result = true;
+		break;
+	}
+
+	return result;
 }
