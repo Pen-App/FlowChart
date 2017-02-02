@@ -648,11 +648,15 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 
 void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-
+	App::tempSaver->unDo();
+	App::symbolVector = safe_cast<Vector<SymbolInfo^> ^ >(App::tempSaver->getCurSymbolInfoVector());
+	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid));
 }
 
 
 void flowchart::MainPage::RedoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-
+	App::tempSaver->reDo();
+	App::symbolVector = safe_cast<Vector<SymbolInfo^> ^ >(App::tempSaver->getCurSymbolInfoVector());
+	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid));
 }

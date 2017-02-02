@@ -32,7 +32,7 @@ private:
 	Vector<bool>^ decision = ref new Vector<bool>(); //yes or no
 public:
 	SymbolInfo();
-
+	SymbolInfo(SymbolInfo^ symbolInfo);
 	// GET & SET
 
 
