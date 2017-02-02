@@ -65,6 +65,8 @@ void GridPage::LoadOpenedFile()
 	App::symbolIdCount = App::symbolVector->GetAt(App::symbolVector->Size - 1)->SymbolNo + 1;
 	isSelectingYesOrNo = false;
 
+	hideAllButtons();
+
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
