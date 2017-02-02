@@ -555,6 +555,8 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		}
 	}
 
+	alignmentLine();
+
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
@@ -2087,7 +2089,14 @@ void flowchart::GridPage::alignmentLine()
 				break;
 			case 3:
 			case 5:
-				outTop->Append(targetInfo);
+				if (isBlockedBetweenSymbols(symbolInfo, targetInfo))
+				{
+					outTop->Append(targetInfo);
+				}
+				else
+				{
+					outLeft->Append(targetInfo);
+				}
 				break;
 			case 4:
 			case 6:
@@ -2095,7 +2104,14 @@ void flowchart::GridPage::alignmentLine()
 				break;
 			case 7:
 			case 8:
-				outRight->Append(targetInfo);
+				if (isBlockedBetweenSymbols(symbolInfo, targetInfo))
+				{
+					outRight->Append(targetInfo);
+				}
+				else
+				{
+					outBottom->Append(targetInfo);
+				}
 				break;
 			default:
 				break;
@@ -2120,11 +2136,25 @@ void flowchart::GridPage::alignmentLine()
 						break;
 					case 1:
 					case 5:
-						inTop->Append(tempSymbolInfo);
+						if (isBlockedBetweenSymbols(tempSymbolInfo, tempConnectSymbolInfo))
+						{
+							inTop->Append(tempSymbolInfo);
+						}
+						else
+						{
+							inLeft->Append(tempSymbolInfo);
+						}
 						break;
 					case 3:
 					case 7:
-						inRight->Append(tempSymbolInfo);
+						if (isBlockedBetweenSymbols(tempSymbolInfo, tempConnectSymbolInfo))
+						{
+							inRight->Append(tempSymbolInfo);
+						}
+						else
+						{
+							inTop->Append(tempSymbolInfo);
+						}
 						break;
 					case 4:
 					case 8:
