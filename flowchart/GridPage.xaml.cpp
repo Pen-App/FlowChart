@@ -511,6 +511,8 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		
 
 		showFocusedSymbolButtons(tempSymbolNo);
+
+		
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
 		if (curColumnIndex == 0)
 		{
@@ -535,7 +537,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		moveFocusedSymbol(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveConnectLine(focusedSymbolNo);
-
+		
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
 		if (curColumnIndex == 0)
 		{
@@ -554,7 +556,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 			appendRow();
 		}
 	}
-
+	App::tempSaver->tempSave();
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
@@ -1221,7 +1223,7 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
 		}
 		pathBox->Text = tempStr;
-		
+		App::tempSaver->tempSave();
 	}
 	OutputDebugString(L"canvas_press!!!\n");
 	wchar_t asdf[234];
@@ -1577,7 +1579,6 @@ void flowchart::GridPage::makeConnectLine(UINT64 from, UINT64 to)
 	lineDeletor2->SetValue(Canvas::LeftProperty, (toXPos-4));
 	lineDeletor2->Visibility = Windows::UI::Xaml::Visibility::Visible;
 	PageGridCanvas->Children->Append(lineDeletor2);
-
 	PageGridCanvas->UpdateLayout();
 }
 
@@ -1928,6 +1929,8 @@ void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender
 
 	//메모리 회수
 	delete[]tappedDeletorNameWc;
+
+	App::tempSaver->tempSave();
 }
 
 //파일오픈용 PageGrid 늘려주는 함수
@@ -2020,6 +2023,7 @@ void flowchart::GridPage::deleteLine(UINT64 from, UINT64 to)
 	}
 
 	PageGridCanvas->UpdateLayout();
+	
 }
 
 //SymbolInfo에서 path와 decision 삭제해주는 함수

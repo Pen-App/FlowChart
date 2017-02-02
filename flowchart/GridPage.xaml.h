@@ -22,7 +22,7 @@ using namespace Windows::UI;
 namespace flowchart
 {
 	/// <summary>
-	/// An empty page that can be used on its own or navigated to within a Frame.
+	/// An empty page that can be used on its own or to within a Frame.
 	/// </summary>
 	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class GridPage sealed

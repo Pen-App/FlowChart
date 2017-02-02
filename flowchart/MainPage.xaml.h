@@ -7,6 +7,7 @@
 
 #include "MainPage.g.h"
 #include <string>
+
 namespace flowchart
 {
 	/// <summary>
