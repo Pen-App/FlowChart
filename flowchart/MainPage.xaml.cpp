@@ -58,9 +58,10 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 	wchar_t asdf[234];
 	swprintf_s(asdf, L"draggingSymbolNo : %d\n", App::draggingSymbolNo);
 	OutputDebugString(asdf);
-
+	
 	if (App::draggingSymbolNo != -1)
 	{
+	
 		/*Button^ tempButton1 = nullptr;
 		Button^ tempButton2 = nullptr;
 		Button^ tempButton3 = nullptr;
@@ -137,7 +138,7 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 				break;
 			}
 		}
-
+		App::tempSaver->tempSave();
 		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 	}
 }

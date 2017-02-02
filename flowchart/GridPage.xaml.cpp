@@ -558,7 +558,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 			appendRow();
 		}
 	}
-	App::tempSaver->tempSave();
+	//App::tempSaver->tempSave();
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
@@ -1225,7 +1225,7 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
 		}
 		pathBox->Text = tempStr;
-		App::tempSaver->tempSave();
+		//App::tempSaver->tempSave();
 	}
 	OutputDebugString(L"canvas_press!!!\n");
 	wchar_t asdf[234];
@@ -1932,7 +1932,7 @@ void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender
 	//메모리 회수
 	delete[]tappedDeletorNameWc;
 
-	App::tempSaver->tempSave();
+	//App::tempSaver->tempSave();
 }
 
 //파일오픈용 PageGrid 늘려주는 함수

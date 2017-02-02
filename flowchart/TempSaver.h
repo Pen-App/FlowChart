@@ -23,5 +23,6 @@ public:
 private:
 	Vector< IVector< SymbolInfo^ >^ >^ symbolInfoVectorContainer = ref new Vector< IVector< SymbolInfo^ >^ >();
 	int curVectorIndex;
+	
 
 };

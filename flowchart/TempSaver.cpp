@@ -6,6 +6,7 @@ TempSaver::TempSaver()
 {
 	//-1로 시작
 	curVectorIndex = -1;
+
 }
 
 SIZE_TYPE TempSaver::getSize()
@@ -25,22 +26,44 @@ void TempSaver::tempSave()
 		clonedVector->Append(symbolInfo);
 	}
 
-	//3. clonedVector도 넣어줌.
-	symbolInfoVectorContainer->Append(clonedVector);
+	if (curVectorIndex != symbolInfoVectorContainer->Size - 1)
+	{
+		symbolInfoVectorContainer->InsertAt(curVectorIndex-1,clonedVector);
+		for (SIZE_TYPE i = 0; i < (symbolInfoVectorContainer->Size - curVectorIndex - 1); i++)
+		{
+			symbolInfoVectorContainer->RemoveAtEnd();
+		}
+		++curVectorIndex;
+	
+	}
+	else
+	{
+		symbolInfoVectorContainer->Append(clonedVector);
+		//. curVectorIndex 늘려주기
+		if (symbolInfoVectorContainer->Size > 0)
+			curVectorIndex = symbolInfoVectorContainer->Size - 1;
+		
+	}
 
-	//4. curVectorIndex 늘려주기
+	
+	
+	
 
-	curVectorIndex = symbolInfoVectorContainer->Size - 1;
+	
 
+
+	
 
 }
 
 void TempSaver::unDo()
 {
+	
 	if (curVectorIndex > 0)
 	{
 		curVectorIndex--;
 	}
+	
 }
 
 void TempSaver::reDo()
@@ -49,9 +72,14 @@ void TempSaver::reDo()
 	{
 		curVectorIndex++;
 	}
+
+
 }
 
 IVector<SymbolInfo^>^ TempSaver::getCurSymbolInfoVector()
 {
+	wchar_t debugstr[256];
+	swprintf_s(debugstr, L"사이즈 : %d, curIndex: %d \n", symbolInfoVectorContainer->Size, curVectorIndex);
+	OutputDebugString(debugstr);
 	return symbolInfoVectorContainer->GetAt(curVectorIndex);
 }
