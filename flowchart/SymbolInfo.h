@@ -33,9 +33,9 @@ private:
 public:
 	SymbolInfo();
 	SymbolInfo(SymbolInfo^ symbolInfo);
+	//copy symbolInfo -> 복사 생성자 대용, 
+	SymbolInfo^ cloneSymbolInfo();
 	// GET & SET
-
-
 	property UINT64 SymbolNo
 	{
 		UINT64 get() { return symbolNo; }

@@ -138,7 +138,7 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 				break;
 			}
 		}
-		App::tempSaver->tempSave();
+		
 		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 	}
 }
@@ -651,7 +651,10 @@ void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI
 {
 	App::tempSaver->unDo();
 	App::symbolVector = safe_cast<Vector<SymbolInfo^> ^ >(App::tempSaver->getCurSymbolInfoVector());
+	
 	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid));
+
+	
 }
 
 
@@ -659,5 +662,8 @@ void flowchart::MainPage::RedoButton_Click(Platform::Object^ sender, Windows::UI
 {
 	App::tempSaver->reDo();
 	App::symbolVector = safe_cast<Vector<SymbolInfo^> ^ >(App::tempSaver->getCurSymbolInfoVector());
+	
 	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid));
+
+	
 }

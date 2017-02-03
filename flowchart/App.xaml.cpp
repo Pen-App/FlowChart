@@ -154,4 +154,5 @@ void App::OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Naviga
 void flowchart::App::OnVectorChanged(Windows::Foundation::Collections::IObservableVector<SymbolInfo ^> ^sender, Windows::Foundation::Collections::IVectorChangedEventArgs ^event)
 {
 	tempSaver->tempSave();
+	
 }

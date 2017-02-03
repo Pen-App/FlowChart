@@ -19,3 +19,11 @@ SymbolInfo::SymbolInfo(SymbolInfo ^ symbolInfo)
 	this->path = symbolInfo->path;
 	this->decision = symbolInfo->decision;
 }
+
+SymbolInfo ^ SymbolInfo::cloneSymbolInfo()
+{
+	SymbolInfo^ tempSymbolInfo = ref new SymbolInfo();
+
+
+	return tempSymbolInfo;
+}

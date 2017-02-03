@@ -7,6 +7,9 @@ TempSaver::TempSaver()
 	//-1로 시작
 	curVectorIndex = -1;
 
+	nowRowNum = 10;
+	nowColumnNum = 10;
+
 }
 
 SIZE_TYPE TempSaver::getSize()
@@ -23,12 +26,12 @@ void TempSaver::tempSave()
 	for (SIZE_TYPE i = 0; i < App::symbolVector->Size; i++)
 	{
 		SymbolInfo^ symbolInfo = App::symbolVector->GetAt(i);
-		clonedVector->Append(symbolInfo);
+		clonedVector->Append(ref new SymbolInfo(symbolInfo));
 	}
 
 	if (curVectorIndex != symbolInfoVectorContainer->Size - 1)
 	{
-		symbolInfoVectorContainer->InsertAt(curVectorIndex-1,clonedVector);
+		symbolInfoVectorContainer->InsertAt(curVectorIndex+1,clonedVector);
 		for (SIZE_TYPE i = 0; i < (symbolInfoVectorContainer->Size - curVectorIndex - 1); i++)
 		{
 			symbolInfoVectorContainer->RemoveAtEnd();
@@ -46,14 +49,6 @@ void TempSaver::tempSave()
 	}
 
 	
-	
-	
-
-	
-
-
-	
-
 }
 
 void TempSaver::unDo()
@@ -82,4 +77,24 @@ IVector<SymbolInfo^>^ TempSaver::getCurSymbolInfoVector()
 	swprintf_s(debugstr, L"사이즈 : %d, curIndex: %d \n", symbolInfoVectorContainer->Size, curVectorIndex);
 	OutputDebugString(debugstr);
 	return symbolInfoVectorContainer->GetAt(curVectorIndex);
+}
+
+int TempSaver::getNowRowNum()
+{
+	return nowRowNum;
+}
+
+int TempSaver::getNowColumnNum()
+{
+	return nowColumnNum;
+}
+
+void TempSaver::setNowRowNum(int value)
+{
+	nowRowNum = value;
+}
+
+void TempSaver::setNowColumnNum(int value)
+{
+	nowColumnNum = value;
 }

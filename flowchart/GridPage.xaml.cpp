@@ -32,8 +32,8 @@ GridPage::GridPage()
 	isSymbolIn = false;
 	isSymbolRectIn = false;
 
-	nowColumnNum = 10;
-	nowRowNum = 10;
+	nowColumnNum = App::tempSaver->getNowColumnNum();
+	nowRowNum = App::tempSaver->getNowRowNum();
 	columnWidth = safe_cast<int>(Resources->Lookup("gridWidth"));
 	rowHeight = safe_cast<int>(Resources->Lookup("gridHeight"));
 	mouseXPos = 0;
@@ -45,6 +45,8 @@ GridPage::GridPage()
 
 	if(App::symbolVector->Size != 0)
 		LoadOpenedFile();
+
+	
 }
 
 void GridPage::LoadOpenedFile()
@@ -354,6 +356,8 @@ void GridPage::appendRow()
 
 	PageGrid->Height = nowRowNum*rowHeight;
 	PageGridCanvas->Height = PageGrid->Height;
+
+	App::tempSaver->setNowRowNum(nowRowNum);
 }
 
 void GridPage::appendColumn()
@@ -372,6 +376,8 @@ void GridPage::appendColumn()
 
 	PageGrid->Width = nowColumnNum*columnWidth;
 	PageGridCanvas->Width = PageGrid->Width;
+
+	App::tempSaver->setNowColumnNum(nowColumnNum);
 }
 
 void GridPage::appendTopRow()
@@ -416,6 +422,8 @@ void GridPage::appendTopRow()
 		moveConnectLine(tempSymbolInfo->SymbolNo);
 	}
 
+	App::tempSaver->setNowRowNum(nowRowNum);
+
 }
 
 void GridPage::appendLeftColumn()
@@ -459,6 +467,8 @@ void GridPage::appendLeftColumn()
 		//연결선 움직임
 		moveConnectLine(tempSymbolInfo->SymbolNo);
 	}
+
+	App::tempSaver->setNowColumnNum(nowColumnNum);
 }
 
 
@@ -540,6 +550,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		moveTextBlocks(PageGrid, focusedSymbolNo, curRowIndex, curColumnIndex);
 		moveConnectLine(focusedSymbolNo);
 		
+		
 		//심볼 놓는 위치에 따라 PageGrid를 늘려줌
 		if (curColumnIndex == 0)
 		{
@@ -557,12 +568,16 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		{
 			appendRow();
 		}
+		App::tempSaver->tempSave();
+		
 	}
-	//App::tempSaver->tempSave();
+
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
+
 	
+		
 }
 
 //마우스가 rectangle위로 올라가있으면 rectangle이 자신이 속한 행,열 인덱스를 curRowIndex와 curColumnIndex에 기록한다. 
@@ -1225,7 +1240,7 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
 		}
 		pathBox->Text = tempStr;
-		//App::tempSaver->tempSave();
+		
 	}
 	OutputDebugString(L"canvas_press!!!\n");
 	wchar_t asdf[234];
@@ -1932,7 +1947,7 @@ void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender
 	//메모리 회수
 	delete[]tappedDeletorNameWc;
 
-	//App::tempSaver->tempSave();
+	
 }
 
 //파일오픈용 PageGrid 늘려주는 함수

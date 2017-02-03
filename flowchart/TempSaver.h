@@ -20,9 +20,15 @@ public:
 	void reDo(); //앞으로
 	IVector<SymbolInfo^>^ getCurSymbolInfoVector();
 
+	int getNowRowNum();
+	int getNowColumnNum();
+	void setNowRowNum(int value);
+	void setNowColumnNum(int value);
+
 private:
 	Vector< IVector< SymbolInfo^ >^ >^ symbolInfoVectorContainer = ref new Vector< IVector< SymbolInfo^ >^ >();
 	int curVectorIndex;
+	int nowRowNum, nowColumnNum;
 	
 
 };
