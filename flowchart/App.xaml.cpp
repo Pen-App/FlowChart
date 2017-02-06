@@ -122,6 +122,244 @@ SymbolInfo^ flowchart::App::getSymbolInfoByNo(UINT64 symbolNo)
 	return targetSymbolInfo;
 }
 
+//symbolInfo에서 4방위중 한 방향에 연결되있는 선 갯수 셈(fourDirection 1이 왼쪽부터 시계방향으로)
+int flowchart::App::getCountInOutLine(SymbolInfo^ symbolInfo, int fourDirection)
+{
+	int result = 0;
+	
+	//서쪽
+	if (fourDirection == 1)
+	{
+		for (int i = 0; i < symbolInfo->Path->Size; i++)
+		{
+			auto connectedSymbolInfo = symbolInfo->Path->GetAt(i);
+			int direction = getDirectionTargetSymbol(symbolInfo, connectedSymbolInfo);
+			if (direction == 1 || direction == 2)
+			{
+				result++;
+			}
+		}
+
+		for (int i = 0; i < symbolVector->Size; i++)
+		{
+			auto tempSymbolInfo = symbolVector->GetAt(i);
+			for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				auto tempConnectedSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+				if (tempConnectedSymbolInfo->SymbolNo == symbolInfo->SymbolNo)
+				{
+					int direction = getDirectionTargetSymbol(tempSymbolInfo, tempConnectedSymbolInfo);
+					if (direction == 2 || direction == 6 || (direction == 5 && !isBlockedBetweenSymbols(tempSymbolInfo, tempConnectedSymbolInfo)))
+					{
+						result++;
+					}
+
+					break;
+				}
+			}
+		}
+	}
+	//북쪽
+	else if (fourDirection == 2)
+	{
+		for (int i = 0; i < symbolInfo->Path->Size; i++)
+		{
+			auto connectedSymbolInfo = symbolInfo->Path->GetAt(i);
+			int direction = getDirectionTargetSymbol(symbolInfo, connectedSymbolInfo);
+			if (direction == 3 || (direction == 5 && isBlockedBetweenSymbols(symbolInfo, connectedSymbolInfo)))
+			{
+				result++;
+			}
+		}
+
+		for (int i = 0; i < symbolVector->Size; i++)
+		{
+			auto tempSymbolInfo = symbolVector->GetAt(i);
+			for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				auto tempConnectedSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+				if (tempConnectedSymbolInfo->SymbolNo == symbolInfo->SymbolNo)
+				{
+					int direction = getDirectionTargetSymbol(tempSymbolInfo, tempConnectedSymbolInfo);
+					if ((direction == 7 && !isBlockedBetweenSymbols(tempSymbolInfo, tempConnectedSymbolInfo)) || (direction == 5 && isBlockedBetweenSymbols(tempSymbolInfo, tempConnectedSymbolInfo)) || direction == 1)
+					{
+						result++;
+					}
+
+					break;
+				}
+			}
+		}
+	}
+	//동쪽
+	else if (fourDirection == 3)
+	{
+		for (int i = 0; i < symbolInfo->Path->Size; i++)
+		{
+			auto connectedSymbolInfo = symbolInfo->Path->GetAt(i);
+			int direction = getDirectionTargetSymbol(symbolInfo, connectedSymbolInfo);
+			if ((direction == 7 && isBlockedBetweenSymbols(symbolInfo, connectedSymbolInfo)) || (direction == 5 && !isBlockedBetweenSymbols(symbolInfo, connectedSymbolInfo)) || direction == 8)
+			{
+				result++;
+			}
+		}
+
+		for (int i = 0; i < symbolVector->Size; i++)
+		{
+			auto tempSymbolInfo = symbolVector->GetAt(i);
+			for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				auto tempConnectedSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+				if (tempConnectedSymbolInfo->SymbolNo == symbolInfo->SymbolNo)
+				{
+					int direction = getDirectionTargetSymbol(tempSymbolInfo, tempConnectedSymbolInfo);
+					if ((direction == 7 && isBlockedBetweenSymbols(tempSymbolInfo, tempConnectedSymbolInfo)) || direction == 3)
+					{
+						result++;
+					}
+
+					break;
+				}
+			}
+		}
+	}
+	//남쪽
+	else if (fourDirection == 4)
+	{
+		for (int i = 0; i < symbolInfo->Path->Size; i++)
+		{
+			auto connectedSymbolInfo = symbolInfo->Path->GetAt(i);
+			int direction = getDirectionTargetSymbol(symbolInfo, connectedSymbolInfo);
+			if ((direction == 7 && !isBlockedBetweenSymbols(symbolInfo, connectedSymbolInfo)) || direction == 4 || direction == 6)
+			{
+				result++;
+			}
+		}
+
+		for (int i = 0; i < symbolVector->Size; i++)
+		{
+			auto tempSymbolInfo = symbolVector->GetAt(i);
+			for (int j = 0; j < tempSymbolInfo->Path->Size; j++)
+			{
+				auto tempConnectedSymbolInfo = tempSymbolInfo->Path->GetAt(j);
+				if (tempConnectedSymbolInfo->SymbolNo == symbolInfo->SymbolNo)
+				{
+					int direction = getDirectionTargetSymbol(tempSymbolInfo, tempConnectedSymbolInfo);
+					if (direction == 4 || direction == 8)
+					{
+						result++;
+					}
+				}
+
+				break;
+			}
+		}
+	}
+
+	return result;
+}
+
+//fromInfo에서 toInfo에 대한 방향을 알려주는 함수
+int flowchart::App::getDirectionTargetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo)
+{
+	int direction;
+
+	if (fromInfo->ColumnIndex > toInfo->ColumnIndex)
+	{
+		if (fromInfo->RowIndex > toInfo->RowIndex)
+		{
+			direction = 1;
+		}
+		else if (fromInfo->RowIndex == toInfo->RowIndex)
+		{
+			direction = 4;
+		}
+		else
+		{
+			direction = 6;
+		}
+	}
+	else if (fromInfo->ColumnIndex == toInfo->ColumnIndex)
+	{
+		if (fromInfo->RowIndex > toInfo->RowIndex)
+		{
+			direction = 2;
+		}
+		else
+		{
+			direction = 7;
+		}
+	}
+	else
+	{
+		if (fromInfo->RowIndex > toInfo->RowIndex)
+		{
+			direction = 3;
+		}
+		else if (fromInfo->RowIndex == toInfo->RowIndex)
+		{
+			direction = 5;
+		}
+		else
+		{
+			direction = 8;
+		}
+	}
+
+	return direction;
+}
+
+//심볼 사이에 다른 심볼이 가로막고 있는지 판별
+//2,4,5,7번 방향만 탐색, 나머지는 무조건 장애물이 있다고(true) 리턴
+bool flowchart::App::isBlockedBetweenSymbols(SymbolInfo^ startSymbol, SymbolInfo^ endSymbol)
+{
+	bool result = false;
+
+	int direction = getDirectionTargetSymbol(startSymbol, endSymbol);
+	switch (direction)
+	{
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 6:
+	case 8:
+		result = true;
+		break;
+	case 5:
+	{
+		for (int i = 0; i < App::symbolVector->Size; i++)
+		{
+			SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
+			if (tempSymbolInfo->RowIndex == startSymbol->RowIndex && (tempSymbolInfo->ColumnIndex > startSymbol->ColumnIndex && tempSymbolInfo->ColumnIndex < endSymbol->ColumnIndex))
+			{
+				result = true;
+				break;
+			}
+		}
+		break;
+	}
+	case 7:
+	{
+		for (int i = 0; i < App::symbolVector->Size; i++)
+		{
+			SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
+			if (tempSymbolInfo->ColumnIndex == startSymbol->ColumnIndex && (tempSymbolInfo->RowIndex > startSymbol->RowIndex && tempSymbolInfo->RowIndex < endSymbol->RowIndex))
+			{
+				result = true;
+				break;
+			}
+		}
+		break;
+	}
+	default:
+		result = true;
+		break;
+	}
+
+	return result;
+}
+
 /// <summary>
 /// 응용 프로그램 실행이 일시 중단된 경우 호출됩니다. 응용 프로그램이 종료될지
 /// 또는 메모리 콘텐츠를 변경하지 않고 다시 시작할지 여부를 결정하지 않은 채

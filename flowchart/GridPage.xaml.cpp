@@ -975,7 +975,7 @@ void flowchart::GridPage::moveYesOrNoTextBlock(Grid^ parentGrid, UINT64 focusedS
 			tempYesOrNoBorder->SetValue(Grid::ColumnProperty, newColumnIndex);
 
 			//2-2. YesOrNo의 Grid안에서 위치를 바꾼다.
-			int direction = getDirectionTartgetSymbol(movedSymbolInfo, targetSymbolInfo);
+			int direction = App::getDirectionTargetSymbol(movedSymbolInfo, targetSymbolInfo);
 			switch (direction)
 			{
 			case 1:
@@ -1038,7 +1038,7 @@ void flowchart::GridPage::moveYesOrNoTextBlock(Grid^ parentGrid, UINT64 focusedS
 					//2-4. YesOrNo의 Grid안에서 위치를 바꾼다.
 					tempYesOrNoBorder = safe_cast<Border^>(PageGrid->FindName("decisionText " + tempSymbolInfo->SymbolNo + " to " + focusedSymbolNo));
 
-					int direction = getDirectionTartgetSymbol(tempSymbolInfo, targetSymbolInfo);
+					int direction = App::getDirectionTargetSymbol(tempSymbolInfo, targetSymbolInfo);
 					switch (direction)
 					{
 					case 1:
@@ -1364,7 +1364,7 @@ void flowchart::GridPage::makeConnectLine(UINT64 from, UINT64 to)
 	double indicatorPoint1X, indicatorPoint1Y;
 	double indicatorPoint2X, indicatorPoint2Y;
 
-	direction = getDirectionTartgetSymbol(fromInfo, toInfo);
+	direction = App::getDirectionTargetSymbol(fromInfo, toInfo);
 
 	switch (direction)
 	{
@@ -1671,56 +1671,6 @@ void flowchart::GridPage::LoadingConnectLine(SymbolInfo^ fromInfo)
 	}
 }
 
-//연결 대상의 방향을 알려주는 함수
-int flowchart::GridPage::getDirectionTartgetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo)
-{
-	int direction;
-
-	if (fromInfo->ColumnIndex > toInfo->ColumnIndex)
-	{
-		if (fromInfo->RowIndex > toInfo->RowIndex)
-		{
-			direction = 1;
-		}
-		else if (fromInfo->RowIndex == toInfo->RowIndex)
-		{
-			direction = 4;
-		}
-		else
-		{
-			direction = 6;
-		}
-	}
-	else if (fromInfo->ColumnIndex == toInfo->ColumnIndex)
-	{
-		if (fromInfo->RowIndex > toInfo->RowIndex)
-		{
-			direction = 2;
-		}
-		else
-		{
-			direction = 7;
-		}
-	}
-	else
-	{
-		if (fromInfo->RowIndex > toInfo->RowIndex)
-		{
-			direction = 3;
-		}
-		else if (fromInfo->RowIndex == toInfo->RowIndex)
-		{
-			direction = 5;
-		}
-		else
-		{
-			direction = 8;
-		}
-	}
-
-	return direction;
-}
-
 //간이 연결선 삭제해주는 함수
 void flowchart::GridPage::deleteTempConnectLine()
 {
@@ -1835,7 +1785,7 @@ void flowchart::GridPage::makeYesOrNoTextBlock(UINT64 from, UINT64 to, bool deci
 	borderOfYesOrNoTextBlock->SetValue(Grid::ColumnProperty, fromInfo->ColumnIndex);
 
 	//6-2. yes or no 위치 조정
-	int direction = getDirectionTartgetSymbol(fromInfo, toInfo);
+	int direction = App::getDirectionTargetSymbol(fromInfo, toInfo);
 	switch (direction)
 	{
 	case 1:
@@ -2088,7 +2038,7 @@ void flowchart::GridPage::alignmentLine()
 		for (int i = 0; i < symbolInfo->Path->Size; i++)
 		{
 			auto targetInfo = symbolInfo->Path->GetAt(i);
-			int direction = getDirectionTartgetSymbol(symbolInfo, targetInfo);
+			int direction = App::getDirectionTargetSymbol(symbolInfo, targetInfo);
 			switch (direction)
 			{
 			case 1:
@@ -2097,7 +2047,7 @@ void flowchart::GridPage::alignmentLine()
 				break;
 			case 3:
 			case 5:
-				if (isBlockedBetweenSymbols(symbolInfo, targetInfo))
+				if (App::isBlockedBetweenSymbols(symbolInfo, targetInfo))
 				{
 					outTop->Append(targetInfo);
 				}
@@ -2113,7 +2063,7 @@ void flowchart::GridPage::alignmentLine()
 				break;
 			case 7:
 			case 8:
-				if (isBlockedBetweenSymbols(symbolInfo, targetInfo))
+				if (App::isBlockedBetweenSymbols(symbolInfo, targetInfo))
 				{
 					outRight->Append(targetInfo);
 				}
@@ -2137,7 +2087,7 @@ void flowchart::GridPage::alignmentLine()
 				auto tempConnectSymbolInfo = tempSymbolInfo->Path->GetAt(j);
 				if (tempConnectSymbolInfo->SymbolNo == symbolInfo->SymbolNo)
 				{
-					int direction = getDirectionTartgetSymbol(tempSymbolInfo, tempConnectSymbolInfo);
+					int direction = App::getDirectionTargetSymbol(tempSymbolInfo, tempConnectSymbolInfo);
 					switch (direction)
 					{
 					case 2:
@@ -2146,7 +2096,7 @@ void flowchart::GridPage::alignmentLine()
 						break;
 					case 1:
 					case 5:
-						if (isBlockedBetweenSymbols(tempSymbolInfo, tempConnectSymbolInfo))
+						if (App::isBlockedBetweenSymbols(tempSymbolInfo, tempConnectSymbolInfo))
 						{
 							inTop->Append(tempSymbolInfo);
 						}
@@ -2158,7 +2108,7 @@ void flowchart::GridPage::alignmentLine()
 						break;
 					case 3:
 					case 7:
-						if (isBlockedBetweenSymbols(tempSymbolInfo, tempConnectSymbolInfo))
+						if (App::isBlockedBetweenSymbols(tempSymbolInfo, tempConnectSymbolInfo))
 						{
 							inRight->Append(tempSymbolInfo);
 						}
@@ -2199,7 +2149,7 @@ void flowchart::GridPage::alignmentLine()
 			Point fromPos, point1, point2, point3, toPos;
 
 			//방향이 2(북쪽)일 때
-			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 2)
+			if (App::getDirectionTargetSymbol(symbolInfo, tempSymbolInfo) == 2)
 			{
 				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0);
 				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - 20) * (tempLeftLineNum / leftLineNum)) + 10;
@@ -2263,7 +2213,7 @@ void flowchart::GridPage::alignmentLine()
 			Point fromPos, point1, point2, point3, toPos;
 			Point indicatorPoint1, indicatorPoint2;
 
-			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 2)
+			if (App::getDirectionTargetSymbol(tempSymbolInfo, symbolInfo) == 2)
 			{
 				fromPos = connectLine->Points->GetAt(0); //fromPos는 연결당하는 쪽에서 관리하지 않음
 				point1 = connectLine->Points->GetAt(1); //point1는 연결당하는 쪽에서 관리하지 않음
@@ -2330,7 +2280,7 @@ void flowchart::GridPage::alignmentLine()
 			Point fromPos, point1, point2, point3, toPos;
 
 			//방향이 5(동쪽)일 때
-			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 5)
+			if (App::getDirectionTargetSymbol(symbolInfo, tempSymbolInfo) == 5)
 			{
 				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - 20) * (tempTopLineNum / topLineNum)) - 10;
 				fromPos.Y = ((symbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
@@ -2391,7 +2341,7 @@ void flowchart::GridPage::alignmentLine()
 			Point fromPos, point1, point2, point3, toPos;
 			Point indicatorPoint1, indicatorPoint2;
 
-			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 5)
+			if (App::getDirectionTargetSymbol(tempSymbolInfo, symbolInfo) == 5)
 			{
 				fromPos = connectLine->Points->GetAt(0); //fromPos는 연결당하는 쪽에서 관리하지 않음
 				point1 = connectLine->Points->GetAt(1); //point1는 연결당하는 쪽에서 관리하지 않음
@@ -2458,7 +2408,7 @@ void flowchart::GridPage::alignmentLine()
 			Point fromPos, point1, point2, point3, toPos;
 
 			//direction == 7(남쪽)
-			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 7)
+			if (App::getDirectionTargetSymbol(symbolInfo, tempSymbolInfo) == 7)
 			{
 				fromPos.X = ((symbolInfo->ColumnIndex + 1)*columnWidth) - ((columnWidth - symbolWidth) / 2.0);
 				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - 20) * (tempRightLineNum / rightLineNum)) - 10;
@@ -2520,7 +2470,7 @@ void flowchart::GridPage::alignmentLine()
 			Point fromPos, point1, point2, point3, toPos;
 			Point indicatorPoint1, indicatorPoint2;
 
-			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 7)
+			if (App::getDirectionTargetSymbol(tempSymbolInfo, symbolInfo) == 7)
 			{
 				fromPos = connectLine->Points->GetAt(0);
 				point1 = connectLine->Points->GetAt(1);
@@ -2586,7 +2536,7 @@ void flowchart::GridPage::alignmentLine()
 			PointCollection^ connectLinePoints = ref new PointCollection;
 			Point fromPos, point1, point2, point3, toPos;
 
-			if (getDirectionTartgetSymbol(symbolInfo, tempSymbolInfo) == 4)
+			if (App::getDirectionTargetSymbol(symbolInfo, tempSymbolInfo) == 4)
 			{
 				fromPos.X = ((symbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - 20) * (tempBottomLineNum / bottomLineNum)) + 10;
 				fromPos.Y = ((symbolInfo->RowIndex + 1)*rowHeight) - ((rowHeight - symbolHeight) / 2.0);
@@ -2647,7 +2597,7 @@ void flowchart::GridPage::alignmentLine()
 			Point fromPos, point1, point2, point3, toPos;
 			Point indicatorPoint1, indicatorPoint2;
 
-			if (getDirectionTartgetSymbol(tempSymbolInfo, symbolInfo) == 4)
+			if (App::getDirectionTargetSymbol(tempSymbolInfo, symbolInfo) == 4)
 			{
 				fromPos = connectLine->Points->GetAt(0);
 				point1 = connectLine->Points->GetAt(1);
@@ -2698,55 +2648,4 @@ void flowchart::GridPage::alignmentLine()
 
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
-}
-
-//심볼 사이에 다른 심볼이 가로막고 있는지 판별
-//5,7번 방향만 탐색, 나머지는 무조건 장애물이 있다고(true) 리턴
-bool flowchart::GridPage::isBlockedBetweenSymbols(SymbolInfo^ startSymbol, SymbolInfo^ endSymbol)
-{
-	bool result = false;
-
-	int direction = getDirectionTartgetSymbol(startSymbol, endSymbol);
-	switch (direction)
-	{
-	case 1:
-	case 2:
-	case 3:
-	case 4:
-	case 6:
-	case 8:
-		result = true;
-		break;
-	case 5:
-	{
-		for (int i = 0; i < App::symbolVector->Size; i++)
-		{
-			SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
-			if (tempSymbolInfo->RowIndex == startSymbol->RowIndex && (tempSymbolInfo->ColumnIndex > startSymbol->ColumnIndex && tempSymbolInfo->ColumnIndex < endSymbol->ColumnIndex))
-			{
-				result = true;
-				break;
-			}
-		}
-		break;
-	}
-	case 7:
-	{
-		for (int i = 0; i < App::symbolVector->Size; i++)
-		{
-			SymbolInfo^ tempSymbolInfo = App::symbolVector->GetAt(i);
-			if (tempSymbolInfo->ColumnIndex == startSymbol->ColumnIndex && (tempSymbolInfo->RowIndex > startSymbol->RowIndex && tempSymbolInfo->RowIndex < endSymbol->RowIndex))
-			{
-				result = true;
-				break;
-			}
-		}
-		break;
-	}
-	default:
-		result = true;
-		break;
-	}
-
-	return result;
 }

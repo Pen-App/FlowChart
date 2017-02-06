@@ -138,9 +138,6 @@ namespace flowchart
 		//파일오픈용 연결선 함수
 		void LoadingConnectLine(SymbolInfo^ fromInfo);
 
-		//연결 대상의 방향을 알려주는 함수
-		int getDirectionTartgetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo);
-
 		//간이 연결선 삭제하는 함수
 		void deleteTempConnectLine();
 
@@ -178,9 +175,5 @@ namespace flowchart
 
 		//연결선 관련 간격 조절(선, 델레터, YesOrNo, 방향표시 전부 정렬)
 		void alignmentLine();
-
-		//심볼 사이에 다른 심볼이 가로막고 있는지 판별
-		//2,4,5,7번 방향만 탐색, 나머지는 무조건 장애물이 있다고(true) 리턴
-		bool isBlockedBetweenSymbols(SymbolInfo^ startSymbol, SymbolInfo^ endSymbol);
 };
 }

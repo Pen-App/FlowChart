@@ -36,6 +36,13 @@ namespace flowchart
 	public:
 		//SymbolNo로 App::SymbolVector에서 SymbolInfo를 반환하는 함수
 		static SymbolInfo^ getSymbolInfoByNo(UINT64 symbolNo);
+		//symbolInfo에서 4방위중 한 방향에 연결되있는 선 갯수 셈(fourDirection 1이 왼쪽부터 시계방향으로)
+		static int getCountInOutLine(SymbolInfo^ symbolInfo, int fourDirection);
+		//fromInfo에서 toInfo에 대한 방향을 알려주는 함수
+		static int getDirectionTargetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo);
+		//심볼 사이에 다른 심볼이 가로막고 있는지 판별
+		//2,4,5,7번 방향만 탐색, 나머지는 무조건 장애물이 있다고(true) 리턴
+		static bool isBlockedBetweenSymbols(SymbolInfo^ startSymbol, SymbolInfo^ endSymbol);
 
 	private:
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);
