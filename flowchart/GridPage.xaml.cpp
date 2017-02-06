@@ -65,6 +65,8 @@ void GridPage::LoadOpenedFile()
 	App::symbolIdCount = App::symbolVector->GetAt(App::symbolVector->Size - 1)->SymbolNo + 1;
 	isSelectingYesOrNo = false;
 
+	alignmentLine();
+
 	hideAllButtons();
 
 	PageGrid->UpdateLayout();
@@ -1218,6 +1220,8 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 			isLineDrawing = false;
 		}
 
+		alignmentLine();
+
 		//debugging
 		String^ tempStr = "startSymbol:" + connectorStartSymbolNo + " ";
 		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
@@ -1579,8 +1583,6 @@ void flowchart::GridPage::makeConnectLine(UINT64 from, UINT64 to)
 	PageGridCanvas->Children->Append(lineDeletor2);
 
 	PageGridCanvas->UpdateLayout();
-
-	alignmentLine();
 }
 
 //연결선과 그에 관련된 것(델레터, YesOrNo, 방향표시)을 이동하는 함수
@@ -2065,6 +2067,10 @@ void flowchart::GridPage::alignmentLine()
 	for (int q = 0; q < App::symbolVector->Size; q++)
 	{
 		auto symbolInfo = App::symbolVector->GetAt(q);
+		SymbolInfo^ straightInLeftSymbolInfo = nullptr;
+		SymbolInfo^ straightInTopSymbolInfo = nullptr;
+		SymbolInfo^ straightOutRightSymbolInfo = nullptr;
+		SymbolInfo^ straightOutBottomSymbolInfo = nullptr;
 
 		//나가는 선
 		Vector<SymbolInfo^>^ outLeft = ref new Vector <SymbolInfo^>();
@@ -2097,7 +2103,8 @@ void flowchart::GridPage::alignmentLine()
 				}
 				else
 				{
-					outLeft->Append(targetInfo);
+					outRight->Append(targetInfo);
+					straightOutRightSymbolInfo = targetInfo;
 				}
 				break;
 			case 4:
@@ -2113,6 +2120,7 @@ void flowchart::GridPage::alignmentLine()
 				else
 				{
 					outBottom->Append(targetInfo);
+					straightOutBottomSymbolInfo = targetInfo;
 				}
 				break;
 			default:
@@ -2145,6 +2153,7 @@ void flowchart::GridPage::alignmentLine()
 						else
 						{
 							inLeft->Append(tempSymbolInfo);
+							straightInLeftSymbolInfo = tempSymbolInfo;
 						}
 						break;
 					case 3:
@@ -2156,6 +2165,7 @@ void flowchart::GridPage::alignmentLine()
 						else
 						{
 							inTop->Append(tempSymbolInfo);
+							straightInTopSymbolInfo = tempSymbolInfo;
 						}
 						break;
 					case 4:
