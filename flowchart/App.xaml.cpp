@@ -32,12 +32,15 @@ App::App()
     InitializeComponent();
     Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
 	symbolVector = ref new Vector<SymbolInfo^>();
+	symbolVector->VectorChanged += ref new Windows::Foundation::Collections::VectorChangedEventHandler<SymbolInfo ^>(this, &flowchart::App::OnVectorChanged); //벡터변화 감지 이벤트 핸들러 달아주기
 
 	symbolIdCount = 0;
 	selectedSymbolNumber = -1;
 	draggingSymbolNo = -1;
 	draggingSymbolType = -1;
 	focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
+
+	tempSaver = ref new TempSaver(); //템프 세이버 하나 만들어줌.
 }
 
 /// <summary>
@@ -145,4 +148,12 @@ void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
 void App::OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs ^e)
 {
     throw ref new FailureException("Failed to load Page " + e->SourcePageType.Name);
+}
+
+void flowchart::App::OnVectorChanged(Windows::Foundation::Collections::IObservableVector<SymbolInfo^>^ sender, Windows::Foundation::Collections::IVectorChangedEventArgs ^ event)
+{
+	tempSaver->tempSave(App::symbolVector); //벡터에 변화가 감지되면 일단 App::symbolVector 를 복제저장해놓는다.
+	tempSaver->refreshPeekerIndex(); //새로운 상태의 등장이기에 peekerIndex를 최신으로 맞춰준다. 
+	//사이즈가 maxHistoryCount를 넘어서면 CONTAINER를 새로 만들어주는 함수가 필요.
+	//tempSaver->containerRefresh(MAX_HISTORY_CNT);
 }
