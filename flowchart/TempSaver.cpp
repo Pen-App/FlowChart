@@ -5,7 +5,7 @@
 TempSaver::TempSaver()
 {
 	vectorPeekerIndex = -1; //1. vectorPeekerIndex´Â -1·Î
-	
+	symbolInfoVectorContainer = ref new Vector< IVector< SymbolInfo^ >^ >();
 }
 
 SIZE_TYPE TempSaver::getSize()
