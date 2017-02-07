@@ -36,7 +36,7 @@ namespace flowchart
 	public:
 		//SymbolNo로 App::SymbolVector에서 SymbolInfo를 반환하는 함수
 		static SymbolInfo^ getSymbolInfoByNo(UINT64 symbolNo);
-		//symbolInfo에서 4방위중 한 방향에 연결되있는 선 갯수 셈(fourDirection 1이 왼쪽부터 시계방향으로)
+		//symbolInfo에서 4방위중 한 방향에 연결되있는 선 갯수 셈(fourDirection 1이 서쪽부터 시계방향으로)
 		static int getCountInOutLine(SymbolInfo^ symbolInfo, int fourDirection);
 		//fromInfo에서 toInfo에 대한 방향을 알려주는 함수
 		static int getDirectionTargetSymbol(SymbolInfo^ fromInfo, SymbolInfo^ toInfo);
