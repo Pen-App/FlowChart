@@ -43,6 +43,12 @@ GridPage::GridPage()
 
 	isLineDrawing = false;
 
+	
+	App::selectedSymbolNumber = -1;
+	App::draggingSymbolNo = -1;
+	App::draggingSymbolType = -1;
+	App::focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
+
 	if(App::symbolVector->Size != 0)
 		LoadOpenedFile();
 }
@@ -65,7 +71,8 @@ void GridPage::LoadOpenedFile()
 	App::symbolIdCount = App::symbolVector->GetAt(App::symbolVector->Size - 1)->SymbolNo + 1;
 	isSelectingYesOrNo = false;
 
-	hideAllButtons();
+	//hideAllButtons();
+	
 
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
@@ -555,6 +562,8 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		{
 			appendRow();
 		}
+
+		App::tempSaver->tempSave(App::symbolVector);
 	}
 
 	PageGrid->UpdateLayout();
