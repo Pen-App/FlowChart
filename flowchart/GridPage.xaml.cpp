@@ -2225,6 +2225,7 @@ void flowchart::GridPage::alignmentLine()
 				point2 = connectLine->Points->GetAt(2);
 				point3 = connectLine->Points->GetAt(3);
 				toPos = connectLine->Points->GetAt(4);
+				tempLeftLineNum--;
 			}
 			else if (App::getDirectionTargetSymbol(tempSymbolInfo, symbolInfo) == 2)
 			{
@@ -2363,6 +2364,7 @@ void flowchart::GridPage::alignmentLine()
 				point2 = connectLine->Points->GetAt(2);
 				point3 = connectLine->Points->GetAt(3);
 				toPos = connectLine->Points->GetAt(4);
+				tempTopLineNum--;
 			}
 			else if (App::getDirectionTargetSymbol(tempSymbolInfo, symbolInfo) == 5)
 			{
