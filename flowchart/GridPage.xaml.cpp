@@ -66,9 +66,8 @@ void GridPage::LoadOpenedFile()
 	isSelectingYesOrNo = false;
 
 	alignmentLine();
-
 	hideAllButtons();
-
+	
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();

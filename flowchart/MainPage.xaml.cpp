@@ -648,11 +648,11 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 
 void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-
+	
 }
 
 
 void flowchart::MainPage::RedoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-
+	
 }
