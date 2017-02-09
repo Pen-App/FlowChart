@@ -66,6 +66,11 @@
                         <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
                     </AppBarButton.RenderTransform>
                 </AppBarButton>
+                <AppBarButton x:Name="SaveImage" Icon="Save" Label="SaveImage" Click="SaveImage_Click" Foreground="White" >
+                    <AppBarButton.RenderTransform>
+                        <CompositeTransform ScaleX="1.1" ScaleY="1.1"/>
+                    </AppBarButton.RenderTransform>
+                </AppBarButton>
                 <StackPanel Orientation="Horizontal" Margin="30,0,30,0">
                     <TextBlock Text="File Name" 
                                FontSize="19"

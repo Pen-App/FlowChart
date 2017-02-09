@@ -33,7 +33,7 @@ using namespace Windows::UI::Popups;	// 테스트용
 MainPage::MainPage()
 {
 	InitializeComponent();
-	ApplicationView::PreferredLaunchViewSize = Size(1000, 700);
+	ApplicationView::PreferredLaunchViewSize = Size(1200, 800);
 	ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
 	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 }
@@ -655,4 +655,10 @@ void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI
 void flowchart::MainPage::RedoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	
+}
+
+
+void flowchart::MainPage::SaveImage_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+
 }
