@@ -2454,6 +2454,18 @@ void flowchart::GridPage::alignmentLine()
 				point3 = point2;
 				toPos.X = ((tempSymbolInfo->ColumnIndex)*columnWidth) + ((columnWidth - symbolWidth) / 2.0);
 				toPos.Y = point3.Y;
+
+				Polyline^ indicator = safe_cast<Polyline^>(PageGridCanvas->FindName("indicator " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+				PointCollection^ indicatorPoints = ref new PointCollection;
+				Ellipse^ lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+				
+				indicatorPoints->Append((*(ref new Point(toPos.X - 4, toPos.Y - 4))));
+				indicatorPoints->Append(toPos);
+				indicatorPoints->Append((*(ref new Point(toPos.X - 4, toPos.Y + 4))));
+				indicator->Points = indicatorPoints;
+
+				lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
+				lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
 			}
 			else //direction == 8
 			{
@@ -2597,6 +2609,18 @@ void flowchart::GridPage::alignmentLine()
 				point3 = point2;
 				toPos.X = fromPos.X;
 				toPos.Y = ((tempSymbolInfo->RowIndex)*rowHeight) + ((rowHeight - symbolHeight) / 2.0);
+
+				Polyline^ indicator = safe_cast<Polyline^>(PageGridCanvas->FindName("indicator " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+				PointCollection^ indicatorPoints = ref new PointCollection;
+				Ellipse^ lineDeletor2 = safe_cast<Ellipse^>(PageGridCanvas->FindName("lineDeletor2 " + symbolInfo->SymbolNo + " to " + tempSymbolInfo->SymbolNo));
+
+				indicatorPoints->Append((*(ref new Point(toPos.X - 4, toPos.Y - 4))));
+				indicatorPoints->Append(toPos);
+				indicatorPoints->Append((*(ref new Point(toPos.X + 4, toPos.Y - 4))));
+				indicator->Points = indicatorPoints;
+
+				lineDeletor2->SetValue(Canvas::TopProperty, (toPos.Y - 4));
+				lineDeletor2->SetValue(Canvas::LeftProperty, (toPos.X - 4));
 			}
 			else //direction == 6
 			{
