@@ -8,6 +8,15 @@
     mc:Ignorable="d"
     >
 
+    <Page.Resources>
+        <ContentDialog x:Name="undoHistoryDialog"
+                       Title="히스토리 없음" Content="더 이상 Undo를 할 수 없습니다."
+                       PrimaryButtonText="확인" IsPrimaryButtonEnabled="False"/>
+        <ContentDialog x:Name="redoHistoryDialog"
+                       Title="히스토리 없음" Content="더 이상 redo를 할 수 없습니다."
+                       PrimaryButtonText="확인" IsPrimaryButtonEnabled="False"/>
+    </Page.Resources>
+
     <!--<Page.TopAppBar>
         <CommandBar
             x:Name="rootCommandBar"

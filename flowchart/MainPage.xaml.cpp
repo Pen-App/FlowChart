@@ -648,11 +648,41 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 
 void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	
+	App::undoOrRedoButtonClicked = true;
+
+	/*if (App::historyIndex <= 0)
+	{
+		ContentDialog^ noHistoryDialog = ref new ContentDialog();
+		noHistoryDialog->Title = "히스토리 없음";
+		noHistoryDialog->Content = "더이상 Undo를 할 수 없습니다.";
+		noHistoryDialog->PrimaryButtonText = "OK";
+		noHistoryDialog->ShowAsync();
+	}
+	else
+	{
+
+	}*/
+	if (!App::historyObject->unDo())
+	{
+		undoHistoryDialog->ShowAsync();
+	}
+	else
+	{
+		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid));
+	}
 }
 
 
 void flowchart::MainPage::RedoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	
+	App::undoOrRedoButtonClicked = true;
+
+	if (!App::historyObject->reDo())
+	{
+		redoHistoryDialog->ShowAsync();
+	}
+	else
+	{
+		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid));
+	}
 }

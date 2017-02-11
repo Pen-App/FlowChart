@@ -7,6 +7,7 @@
 
 #include "App.g.h"
 #include "SymbolInfo.h"
+#include "HistoryObject.h"
 #include <collection.h>
 
 //typedef UINT64 LONGINT;
@@ -26,10 +27,13 @@ namespace flowchart
 		App();
 		static property UINT64 symbolIdCount;
 		static property int selectedSymbolNumber;
-		static property Platform::Collections::Vector<SymbolInfo^>^ symbolVector;
+		static property Vector<SymbolInfo^>^ symbolVector;
 		static property UINT64 draggingSymbolNo;
 		static property int draggingSymbolType;
 		static property int focusedSymbolIndex;	// 선택된 symbolInfoVector의 index
+
+		static property bool undoOrRedoButtonClicked;
+		static property HistoryObject^ historyObject;
 	public:
 		//SymbolNo로 App::SymbolVector에서 SymbolInfo를 반환하는 함수
 		static SymbolInfo^ getSymbolInfoByNo(UINT64 symbolNo);
@@ -45,5 +49,6 @@ namespace flowchart
 		void OnSuspending(Platform::Object^ sender, Windows::ApplicationModel::SuspendingEventArgs^ e);
 		void OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs ^e);
 
+		void OnVectorChanged(Windows::Foundation::Collections::IObservableVector<SymbolInfo ^> ^sender, Windows::Foundation::Collections::IVectorChangedEventArgs ^event);
 	};
 }
