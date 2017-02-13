@@ -32,7 +32,6 @@ private:
 	Vector<bool>^ decision = ref new Vector<bool>(); //yes or no
 public:
 	SymbolInfo();
-	SymbolInfo(SymbolInfo^ symbolInfo);
 
 	// GET & SET
 
@@ -95,16 +94,6 @@ public:
 		{
 			return path;
 		}
-		void set(IVector<SymbolInfo^>^ value)
-		{
-			Vector<SymbolInfo^>^ tempPath = ref new Vector<SymbolInfo^>();
-			for (int i = 0; i < value->Size; i++)
-			{
-				SymbolInfo^ tempPathElement = ref new SymbolInfo(value->GetAt(i));
-				tempPath->Append(tempPathElement);
-			}
-			path = tempPath;
-		}
 	}
 	property IVector<bool>^ Decision
 	{
@@ -112,7 +101,7 @@ public:
 		{
 			return decision;
 		}
-		void set(IVector<bool>^ value)
+		/*void set(IVector<bool>^ value)
 		{
 			Vector<bool>^ tempDecision = ref new Vector<bool>();
 			for (int i = 0; i < value->Size; i++)
@@ -120,6 +109,6 @@ public:
 				tempDecision->Append(value->GetAt(i));
 			}
 			decision = tempDecision;
-		}
+		}*/
 	}
 };

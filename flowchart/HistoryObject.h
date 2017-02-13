@@ -24,6 +24,8 @@ public:
 	bool reDo();
 	//꽉찬 히스토리에 자리 만들기
 	void moveFullHistory();
+	//SymbolInfo가 담긴 벡터를 오류없이 복사하기
+	IVector<SymbolInfo^>^ copySymbolVector(IVector<SymbolInfo^>^ baseSymbolVector);
 
 private:
 	Vector<SymbolInfo^>^ *history = new Vector<SymbolInfo^>^[10];

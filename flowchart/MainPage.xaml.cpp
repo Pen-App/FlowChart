@@ -138,6 +138,8 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 			}
 		}
 
+		App::historyObject->putHistory();
+
 		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 	}
 }
@@ -329,6 +331,7 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 		}
 		// path 정리
 		SetPathList(tmpPath);
+		App::historyObject->initHistory();
 		MessageDialog^ msg = ref new MessageDialog("file open success!" + "\n vector size = " + App::symbolVector->Size);
 		msg->ShowAsync();
 	}
@@ -414,6 +417,7 @@ void flowchart::MainPage::SaveFileInit()
 void flowchart::MainPage::NewFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	OpenFileInit();
+	App::historyObject->initHistory();
 	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 }
 

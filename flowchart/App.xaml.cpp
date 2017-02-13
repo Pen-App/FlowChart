@@ -32,7 +32,7 @@ App::App()
     InitializeComponent();
     Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
 	symbolVector = ref new Vector<SymbolInfo^>();
-	symbolVector->VectorChanged += ref new Windows::Foundation::Collections::VectorChangedEventHandler<SymbolInfo ^>(this, &flowchart::App::OnVectorChanged);
+	//symbolVector->VectorChanged += ref new Windows::Foundation::Collections::VectorChangedEventHandler<SymbolInfo ^>(this, &flowchart::App::OnVectorChanged);
 
 	symbolIdCount = 0;
 	selectedSymbolNumber = -1;
