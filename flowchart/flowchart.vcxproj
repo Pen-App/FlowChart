@@ -147,7 +147,13 @@
     <ClInclude Include="MainPage.xaml.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="RedoHistoryDialog.xaml.h">
+      <DependentUpon>RedoHistoryDialog.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="SymbolInfo.h" />
+    <ClInclude Include="UndoHistoryDialog.xaml.h">
+      <DependentUpon>UndoHistoryDialog.xaml</DependentUpon>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -157,6 +163,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="RedoHistoryDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UndoHistoryDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -200,10 +212,16 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RedoHistoryDialog.xaml.cpp">
+      <DependentUpon>RedoHistoryDialog.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="SymbolInfo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="UndoHistoryDialog.xaml.cpp">
+      <DependentUpon>UndoHistoryDialog.xaml</DependentUpon>
     </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

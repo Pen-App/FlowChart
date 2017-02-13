@@ -78,5 +78,7 @@
   <ItemGroup>
     <Page Include="MainPage.xaml" />
     <Page Include="GridPage.xaml" />
+    <Page Include="UndoHistoryDialog.xaml" />
+    <Page Include="RedoHistoryDialog.xaml" />
   </ItemGroup>
 </Project>

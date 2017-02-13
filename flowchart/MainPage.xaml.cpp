@@ -7,6 +7,8 @@
 #include "MainPage.xaml.h"
 #include "SymbolInfo.h"
 #include "GridPage.xaml.h"
+#include "UndoHistoryDialog.xaml.h"
+#include "RedoHistoryDialog.xaml.h"
 
 using namespace flowchart;
 
@@ -649,7 +651,6 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 	varPageGridCanvas->UpdateLayout();
 }
 
-
 void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	App::undoOrRedoButtonClicked = true;
@@ -668,7 +669,8 @@ void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI
 	}*/
 	if (!App::historyObject->unDo())
 	{
-		undoHistoryDialog->ShowAsync();
+		UndoHistoryDialog^ dialog = ref new UndoHistoryDialog();
+		dialog->ShowAsync();
 	}
 	else
 	{
@@ -676,14 +678,14 @@ void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI
 	}
 }
 
-
 void flowchart::MainPage::RedoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	App::undoOrRedoButtonClicked = true;
 
 	if (!App::historyObject->reDo())
 	{
-		redoHistoryDialog->ShowAsync();
+		RedoHistoryDialog^ dialog = ref new RedoHistoryDialog();
+		dialog->ShowAsync();
 	}
 	else
 	{

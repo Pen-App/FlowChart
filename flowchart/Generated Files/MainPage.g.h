@@ -11,7 +11,6 @@ namespace Windows {
     namespace UI {
         namespace Xaml {
             namespace Controls {
-                ref class ContentDialog;
                 ref class AppBarButton;
                 ref class TextBox;
                 ref class Frame;
@@ -36,8 +35,6 @@ namespace flowchart
     private:
         bool _contentLoaded;
     
-        private: ::Windows::UI::Xaml::Controls::ContentDialog^ undoHistoryDialog;
-        private: ::Windows::UI::Xaml::Controls::ContentDialog^ redoHistoryDialog;
         private: ::Windows::UI::Xaml::Controls::AppBarButton^ NewFile;
         private: ::Windows::UI::Xaml::Controls::AppBarButton^ OpenFile;
         private: ::Windows::UI::Xaml::Controls::AppBarButton^ SaveFile;
