@@ -1,0 +1,12 @@
+﻿<ContentDialog
+    x:Class="flowchart.UndoHistoryDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:flowchart"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="히스토리 없음" 
+    Content="더 이상 Undo를 할 수 없습니다."
+    PrimaryButtonText="확인">
+</ContentDialog>

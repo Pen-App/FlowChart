@@ -559,6 +559,7 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 	}
 
 	alignmentLine();
+	App::historyObject->putHistory();
 
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
@@ -1163,13 +1164,15 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		SymbolInfo^ startSymbolInfo = nullptr;
 		SymbolInfo^ connectSymbolInfo = nullptr;
 		//1. 기준이 되는 symbolInfo 찾기, app::vector에서
-		for (UINT64 i = 0; i < App::symbolVector->Size; i++) 
+		/*for (UINT64 i = 0; i < App::symbolVector->Size; i++) 
 		{
 			if (App::symbolVector->GetAt(i)->SymbolNo == connectorStartSymbolNo)
 			{
 				startSymbolInfo = App::symbolVector->GetAt(i);
 			}
-		}
+		}*/
+		startSymbolInfo = App::getSymbolInfoByNo(connectorStartSymbolNo);
+		if (startSymbolInfo == nullptr) return;
 
 		//1.5 이미 startSymbolInfo에 connectorStartSymbolNo가 들어있으면 return한다.
 		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
@@ -1181,13 +1184,15 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		}
 
 		//2. 이어질 connecctSymbolInfo 찾기
-		for (UINT64 i = 0; i < App::symbolVector->Size; i++)
+		/*for (UINT64 i = 0; i < App::symbolVector->Size; i++)
 		{
 			if (App::symbolVector->GetAt(i)->SymbolNo == focusedSymbolNo)
 			{
 				connectSymbolInfo = App::symbolVector->GetAt(i);
 			}
-		}
+		}*/
+		connectSymbolInfo = App::getSymbolInfoByNo(focusedSymbolNo);
+		if (connectSymbolInfo == nullptr) return;
 
 		//3. startSymbolInfo의 path에 connectSymbolInfo넣기
 		if (startSymbolInfo->SymbolType != 2)
@@ -1217,6 +1222,7 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 			//5. 실제 연결선 생성
 			makeConnectLine(connectorStartSymbolNo, connectSymbolInfo->SymbolNo);
 			isLineDrawing = false;
+			App::historyObject->putHistory();
 		}
 
 		alignmentLine();
@@ -1758,6 +1764,9 @@ void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Wi
 	//8. boolean false;
 	isLineDrawing = false;
 	isSelectingYesOrNo = false;
+
+	alignmentLine();
+	App::historyObject->putHistory();
 }
 
 //Yes Or No TextBlock을 만드는 함수
@@ -1880,6 +1889,7 @@ void flowchart::GridPage::LineDeleteConfirmButton_Click(Platform::Object^ sender
 	delete[]tappedDeletorNameWc;
 
 	alignmentLine();
+	App::historyObject->putHistory();
 }
 
 //파일오픈용 PageGrid 늘려주는 함수

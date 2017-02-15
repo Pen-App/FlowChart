@@ -17,12 +17,16 @@
     <ClCompile Include="MainPage.xaml.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="SymbolInfo.cpp" />
+    <ClCompile Include="GridPage.xaml.cpp" />
+    <ClCompile Include="HistoryObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h" />
     <ClInclude Include="MainPage.xaml.h" />
     <ClInclude Include="SymbolInfo.h" />
+    <ClInclude Include="GridPage.xaml.h" />
+    <ClInclude Include="HistoryObject.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
@@ -74,5 +78,7 @@
   <ItemGroup>
     <Page Include="MainPage.xaml" />
     <Page Include="GridPage.xaml" />
+    <Page Include="UndoHistoryDialog.xaml" />
+    <Page Include="RedoHistoryDialog.xaml" />
   </ItemGroup>
 </Project>

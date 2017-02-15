@@ -7,6 +7,8 @@
 #include "MainPage.xaml.h"
 #include "SymbolInfo.h"
 #include "GridPage.xaml.h"
+#include "UndoHistoryDialog.xaml.h"
+#include "RedoHistoryDialog.xaml.h"
 
 using namespace flowchart;
 
@@ -138,6 +140,8 @@ void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xa
 				break;
 			}
 		}
+
+		App::historyObject->putHistory();
 
 		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 	}
@@ -330,6 +334,7 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 		}
 		// path 정리
 		SetPathList(tmpPath);
+		App::historyObject->initHistory();
 		MessageDialog^ msg = ref new MessageDialog("file open success!" + "\n vector size = " + App::symbolVector->Size);
 		msg->ShowAsync();
 	}
@@ -415,6 +420,7 @@ void flowchart::MainPage::SaveFileInit()
 void flowchart::MainPage::NewFile_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 	OpenFileInit();
+	App::historyObject->initHistory();
 	this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid), "s0");
 }
 
@@ -646,16 +652,46 @@ void flowchart::MainPage::deleteConnectLine(UINT16 deleteSymbolNo)
 	varPageGridCanvas->UpdateLayout();
 }
 
-
 void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	
-}
+	App::undoOrRedoButtonClicked = true;
 
+	/*if (App::historyIndex <= 0)
+	{
+		ContentDialog^ noHistoryDialog = ref new ContentDialog();
+		noHistoryDialog->Title = "히스토리 없음";
+		noHistoryDialog->Content = "더이상 Undo를 할 수 없습니다.";
+		noHistoryDialog->PrimaryButtonText = "OK";
+		noHistoryDialog->ShowAsync();
+	}
+	else
+	{
+
+	}*/
+	if (!App::historyObject->unDo())
+	{
+		UndoHistoryDialog^ dialog = ref new UndoHistoryDialog();
+		dialog->ShowAsync();
+	}
+	else
+	{
+		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid));
+	}
+}
 
 void flowchart::MainPage::RedoButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	
+	App::undoOrRedoButtonClicked = true;
+
+	if (!App::historyObject->reDo())
+	{
+		RedoHistoryDialog^ dialog = ref new RedoHistoryDialog();
+		dialog->ShowAsync();
+	}
+	else
+	{
+		this->GridContentFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(GridPage::typeid));
+	}
 }
 
 

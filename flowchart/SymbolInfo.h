@@ -64,17 +64,29 @@ public:
 	property String^ Title
 	{
 		String^ get() { return title; }
-		void set(String^ value) { title = value; }
+		void set(String^ value) 
+		{ 
+			String^ tempValue = ref new String(value->Data());
+			title = tempValue; 
+		}
 	}
 	property String^ Content
 	{
 		String^ get() { return content; }
-		void set(String^ value) { content = value; }
+		void set(String^ value) 
+		{ 
+			String^ tempValue = ref new String(value->Data());
+			content = tempValue; 
+		}
 	}
 	property String^ Detail
 	{
 		String^ get() { return detail; }
-		void set(String^ value) { detail = value; }
+		void set(String^ value) 
+		{ 
+			String^ tempValue = ref new String(value->Data());
+			detail = tempValue; 
+		}
 	}
 	property IVector<SymbolInfo^>^ Path
 	{
@@ -82,10 +94,6 @@ public:
 		{
 			return path;
 		}
-		//void set(IVector<SymbolInfo^>^ value)
-		//{
-		//	path = static_cast<Vector>(value);
-		//}
 	}
 	property IVector<bool>^ Decision
 	{
@@ -93,5 +101,14 @@ public:
 		{
 			return decision;
 		}
+		/*void set(IVector<bool>^ value)
+		{
+			Vector<bool>^ tempDecision = ref new Vector<bool>();
+			for (int i = 0; i < value->Size; i++)
+			{
+				tempDecision->Append(value->GetAt(i));
+			}
+			decision = tempDecision;
+		}*/
 	}
 };

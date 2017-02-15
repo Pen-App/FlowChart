@@ -32,12 +32,17 @@ App::App()
     InitializeComponent();
     Suspending += ref new SuspendingEventHandler(this, &App::OnSuspending);
 	symbolVector = ref new Vector<SymbolInfo^>();
+	//symbolVector->VectorChanged += ref new Windows::Foundation::Collections::VectorChangedEventHandler<SymbolInfo ^>(this, &flowchart::App::OnVectorChanged);
 
 	symbolIdCount = 0;
 	selectedSymbolNumber = -1;
 	draggingSymbolNo = -1;
 	draggingSymbolType = -1;
 	focusedSymbolIndex = -1;	// 선택된 symbolInfoVector의 index
+
+	historyObject = ref new HistoryObject();
+	historyObject->initHistory();
+	undoOrRedoButtonClicked = false;
 }
 
 /// <summary>
@@ -383,4 +388,16 @@ void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
 void App::OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs ^e)
 {
     throw ref new FailureException("Failed to load Page " + e->SourcePageType.Name);
+}
+
+void flowchart::App::OnVectorChanged(Windows::Foundation::Collections::IObservableVector<SymbolInfo ^> ^sender, Windows::Foundation::Collections::IVectorChangedEventArgs ^event)
+{
+	if (undoOrRedoButtonClicked)
+	{
+		undoOrRedoButtonClicked = false;
+	}
+	else
+	{
+		historyObject->putHistory();
+	}
 }
