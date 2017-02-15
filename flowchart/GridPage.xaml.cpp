@@ -1638,7 +1638,7 @@ void flowchart::GridPage::moveConnectLine(UINT64 movedSymbolNo)
 					deleteLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
 
 					//선 새로 다시 그려줌
-					if (movedSymbolInfo->SymbolType == 2)
+					if (tempSymbolInfo->SymbolType == 2)
 					{
 						makeYesOrNoTextBlock(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo, tempSymbolInfo->Decision->GetAt(j));
 						makeConnectLine(tempSymbolInfo->SymbolNo, movedSymbolInfo->SymbolNo);
