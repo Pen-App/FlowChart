@@ -25,6 +25,7 @@ using namespace Windows::Data::Xml::Dom;	// 파일 입출력
 using namespace Windows::Storage;
 using namespace Windows::Storage::Pickers;	// 선택기 사용 파일저장
 using namespace Concurrency;
+using namespace Windows::UI::Xaml::Media::Imaging;
 
 using namespace Windows::UI::Popups;	// 테스트용
 
@@ -660,5 +661,10 @@ void flowchart::MainPage::RedoButton_Click(Platform::Object^ sender, Windows::UI
 
 void flowchart::MainPage::SaveImage_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	Page^ varGridPage = (Page^)(GridContentFrame->Content);
+	Grid^ varPageGrid = (Grid^)(varGridPage->FindName("PageGrid"));
 
+	// create and capture Window
+	auto rtb = ref new RenderTargetBitmap();
+	create_task(rtb->RenderAsync(varPageGrid, 100, 100)).then([=]() {});
 }
