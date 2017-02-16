@@ -556,12 +556,12 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		{
 			appendRow();
 		}
+
+		showFocusedSymbolButtons(focusedSymbolNo);
 	}
 
 	alignmentLine();
 	App::historyObject->putHistory();
-
-	showFocusedSymbolButtons(focusedSymbolNo);
 
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
