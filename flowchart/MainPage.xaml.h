@@ -16,7 +16,17 @@ namespace flowchart
 	{
 	public:
 		MainPage();
+		Windows::Foundation::IAsyncAction^ RenderImageToFileAsync(Windows::UI::Xaml::UIElement^ uiElement, Platform::String^ outputImageFilename);
 	private:
+		unsigned int pixelWidth;
+		unsigned int pixelHeight;
+		Platform::Array<unsigned char>^ pixelData;
+		Platform::Array<unsigned char>^ GetArrayFromBuffer(Windows::Storage::Streams::IBuffer^ buffer);
+		void StorePixelsFromBuffer(Windows::Storage::Streams::IBuffer^ buffer);
+		concurrency::task<void> WriteBufferToFile(Platform::String^ outputImageFilename);
+		concurrency::task<void> RenderAndSaveToFileAsync(Windows::UI::Xaml::UIElement^ uiElement, Platform::String^ outputImageFilename,
+			uint32 width = 0, uint32 height = 0);
+
 		void Image_DragStarting(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DragStartingEventArgs^ args);
 		void Image_DropCompleted(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::DropCompletedEventArgs^ args);
 		void ListBox_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e);
