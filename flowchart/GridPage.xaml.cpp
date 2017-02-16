@@ -637,27 +637,19 @@ void flowchart::GridPage::Image_PointerEntered(Platform::Object^ sender, Windows
 	wchar_t tempImageType[3];
 	wcsncpy_s(tempImageType, tempImageName->Data(), 2);
 	focusedSymbolType = _wtoi(tempImageType + 1);
-
-	testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
-
-	OutputDebugString(L"Image_PointerEntered!!!\n");
 }
 void flowchart::GridPage::Image_DragEnter(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
 	isSymbolIn = true;
-	OutputDebugString(L"Image_DragEnter!!!\n");
 }
 
 void flowchart::GridPage::Image_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
 	isSymbolIn = false;
-	
-	OutputDebugString(L"Image_PointerExited!!!\n");
 }
 void flowchart::GridPage::Image_DragLeave(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
 	isSymbolIn = false;
-	OutputDebugString(L"Image_DragLeave!!!\n");
 }
 
 //이미지 안에서 클릭을 했을 경우 -> focus 시키기, 버튼보이게 하기
@@ -683,10 +675,7 @@ void flowchart::GridPage::Image_PointerPressed(Platform::Object^ sender, Windows
 
 		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
 		showFocusedSymbolButtons(focusedSymbolNo);
-		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 	}
-	
-	OutputDebugString(L"Image_clicked!!!\n");
 }
 
 //이미지의 드래그가 시작될 때
@@ -705,7 +694,6 @@ void flowchart::GridPage::Image_DragStarting(Windows::UI::Xaml::UIElement^ sende
 		
 		//3. 포커스된 symbol의 버튼만 보이게 만든다. 
 		showFocusedSymbolButtons(focusedSymbolNo);
-		testTextBox->Text = "No:" + focusedSymbolNo + "/t: " + focusedSymbolType;
 
 		//App.xaml.h.DraggingSymbolNo 설정
 		App::draggingSymbolNo = focusedSymbolNo;
@@ -871,16 +859,6 @@ void flowchart::GridPage::PageGridScrollViewer_PointerWheelChanged(Platform::Obj
 		PageGridCanvas->UpdateLayout();
 		PageGridScrollViewer->UpdateLayout();
 	}
-
-	wchar_t debugstr[256];
-	swprintf_s(debugstr, L"zoom : %lf\n", PageGridScrollViewer->ZoomFactor);
-	OutputDebugString(debugstr);
-
-	swprintf_s(debugstr, L"PageGridCanvas : %lf, %lf\n", PageGridCanvas->RenderSize.Width, PageGridCanvas->RenderSize.Height);
-	OutputDebugString(debugstr);
-
-	swprintf_s(debugstr, L"PageGridScrollViewer : %lf, %lf\n", PageGridScrollViewer->ActualWidth, PageGridScrollViewer->ActualHeight);
-	OutputDebugString(debugstr);
 }
 
 void flowchart::GridPage::moveFocusedSymbol(Grid^ parentGrid, UINT64 focusedSymbolNo, int newRowIndex, int newColumnIndex)
@@ -1086,16 +1064,6 @@ void flowchart::GridPage::PageGridScrollViewer_SizeChanged(Platform::Object^ sen
 	double gridRenderWidth = nowColumnNum * columnWidth * PageGridScrollViewer->ZoomFactor;
 	double gridRenderHeight = nowRowNum * rowHeight * PageGridScrollViewer->ZoomFactor;
 
-	wchar_t debugstr[256];
-	swprintf_s(debugstr,
-		L"zoom : %lf\ngrid : %lf %lf\nscroll : %lf %lf\n",
-		PageGridScrollViewer->ZoomFactor,
-		gridRenderWidth,
-		gridRenderHeight,
-		PageGridScrollViewer->ActualWidth,
-		PageGridScrollViewer->ActualHeight);
-	OutputDebugString(debugstr);
-
 	if (PageGridScrollViewer->ZoomFactor >= 1) 
 	{
 		while (gridRenderWidth < (PageGridScrollViewer->ActualWidth*PageGridScrollViewer->ZoomFactor))
@@ -1135,7 +1103,6 @@ void flowchart::GridPage::ConnectorButtonPress(Platform::Object^ sender, Windows
 		PageGridCanvas->Children->RemoveAtEnd();
 	}
 
-	OutputDebugString(L"connectorButtonPressed!!\n");
 	isLineDrawing = true;
 	connectorStartSymbolNo = focusedSymbolNo;
 
@@ -1150,10 +1117,6 @@ void flowchart::GridPage::ConnectorButtonPress(Platform::Object^ sender, Windows
 	tempLine->Y2 = (mouseYPos + PageGridScrollViewer->VerticalOffset) / PageGridScrollViewer->ZoomFactor;
 	PageGridCanvas->Children->Append(tempLine);
 	PageGridCanvas->UpdateLayout();
-
-	wchar_t asdf[234];
-	swprintf_s(asdf, L"ScrollOffset : %lf, %lf\n", PageGridScrollViewer->VerticalOffset, PageGridScrollViewer->HorizontalOffset);
-	OutputDebugString(asdf);
 }
 
 void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
@@ -1227,14 +1190,6 @@ void flowchart::GridPage::PageGridCanvas_PointerPress(Platform::Object^ sender, 
 		}
 
 		alignmentLine();
-
-		//debugging
-		String^ tempStr = "startSymbol:" + connectorStartSymbolNo + " ";
-		for (UINT64 i = 0; i < startSymbolInfo->Path->Size; i++)
-		{
-			tempStr = tempStr + ((startSymbolInfo->Path->GetAt(i)->SymbolNo)) + L", " ;
-		}
-		pathBox->Text = tempStr;
 	}
 
 	if (isLineDrawing && !isSelectingYesOrNo)
@@ -1251,7 +1206,6 @@ void flowchart::GridPage::PageGridCanvas_PointerMove(Platform::Object^ sender, W
 {
 	if (isLineDrawing)
 	{
-		//OutputDebugString(L"move\n");
 		Line^ tempLine = (Line^)(PageGridCanvas->FindName(L"tempLine"));
 		auto movedPoint = e->GetCurrentPoint(this)->Position;
 		tempLine->X2 = (movedPoint.X + PageGridScrollViewer->HorizontalOffset) / PageGridScrollViewer->ZoomFactor;
@@ -1328,10 +1282,6 @@ void flowchart::GridPage::Button_DragLeave(Platform::Object^ sender, Windows::UI
 
 void flowchart::GridPage::PageGridScrollViewer_ViewChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::ScrollViewerViewChangedEventArgs^ e)
 {
-	wchar_t debugStr[256];
-	swprintf_s(debugStr, L"zoomLevel : %f\n", PageGridScrollViewer->ZoomFactor);
-	OutputDebugString(debugStr);
-
 	while (
 		PageGridCanvas->ActualWidth * PageGridScrollViewer->ZoomFactor
 		<
@@ -1723,7 +1673,6 @@ void flowchart::GridPage::ContentText_TextChanging(Windows::UI::Xaml::Controls::
 //YES_OR_NO_FLYOUT의 버튼을 클릭했을 때
 void flowchart::GridPage::YesOrNoFlyoutButton_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-	OutputDebugString(L"YesOrNoFlyoutButton_Click\n");
 	Button^ yesOrNoButton = safe_cast<Button^>(sender);
 
 	SymbolInfo^ startSymbolInfo = App::getSymbolInfoByNo(connectorStartSymbolNo);
@@ -1923,9 +1872,6 @@ void flowchart::GridPage::LineDeletor_Tapped(Platform::Object ^sender, Windows::
 	auto deletor = safe_cast<Ellipse^>(sender);
 	//델레터 지정
 	tappedDeletorName = deletor->Name;
-	String^ deletorNameDebug = deletor->Name;
-	deletorNameDebug += "\n";
-	OutputDebugString(deletorNameDebug->Data());
 
 	//open LINEDELETOR_FLYOUT
 	LINEDELETOR_FLYOUT->ShowAt(deletor);
