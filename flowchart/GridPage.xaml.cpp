@@ -561,10 +561,11 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 	alignmentLine();
 	App::historyObject->putHistory();
 
+	showFocusedSymbolButtons(focusedSymbolNo);
+
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
 	PageGridScrollViewer->UpdateLayout();
-	
 }
 
 //마우스가 rectangle위로 올라가있으면 rectangle이 자신이 속한 행,열 인덱스를 curRowIndex와 curColumnIndex에 기록한다. 
@@ -1785,8 +1786,8 @@ void flowchart::GridPage::makeYesOrNoTextBlock(UINT64 from, UINT64 to, bool deci
 	borderOfYesOrNoTextBlock->Name = nameOfTextBlockBorder;
 	borderOfYesOrNoTextBlock->BorderBrush = ref new SolidColorBrush(Windows::UI::Colors::Gray);
 	borderOfYesOrNoTextBlock->BorderThickness = 1;
-	borderOfYesOrNoTextBlock->Width = 30;
-	borderOfYesOrNoTextBlock->Height = 20;
+	borderOfYesOrNoTextBlock->Width = 19.5;
+	borderOfYesOrNoTextBlock->Height = 13;
 	borderOfYesOrNoTextBlock->IsTapEnabled = false;
 	borderOfYesOrNoTextBlock->SetValue(Canvas::ZIndexProperty, 3);
 	borderOfYesOrNoTextBlock->SetValue(Grid::RowProperty, fromInfo->RowIndex);
@@ -1832,6 +1833,7 @@ void flowchart::GridPage::makeYesOrNoTextBlock(UINT64 from, UINT64 to, bool deci
 	if (decision)
 	{
 		TextBlock^ yesTextBlock = ref new TextBlock;
+		yesTextBlock->FontSize = 10.4;
 		yesTextBlock->Text = L"Yes";
 		yesTextBlock->HorizontalAlignment =
 			Windows::UI::Xaml::HorizontalAlignment::Center;
@@ -1842,7 +1844,8 @@ void flowchart::GridPage::makeYesOrNoTextBlock(UINT64 from, UINT64 to, bool deci
 	else
 	{
 		TextBlock^ noTextBlock = ref new TextBlock;
-		noTextBlock->Text = L"no";
+		noTextBlock->FontSize = 10.4;
+		noTextBlock->Text = L"No";
 		noTextBlock->HorizontalAlignment =
 			Windows::UI::Xaml::HorizontalAlignment::Center;
 		noTextBlock->VerticalAlignment =
@@ -2201,7 +2204,7 @@ void flowchart::GridPage::alignmentLine()
 
 			if (borderOfYesOrNoTextBlock != nullptr)
 			{
-				double topMargin = ((rowHeight - 20) * (tempLeftLineNum / leftLineNum)) - (rowHeight / 2.0);
+				double topMargin = ((rowHeight - 10) * (tempLeftLineNum / leftLineNum)) + 5 - (rowHeight / 2.0);
 				if (topMargin < 0)
 				{
 					topMargin = abs(topMargin);
@@ -2341,7 +2344,7 @@ void flowchart::GridPage::alignmentLine()
 
 			if (borderOfYesOrNoTextBlock != nullptr)
 			{
-				double leftMargin = ((columnWidth - 20)* (tempTopLineNum / topLineNum)) + 10 - ((columnWidth) / 2.0);
+				double leftMargin = ((columnWidth - 10) * (tempTopLineNum / topLineNum)) + 5 - ((columnWidth) / 2.0);
 				if (leftMargin < 0)
 				{
 					leftMargin = abs(leftMargin);
@@ -2501,7 +2504,7 @@ void flowchart::GridPage::alignmentLine()
 
 			if (borderOfYesOrNoTextBlock != nullptr)
 			{
-				double bottomMargin = ((rowHeight - 20) * (tempRightLineNum / rightLineNum)) + 10 - (rowHeight / 2.0);
+				double bottomMargin = ((rowHeight - 10) * (tempRightLineNum / rightLineNum)) + 5 - (rowHeight / 2.0);
 				if (bottomMargin < 0)
 				{
 					bottomMargin = abs(bottomMargin);
@@ -2656,7 +2659,7 @@ void flowchart::GridPage::alignmentLine()
 
 			if (borderOfYesOrNoTextBlock != nullptr)
 			{
-				double leftMargin = ((columnWidth - 20) * (tempBottomLineNum / bottomLineNum)) + 10 - (columnWidth / 2.0);
+				double leftMargin = ((columnWidth - 10) * (tempBottomLineNum / bottomLineNum)) + 5 - (columnWidth / 2.0);
 				if (leftMargin < 0)
 				{
 					leftMargin = abs(leftMargin);
