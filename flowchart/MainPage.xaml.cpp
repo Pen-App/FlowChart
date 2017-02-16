@@ -57,10 +57,6 @@ void flowchart::MainPage::Image_DropCompleted(Windows::UI::Xaml::UIElement^ send
 //심볼 리스트박스에 그리드에 들어있던 심볼을 드래그&드롭해서 삭제
 void flowchart::MainPage::ListBox_Drop(Platform::Object^ sender, Windows::UI::Xaml::DragEventArgs^ e)
 {
-	wchar_t asdf[234];
-	swprintf_s(asdf, L"draggingSymbolNo : %d\n", App::draggingSymbolNo);
-	OutputDebugString(asdf);
-
 	if (App::draggingSymbolNo != -1)
 	{
 		/*Button^ tempButton1 = nullptr;
@@ -340,9 +336,6 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 }
 void flowchart::MainPage::SetPathList(Vector<SymbolInfo^>^ tmpPath)
 {
-	//MessageDialog^ msg = ref new MessageDialog(App::symbolVector->Size + ", " + tmpPath->Size);
-	//msg->ShowAsync();
-	OutputDebugStringA("My output string.\n");
 	for (int i = 0; i < App::symbolVector->Size; i++)
 	{
 		for (int j = 0; j < tmpPath->GetAt(i)->Path->Size; j++)
@@ -655,18 +648,6 @@ void flowchart::MainPage::UndoButton_Click(Platform::Object^ sender, Windows::UI
 {
 	App::undoOrRedoButtonClicked = true;
 
-	/*if (App::historyIndex <= 0)
-	{
-		ContentDialog^ noHistoryDialog = ref new ContentDialog();
-		noHistoryDialog->Title = "히스토리 없음";
-		noHistoryDialog->Content = "더이상 Undo를 할 수 없습니다.";
-		noHistoryDialog->PrimaryButtonText = "OK";
-		noHistoryDialog->ShowAsync();
-	}
-	else
-	{
-
-	}*/
 	if (!App::historyObject->unDo())
 	{
 		UndoHistoryDialog^ dialog = ref new UndoHistoryDialog();
