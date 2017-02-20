@@ -330,7 +330,7 @@ void flowchart::MainPage::OpenFileContentXmlParser(Windows::Data::Xml::Dom::XmlD
 		// path 정리
 		SetPathList(tmpPath);
 		App::historyObject->initHistory();
-		MessageDialog^ msg = ref new MessageDialog("file open success!" + "\n vector size = " + App::symbolVector->Size);
+		MessageDialog^ msg = ref new MessageDialog("file open success!");
 		msg->ShowAsync();
 	}
 }
