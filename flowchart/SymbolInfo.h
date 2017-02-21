@@ -64,28 +64,28 @@ public:
 	property String^ Title
 	{
 		String^ get() { return title; }
-		void set(String^ value) 
-		{ 
+		void set(String^ value)
+		{
 			String^ tempValue = ref new String(value->Data());
-			title = tempValue; 
+			title = tempValue;
 		}
 	}
 	property String^ Content
 	{
 		String^ get() { return content; }
-		void set(String^ value) 
-		{ 
+		void set(String^ value)
+		{
 			String^ tempValue = ref new String(value->Data());
-			content = tempValue; 
+			content = tempValue;
 		}
 	}
 	property String^ Detail
 	{
 		String^ get() { return detail; }
-		void set(String^ value) 
-		{ 
+		void set(String^ value)
+		{
 			String^ tempValue = ref new String(value->Data());
-			detail = tempValue; 
+			detail = tempValue;
 		}
 	}
 	property IVector<SymbolInfo^>^ Path
