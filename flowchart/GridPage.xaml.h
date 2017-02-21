@@ -175,5 +175,8 @@ namespace flowchart
 
 		//연결선 관련 간격 조절(선, 델레터, YesOrNo, 방향표시 전부 정렬)
 		void alignmentLine();
+		void FLYOUT_DETAIL_Closed(Platform::Object^ sender, Platform::Object^ e);
+		void FLYOUT_CONTENT_Closed(Platform::Object^ sender, Platform::Object^ e);
+		void FLYOUT_TITLE_Closed(Platform::Object^ sender, Platform::Object^ e);
 };
 }
