@@ -123,7 +123,7 @@
 
 
         <!-- Flyout Detail style -->
-        <Flyout Placement="Right" x:Name="FLYOUT_DETAIL" x:Key="FLYOUT_DETAIL">
+        <Flyout Placement="Right" x:Name="FLYOUT_DETAIL" x:Key="FLYOUT_DETAIL" Closed="FLYOUT_DETAIL_Closed">
             <Flyout.FlyoutPresenterStyle>
                 <Style TargetType = "FlyoutPresenter">
                     <Setter Property = "BorderThickness" Value = "3" />
@@ -147,7 +147,7 @@
         </Flyout>
 
         <!-- Flyout Content style -->
-        <Flyout Placement="Left" x:Name="FLYOUT_CONTENT" x:Key="FLYOUT_CONTENT">
+        <Flyout Placement="Left" x:Name="FLYOUT_CONTENT" x:Key="FLYOUT_CONTENT" Closed="FLYOUT_CONTENT_Closed">
             <Flyout.FlyoutPresenterStyle>
                 <Style TargetType = "FlyoutPresenter">
                     <Setter Property = "BorderThickness" Value = "3" />
@@ -171,7 +171,7 @@
         </Flyout>
 
         <!-- Flyout Title Style -->
-        <Flyout Placement="Left" x:Name="FLYOUT_TITLE" x:Key="FLYOUT_TITLE">
+        <Flyout Placement="Left" x:Name="FLYOUT_TITLE" x:Key="FLYOUT_TITLE" Closed="FLYOUT_TITLE_Closed">
             <Flyout.FlyoutPresenterStyle>
                 <Style TargetType = "FlyoutPresenter">
                     <Setter Property = "BorderThickness" Value = "3" />

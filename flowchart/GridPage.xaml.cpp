@@ -311,10 +311,12 @@ void GridPage::makeButtons(Grid^ parentGrid, UINT64 symbolNo, int rowIndex, int 
 
 void flowchart::GridPage::makeTitleTextBlock(Grid ^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
 {
+	SymbolInfo^ symbolInfo = App::getSymbolInfoByNo(symbolNo);
+
 	TextBlock^ tempTextBlock = ref new TextBlock();
 	tempTextBlock->Style = TITLE_TEXTBLOCK;
 	tempTextBlock->Name = "title " + symbolNo;
-	tempTextBlock->Text = "title " + symbolNo;
+	tempTextBlock->Text = symbolInfo->Title;
 	tempTextBlock->SetValue(Canvas::ZIndexProperty, 2);
 	tempTextBlock->SetValue(parentGrid->ColumnProperty, columnIndex);
 	tempTextBlock->SetValue(parentGrid->RowProperty, rowIndex);
@@ -323,10 +325,12 @@ void flowchart::GridPage::makeTitleTextBlock(Grid ^ parentGrid, UINT64 symbolNo,
 
 void flowchart::GridPage::makeContentTextBlock(Grid ^ parentGrid, UINT64 symbolNo, int rowIndex, int columnIndex)
 {
+	SymbolInfo^ symbolInfo = App::getSymbolInfoByNo(symbolNo);
+
 	TextBlock^ tempTextBlock = ref new TextBlock();
 	tempTextBlock->Style = CONTENT_TEXTBLOCK;
 	tempTextBlock->Name = "content " + symbolNo;
-	tempTextBlock->Text = "content " + symbolNo;
+	tempTextBlock->Text = symbolInfo->Content;
 	tempTextBlock->SetValue(Canvas::ZIndexProperty, 2);
 	tempTextBlock->SetValue(parentGrid->ColumnProperty, columnIndex);
 	tempTextBlock->SetValue(parentGrid->RowProperty, rowIndex);
@@ -503,6 +507,8 @@ void flowchart::GridPage::PageGrid_Drop(Platform::Object^ sender, Windows::UI::X
 		tempSymbolInfo->RowIndex = curRowIndex;
 		tempSymbolInfo->ColumnIndex = curColumnIndex;
 		tempSymbolInfo->SymbolNo = tempSymbolNo;
+		tempSymbolInfo->Title = "title " + tempSymbolNo;
+		tempSymbolInfo->Content = "content " + tempSymbolNo;
 		App::symbolVector->Append(tempSymbolInfo);
 		App::focusedSymbolIndex = App::symbolVector->Size - 1;
 
@@ -1651,23 +1657,23 @@ void flowchart::GridPage::deleteTempConnectLine()
 void flowchart::GridPage::DetailText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
 {
 	// vector에 저장
-	App::symbolVector->GetAt(App::focusedSymbolIndex)->Detail = sender->Text;
+	//App::symbolVector->GetAt(App::focusedSymbolIndex)->Detail = sender->Text;
 }
 
 // Title Flyout에서 텍스트를 입력받는 중일 때
 void flowchart::GridPage::TitleText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
 {
-	App::symbolVector->GetAt(App::focusedSymbolIndex)->Title = sender->Text;
+	//App::symbolVector->GetAt(App::focusedSymbolIndex)->Title = sender->Text;
 	TextBlock^ title = safe_cast<TextBlock^>(PageGrid->FindName("title " + focusedSymbolNo));
-	title->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Title;
+	title->Text = sender->Text;
 }
 
 // Content Flyout에서 텍스트를 입력받는 중일 때
 void flowchart::GridPage::ContentText_TextChanging(Windows::UI::Xaml::Controls::TextBox^ sender, Windows::UI::Xaml::Controls::TextBoxTextChangingEventArgs^ args)
 {
-	App::symbolVector->GetAt(App::focusedSymbolIndex)->Content = sender->Text;
+	//App::symbolVector->GetAt(App::focusedSymbolIndex)->Content = sender->Text;
 	TextBlock^ content = safe_cast<TextBlock^>(PageGrid->FindName("content " + focusedSymbolNo));
-	content->Text = App::symbolVector->GetAt(App::focusedSymbolIndex)->Content;
+	content->Text = sender->Text;
 }
 
 //YES_OR_NO_FLYOUT의 버튼을 클릭했을 때
@@ -2682,4 +2688,33 @@ void flowchart::GridPage::alignmentLine()
 
 	PageGrid->UpdateLayout();
 	PageGridCanvas->UpdateLayout();
+}
+
+void flowchart::GridPage::FLYOUT_DETAIL_Closed(Platform::Object^ sender, Platform::Object^ e)
+{
+	if (DetailText->Text != App::getSymbolInfoByNo(focusedSymbolNo)->Detail)
+	{
+		App::getSymbolInfoByNo(focusedSymbolNo)->Detail = DetailText->Text;
+		App::historyObject->putHistory();
+	}
+}
+
+
+void flowchart::GridPage::FLYOUT_CONTENT_Closed(Platform::Object^ sender, Platform::Object^ e)
+{
+	if (ContentText->Text != App::getSymbolInfoByNo(focusedSymbolNo)->Content)
+	{
+		App::getSymbolInfoByNo(focusedSymbolNo)->Content = ContentText->Text;
+		App::historyObject->putHistory();
+	}
+}
+
+
+void flowchart::GridPage::FLYOUT_TITLE_Closed(Platform::Object^ sender, Platform::Object^ e)
+{
+	if (TitleText->Text != App::getSymbolInfoByNo(focusedSymbolNo)->Title)
+	{
+		App::getSymbolInfoByNo(focusedSymbolNo)->Title = TitleText->Text;
+		App::historyObject->putHistory();
+	}
 }
